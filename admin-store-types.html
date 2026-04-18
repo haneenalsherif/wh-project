@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إدارة أنواع المتاجر - WH Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #A3B18A;
+      color: white;
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .menu-item {
+      display: block;
+      width: 100%;
+      text-decoration: none;
+      color: white;
+      background: transparent;
+      border: none;
+      padding: 14px 16px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      text-align: right;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .content {
+      flex: 1;
+      padding: 24px;
+    }
+
+    .topbar {
+      background: white;
+      border-radius: 20px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #344E41;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #EDE0D4;
+      color: #344E41;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .section {
+      background: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      color: #344E41;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #DAD7CD;
+      border-radius: 14px;
+      background: #FAF3E0;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      padding: 13px 18px;
+      border-radius: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #344E41;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #EDE0D4;
+      color: #344E41;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px;
+    }
+
+    th, td {
+      padding: 14px 10px;
+      border-bottom: 1px solid #eee;
+      text-align: right;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    th {
+      color: #344E41;
+      font-size: 15px;
+      background: #FAF3E0;
+    }
+
+    .delete-btn {
+      border: none;
+      background: #b00020;
+      color: white;
+      padding: 9px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #344E41;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+      z-index: 9999;
+      min-width: 240px;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+      background: #b00020;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+const role = localStorage.getItem("userRole");
+if (role !== "admin") {
+  window.location.href = "admin-login.html";
+}
+</script>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="logo">WH Admin</div>
+
+    <button class="menu-item" onclick="window.location.href='admin-dashboard.html'">الرئيسية</button>
+    <button class="menu-item" onclick="window.location.href='admin-stores.html'">إدارة المتاجر</button>
+    <button class="menu-item active" onclick="window.location.href='admin-store-types.html'">أنواع المتاجر</button>
+    <button class="menu-item" onclick="window.location.href='admin-admins.html'">إدارة الأدمنات</button>
+    <button class="menu-item" onclick="window.location.href='admin-orders.html'">إدارة الطلبات</button>
+  </div>
+
+  <div class="content">
+    <div class="topbar">
+      <div class="page-title">إدارة أنواع المتاجر</div>
+      <button class="logout-btn" onclick="logoutAdmin()">تسجيل الخروج</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">إضافة نوع متجر جديد</div>
+
+      <div class="grid">
+        <div>
+          <label>الاسم الظاهر</label>
+          <input type="text" id="name" placeholder="مثال: مخبز">
+        </div>
+
+        <div>
+          <label>المفتاح الداخلي</label>
+          <input type="text" id="typeKey" placeholder="مثال: bakery">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="addStoreType()">إضافة النوع</button>
+        <button class="btn btn-secondary" onclick="resetForm()">تفريغ الحقول</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">الأنواع الحالية</div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>الاسم</th>
+              <th>المفتاح</th>
+              <th>التاريخ</th>
+              <th>حذف</th>
+            </tr>
+          </thead>
+          <tbody id="typesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script>
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.className = "toast show " + type;
+
+  setTimeout(() => {
+    toast.className = "toast";
+  }, 2500);
+}
+
+function logoutAdmin() {
+  localStorage.clear();
+  window.location.href = "admin-login.html";
+}
+
+function resetForm() {
+  document.getElementById("name").value = "";
+  document.getElementById("typeKey").value = "";
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (isNaN(date)) return value;
+  return date.toLocaleString("ar-EG");
+}
+
+function getToken() {
+  return localStorage.getItem("token");
+}
+
+function authHeaders(json = false) {
+  const headers = {
+    "Authorization": `Bearer ${getToken()}`
+  };
+
+  if (json) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
+}
+
+async function loadStoreTypes() {
+  try {
+    const response = await fetch("/api/admin/store-types", {
+      headers: authHeaders()
+    });
+
+    const data = await response.json();
+
+    const tbody = document.getElementById("typesTableBody");
+    tbody.innerHTML = "";
+
+    if (!response.ok) {
+      showToast(data.message || "فشل جلب الأنواع", "error");
+      return;
+    }
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = `<tr><td colspan="4">لا توجد أنواع حاليًا</td></tr>`;
+      return;
+    }
+
+    data.forEach(type => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${type.name || ""}</td>
+        <td>${type.type_key || ""}</td>
+        <td>${formatDate(type.created_at)}</td>
+        <td><button class="delete-btn" onclick="deleteStoreType(${type.id})">حذف</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (error) {
+    console.error(error);
+    showToast("فشل الاتصال بالسيرفر", "error");
+  }
+}
+
+async function addStoreType() {
+  const name = document.getElementById("name").value.trim();
+  const type_key = document.getElementById("typeKey").value.trim().toLowerCase();
+
+  if (!name || !type_key) {
+    showToast("يرجى تعبئة كل الحقول", "error");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/admin/store-types", {
+      method: "POST",
+      headers: authHeaders(true),
+      body: JSON.stringify({
+        name,
+        type_key
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast(data.message || "فشل إضافة النوع", "error");
+      return;
+    }
+
+    showToast("تمت إضافة النوع بنجاح");
+    resetForm();
+    loadStoreTypes();
+  } catch (error) {
+    console.error(error);
+    showToast("فشل الاتصال بالسيرفر", "error");
+  }
+}
+
+async function deleteStoreType(id) {
+  const ok = confirm("هل أنت متأكد من حذف هذا النوع؟");
+  if (!ok) return;
+
+  try {
+    const response = await fetch(`/api/admin/store-types/${id}`, {
+      method: "DELETE",
+      headers: authHeaders()
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast(data.message || "فشل حذف النوع", "error");
+      return;
+    }
+
+    showToast("تم حذف النوع بنجاح");
+    loadStoreTypes();
+  } catch (error) {
+    console.error(error);
+    showToast("فشل الاتصال بالسيرفر", "error");
+  }
+}
+
+loadStoreTypes();
+</script>
+
+</body>
+</html>

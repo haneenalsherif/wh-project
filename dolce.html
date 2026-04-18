@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>دولشي كافيه</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+    }
+
+    .page {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #FAF3E0;
+      padding-bottom: 100px;
+    }
+
+    .topbar {
+      background: #A3B18A;
+      color: white;
+      padding: 16px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar .arrow-btn {
+      border: none;
+      background: white;
+      color: #344E41;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .topbar .spacer {
+      width: 38px;
+      height: 38px;
+    }
+
+    .hero {
+      margin: 14px;
+      background: #EDE0D4;
+      border-radius: 22px;
+      padding: 18px;
+    }
+
+    .hero-title {
+      font-size: 28px;
+      color: #344E41;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      color: #6B705C;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 10px;
+    }
+
+    .stat-box {
+      flex: 1;
+      background: white;
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+    }
+
+    .stat-label {
+      color: #888;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      color: #344E41;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 22px;
+      padding: 0 14px;
+      border-bottom: 1px solid #ddd6c8;
+      overflow-x: auto;
+      background: #FAF3E0;
+      position: sticky;
+      top: 70px;
+      z-index: 9;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab {
+      padding: 14px 0 12px;
+      font-size: 18px;
+      color: #7a7a7a;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tab.active {
+      color: #344E41;
+      border-bottom-color: #A3B18A;
+      font-weight: bold;
+    }
+
+    .section {
+      display: none;
+      padding: 18px 14px 0;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section-title {
+      font-size: 30px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 16px;
+    }
+
+    .menu-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 18px;
+      background: white;
+      padding: 12px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      align-items: center;
+    }
+
+    .menu-item img {
+      width: 95px;
+      height: 95px;
+      border-radius: 18px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .menu-content {
+      flex: 1;
+    }
+
+    .menu-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2F3E46;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .menu-desc {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .menu-price {
+      font-size: 16px;
+      color: #344E41;
+      font-weight: bold;
+    }
+
+    .add-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: none;
+      background: #A3B18A;
+      color: white;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .add-btn:hover {
+      background: #8FA17A;
+    }
+
+    .cart-bar {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 406px;
+      background: #344E41;
+      color: white;
+      border-radius: 18px;
+      padding: 14px 16px;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+      z-index: 999;
+    }
+
+    .cart-bar-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cart-count {
+      font-size: 14px;
+      color: #EDE0D4;
+    }
+
+    .cart-total {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .view-cart-btn {
+      border: none;
+      background: #A3B18A;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .view-cart-btn:hover {
+      background: #8FA17A;
+    }
+
+    .loading-text {
+      text-align: center;
+      color: #777;
+      padding: 18px 0;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <button class="arrow-btn" onclick="history.back()">→</button>
+      <div>دولشي كافيه</div>
+      <div class="spacer"></div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-title">دولشي كافيه ☕</div>
+      <div class="hero-subtitle">
+        قهوة، حلويات، ومأكولات خفيفة في مكان واحد بطابع هادئ وأنيق.
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-box">
+          <div class="stat-label">التقييم</div>
+          <div class="stat-value">4.8 ⭐</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">التوصيل</div>
+          <div class="stat-value">0.75 د.ل</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">الوقت</div>
+          <div class="stat-value">25 دقيقة</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="showSection('drinks', this)">مشروبات</div>
+      <div class="tab" onclick="showSection('food', this)">مأكولات</div>
+      <div class="tab" onclick="showSection('dessert', this)">حلويات</div>
+    </div>
+
+    <div class="section active" id="drinks">
+      <div class="section-title">مشروبات</div>
+      <div id="drinksContainer">
+        <div class="loading-text">جاري تحميل المنتجات...</div>
+      </div>
+    </div>
+
+    <div class="section" id="food">
+      <div class="section-title">مأكولات</div>
+      <div id="foodContainer">
+        <div class="loading-text">جاري تحميل المنتجات...</div>
+      </div>
+    </div>
+
+    <div class="section" id="dessert">
+      <div class="section-title">حلويات</div>
+      <div id="dessertContainer">
+        <div class="loading-text">جاري تحميل المنتجات...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="cart-bar" id="cartBar">
+    <div class="cart-bar-info">
+      <div class="cart-count" id="cartCount">0 عناصر</div>
+      <div class="cart-total" id="cartTotal">0 دينار</div>
+    </div>
+    <button class="view-cart-btn" onclick="window.location.href='cart.html'">عرض السلة</button>
+  </div>
+
+  <script>
+    function showSection(sectionId, element) {
+      let sections = document.querySelectorAll(".section");
+      let tabs = document.querySelectorAll(".tab");
+
+      sections.forEach(section => section.classList.remove("active"));
+      tabs.forEach(tab => tab.classList.remove("active"));
+
+      document.getElementById(sectionId).classList.add("active");
+      element.classList.add("active");
+    }
+
+    function updateCartBar() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let cartBar = document.getElementById("cartBar");
+      let cartCount = document.getElementById("cartCount");
+      let cartTotal = document.getElementById("cartTotal");
+
+      if (cart.length === 0) {
+        cartBar.style.display = "none";
+        return;
+      }
+
+      let totalItems = 0;
+      let totalPrice = 0;
+
+      cart.forEach(item => {
+        totalItems += item.qty ? item.qty : 1;
+        totalPrice += (item.price * (item.qty ? item.qty : 1));
+      });
+
+      cartCount.textContent = totalItems + " عناصر";
+      cartTotal.textContent = totalPrice + " دينار";
+      cartBar.style.display = "flex";
+    }
+
+    function addToCart(name, price, restaurant) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      if (cart.length > 0 && cart[0].restaurant !== restaurant) {
+        if (!confirm("السلة فيها منتجات من متجر آخر، هل تريد إفراغها؟")) {
+          return;
+        }
+        cart = [];
+        localStorage.removeItem("storeNote");
+      }
+
+      const existingItem = cart.find(item =>
+        item.name === name && item.restaurant === restaurant
+      );
+
+      if (existingItem) {
+        existingItem.qty = (existingItem.qty || 1) + 1;
+      } else {
+        cart.push({
+          name: name,
+          price: Number(price),
+          qty: 1,
+          restaurant: restaurant
+        });
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartBar();
+    }
+
+    function renderProducts(products, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+
+      if (!products.length) {
+        container.innerHTML = '<div class="loading-text">لا توجد منتجات حاليًا</div>';
+        return;
+      }
+
+      products.forEach(product => {
+        const item = document.createElement("div");
+        item.className = "menu-item";
+
+        item.innerHTML = `
+          <button class="add-btn" onclick="addToCart('${product.name.replace(/'/g, "\\'")}', ${Number(product.price)}, 'dolce')">+</button>
+          <div class="menu-content">
+            <div class="menu-name">${product.name}</div>
+            <div class="menu-desc">${product.description || ''}</div>
+            <div class="menu-price">${product.price} دينار</div>
+          </div>
+          <img src="${product.image}" alt="${product.name}">
+        `;
+
+        container.appendChild(item);
+      });
+    }
+
+    async function loadCategoryProducts(storeId, categoryId, containerId) {
+      try {
+        const response = await fetch(`/api/store/${storeId}/category/${categoryId}/products`);
+        const products = await response.json();
+        renderProducts(products, containerId);
+      } catch (error) {
+        document.getElementById(containerId).innerHTML =
+          '<div class="loading-text">فشل تحميل المنتجات</div>';
+        console.error("Error loading category products:", error);
+      }
+    }
+
+    updateCartBar();
+
+    // دولشي = store_id 1
+    // categories:
+    // 1 = مشروبات
+    // 2 = مأكولات
+    // 3 = حلويات
+    loadCategoryProducts(1, 1, "drinksContainer");
+    loadCategoryProducts(1, 2, "foodContainer");
+    loadCategoryProducts(1, 3, "dessertContainer");
+  </script>
+</body>
+</html>

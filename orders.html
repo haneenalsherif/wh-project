@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>طلباتي</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+    }
+
+    .page {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #FAF3E0;
+      padding-bottom: 90px;
+    }
+
+    .topbar {
+      background: #A3B18A;
+      color: white;
+      padding: 16px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .back-btn {
+      background: white;
+      color: #344E41;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .section {
+      padding: 14px;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      color: #6B705C;
+      font-size: 14px;
+      margin-bottom: 18px;
+      line-height: 1.7;
+    }
+
+    .order-card {
+      background: white;
+      border-radius: 22px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .order-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .order-store {
+      font-size: 19px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 6px;
+    }
+
+    .order-number {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .order-status {
+      background: #EDE0D4;
+      color: #344E41;
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .order-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .meta-row strong {
+      color: #344E41;
+    }
+
+    .items-box {
+      background: #FAF3E0;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .items-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 8px;
+    }
+
+    .item-line {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.8;
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      flex: 1;
+      border: none;
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .action-primary {
+      background: #344E41;
+      color: white;
+    }
+
+    .action-secondary {
+      background: #EDE0D4;
+      color: #344E41;
+    }
+
+    .empty-box {
+      background: white;
+      border-radius: 22px;
+      padding: 28px 18px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .empty-icon {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .empty-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 8px;
+    }
+
+    .empty-subtitle {
+      color: #777;
+      line-height: 1.8;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .go-home-btn {
+      border: none;
+      background: #A3B18A;
+      color: white;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #eee;
+      z-index: 999;
+    }
+
+    .nav-item {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      cursor: pointer;
+    }
+
+    .nav-item div {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #344E41;
+      font-weight: bold;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #344E41;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+      z-index: 9999;
+      min-width: 220px;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .loading-text {
+      text-align: center;
+      color: #777;
+      padding: 18px 0;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">→</button>
+    <div>طلباتي</div>
+    <div style="width:38px;"></div>
+  </div>
+
+  <div class="section">
+    <div class="page-title">طلباتي السابقة</div>
+    <div class="page-subtitle">هنا تقدري تشوفي جميع الطلبات اللي تم إرسالها من التطبيق.</div>
+
+    <div id="ordersContainer">
+      <div class="loading-text">جاري تحميل الطلبات...</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='index.html'">
+    <div>🏠</div>
+    <span>الرئيسية</span>
+  </div>
+
+  <div class="nav-item active" onclick="window.location.href='orders.html'">
+    <div>📦</div>
+    <span>طلباتي</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='cart.html'">
+    <div>🛒</div>
+    <span>السلة</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='profile.html'">
+    <div>👤</div>
+    <span>حسابي</span>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 1800);
+}
+
+function getPaymentLabel(payment) {
+  if (payment === "cash") return "الدفع عند الاستلام";
+  if (payment === "card") return "بطاقة مصرفية";
+  return "الدفع عند الاستلام";
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date)) return "---";
+
+  return date.toLocaleDateString("ar-EG") + " - " + date.toLocaleTimeString("ar-EG", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function formatOrderNumber(id) {
+  return "#WH-" + String(id).padStart(4, "0");
+}
+
+function getStatusLabel(status) {
+  const map = {
+    pending: "تم الاستلام",
+    preparing: "جاري التجهيز",
+    delivering: "خرج للتوصيل",
+    delivered: "تم التسليم"
+  };
+  return map[status] || "تم الاستلام";
+}
+
+function getRestaurantKeyFromStoreId(storeId) {
+  const map = {
+    1: "dolce",
+    2: "omega",
+    3: "burger"
+  };
+  return map[storeId] || "dolce";
+}
+
+async function reorder(orderId, storeId) {
+  const userId = localStorage.getItem("userId");
+
+  if (!userId) {
+    showToast("يجب تسجيل الدخول أولًا");
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/orders/${orderId}?user_id=${userId}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast("تعذر إعادة الطلب");
+      return;
+    }
+
+    const restaurantKey = getRestaurantKeyFromStoreId(storeId);
+
+    const cart = (data.items || []).map(item => ({
+      name: item.product_name,
+      price: Number(item.price),
+      qty: item.qty,
+      restaurant: restaurantKey
+    }));
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.removeItem("storeNote");
+
+    showToast("تمت إضافة الطلب إلى السلة");
+
+    setTimeout(() => {
+      window.location.href = "cart.html";
+    }, 800);
+  } catch (error) {
+    console.error(error);
+    showToast("فشل إعادة الطلب");
+  }
+}
+
+async function loadOrders() {
+  const container = document.getElementById("ordersContainer");
+  const userId = localStorage.getItem("userId");
+
+  if (!userId) {
+    container.innerHTML = `
+      <div class="empty-box">
+        <div class="empty-icon">🔒</div>
+        <div class="empty-title">يجب تسجيل الدخول</div>
+        <div class="empty-subtitle">سجلي الدخول أولًا حتى تشوفي طلباتك.</div>
+        <button class="go-home-btn" onclick="window.location.href='login.html'">تسجيل الدخول</button>
+      </div>
+    `;
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/orders?user_id=${userId}`);
+    const orders = await response.json();
+
+    if (!response.ok) {
+      container.innerHTML = `
+        <div class="empty-box">
+          <div class="empty-icon">⚠️</div>
+          <div class="empty-title">تعذر تحميل الطلبات</div>
+          <div class="empty-subtitle">حاولي مرة أخرى لاحقًا.</div>
+        </div>
+      `;
+      return;
+    }
+
+    if (!orders.length) {
+      container.innerHTML = `
+        <div class="empty-box">
+          <div class="empty-icon">📭</div>
+          <div class="empty-title">لا توجد طلبات بعد</div>
+          <div class="empty-subtitle">بعد ما تأكدي أول طلب، حيظهر هنا تلقائيًا.</div>
+          <button class="go-home-btn" onclick="window.location.href='index.html'">الذهاب للرئيسية</button>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = "";
+
+    for (const order of orders) {
+      let itemsPreviewHtml = '<div class="item-line">جاري تحميل العناصر...</div>';
+
+      try {
+        const detailsResponse = await fetch(`/api/orders/${order.id}?user_id=${userId}`);
+        const detailsData = await detailsResponse.json();
+
+        if (detailsResponse.ok) {
+          const previewItems = (detailsData.items || []).slice(0, 3);
+
+          if (previewItems.length) {
+            itemsPreviewHtml = previewItems.map(item => {
+              return `<div class="item-line">${item.product_name} × ${item.qty}</div>`;
+            }).join("");
+          } else {
+            itemsPreviewHtml = '<div class="item-line">لا توجد عناصر</div>';
+          }
+        }
+      } catch (error) {
+        itemsPreviewHtml = '<div class="item-line">تعذر تحميل العناصر</div>';
+      }
+
+      const card = document.createElement("div");
+      card.className = "order-card";
+
+      card.innerHTML = `
+        <div class="order-top">
+          <div>
+            <div class="order-store">${order.store_name || "المتجر"}</div>
+            <div class="order-number">${formatOrderNumber(order.id)}</div>
+          </div>
+          <div class="order-status">${getStatusLabel(order.status)}</div>
+        </div>
+
+        <div class="order-meta">
+          <div class="meta-row">
+            <span>التاريخ</span>
+            <strong>${formatDate(order.created_at)}</strong>
+          </div>
+
+          <div class="meta-row">
+            <span>طريقة الدفع</span>
+            <strong>${getPaymentLabel(order.payment_method)}</strong>
+          </div>
+
+          <div class="meta-row">
+            <span>الإجمالي</span>
+            <strong>${order.total_price} دينار</strong>
+          </div>
+
+          <div class="meta-row">
+            <span>ملاحظة الطلب</span>
+            <strong>${order.delivery_note?.trim() ? order.delivery_note : "لا توجد"}</strong>
+          </div>
+        </div>
+
+        <div class="items-box">
+          <div class="items-title">عناصر الطلب</div>
+          ${itemsPreviewHtml}
+        </div>
+
+        <div class="order-actions">
+          <button class="action-btn action-secondary" onclick="localStorage.setItem('lastOrderId', '${order.id}'); window.location.href='success.html'">عرض التفاصيل</button>
+          <button class="action-btn action-primary" onclick="reorder(${order.id}, ${order.store_id})">إعادة الطلب</button>
+        </div>
+      `;
+
+      container.appendChild(card);
+    }
+
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = `
+      <div class="empty-box">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-title">فشل الاتصال</div>
+        <div class="empty-subtitle">تعذر الاتصال بالسيرفر.</div>
+      </div>
+    `;
+  }
+}
+
+loadOrders();
+</script>
+
+</body>
+</html>

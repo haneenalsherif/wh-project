@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إدارة المتاجر - WH Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #A3B18A;
+      color: white;
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .menu-item {
+      display: block;
+      width: 100%;
+      text-decoration: none;
+      color: white;
+      background: transparent;
+      border: none;
+      padding: 14px 16px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      text-align: right;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .content {
+      flex: 1;
+      padding: 24px;
+    }
+
+    .topbar {
+      background: white;
+      border-radius: 20px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #344E41;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #EDE0D4;
+      color: #344E41;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .section {
+      background: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      color: #344E41;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #DAD7CD;
+      border-radius: 14px;
+      background: #FAF3E0;
+      font-size: 14px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      padding: 13px 18px;
+      border-radius: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #344E41;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #EDE0D4;
+      color: #344E41;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 950px;
+    }
+
+    th, td {
+      padding: 14px 10px;
+      border-bottom: 1px solid #eee;
+      text-align: right;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    th {
+      color: #344E41;
+      font-size: 15px;
+      background: #FAF3E0;
+    }
+
+    .store-img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 1px solid #eee;
+      background: #f3f3f3;
+    }
+
+    .mini-btn {
+      border: none;
+      padding: 9px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 6px;
+    }
+
+    .edit-btn {
+      background: #A3B18A;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #b00020;
+      color: white;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .active-badge {
+      background: #dff3e1;
+      color: #2e7d32;
+    }
+
+    .inactive-badge {
+      background: #fde7e9;
+      color: #b00020;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #344E41;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+      z-index: 9999;
+      min-width: 240px;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+      background: #b00020;
+    }
+
+    .helper {
+      color: #777;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+const role = localStorage.getItem("userRole");
+if (role !== "admin") {
+  window.location.href = "admin-login.html";
+}
+</script>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="logo">WH Admin</div>
+
+    <button class="menu-item" onclick="window.location.href='admin-dashboard.html'">الرئيسية</button>
+    <button class="menu-item active" onclick="window.location.href='admin-stores.html'">إدارة المتاجر</button>
+    <button class="menu-item" onclick="window.location.href='admin-admins.html'">إدارة الأدمنات</button>
+    <button class="menu-item" onclick="window.location.href='admin-orders.html'">إدارة الطلبات</button>
+    <button class="menu-item" onclick="window.location.href='admin-store-types.html'">أنواع المتاجر</button>
+  </div>
+
+  <div class="content">
+    <div class="topbar">
+      <div class="page-title">إدارة المتاجر</div>
+      <button class="logout-btn" onclick="logoutAdmin()">تسجيل الخروج</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title" id="formTitle">إضافة متجر جديد</div>
+
+      <div class="grid">
+        <div>
+          <label>اسم المتجر</label>
+          <input type="text" id="name" placeholder="مثال: دولشي كافيه">
+        </div>
+
+        <div>
+          <label>نوع المتجر</label>
+          <select id="storeType"></select>
+        </div>
+
+        <div class="full">
+          <label>وصف المتجر</label>
+          <textarea id="description" placeholder="اكتبي وصفًا قصيرًا يظهر للمستخدم"></textarea>
+        </div>
+
+        <div>
+          <label>رابط الصورة</label>
+          <input type="text" id="image" placeholder="https://...">
+          <div class="helper">الصورة تظهر في الصفحة الرئيسية وصفحة المتجر</div>
+        </div>
+
+        <div>
+          <label>اسم الصفحة الداخلية</label>
+          <input type="text" id="page" placeholder="مثال: dolce.html">
+          <div class="helper">الصفحة التي تفتح عند الضغط على المتجر</div>
+        </div>
+
+        <div>
+          <label>رسوم التوصيل</label>
+          <input type="number" step="0.01" id="deliveryFee" placeholder="مثال: 0.75">
+        </div>
+
+        <div>
+          <label>وقت التوصيل</label>
+          <input type="text" id="deliveryTime" placeholder="مثال: 25 دقيقة">
+        </div>
+
+        <div>
+          <label>التقييم</label>
+          <input type="number" step="0.1" id="rating" placeholder="مثال: 4.8">
+        </div>
+
+        <div>
+          <label>الحالة</label>
+          <select id="isActive">
+            <option value="true">نشط</option>
+            <option value="false">غير نشط</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="saveBtn" onclick="saveStore()">حفظ المتجر</button>
+        <button class="btn btn-secondary" onclick="resetForm()">تفريغ الحقول</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">المتاجر الحالية</div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>الصورة</th>
+              <th>الاسم</th>
+              <th>النوع</th>
+              <th>رسوم التوصيل</th>
+              <th>الوقت</th>
+              <th>التقييم</th>
+              <th>الحالة</th>
+              <th>الصفحة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="storesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+let editingStoreId = null;
+let storeTypesMap = {};
+
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.className = "toast show " + type;
+
+  setTimeout(() => {
+    toast.className = "toast";
+  }, 2500);
+}
+
+function logoutAdmin() {
+  localStorage.clear();
+  window.location.href = "admin-login.html";
+}
+
+function guardAdmin() {
+  const role = localStorage.getItem("userRole");
+  if (role !== "admin") {
+    showToast("غير مصرح لك بالدخول", "error");
+    setTimeout(() => {
+      window.location.href = "admin-login.html";
+    }, 800);
+  }
+}
+
+function getToken() {
+  return localStorage.getItem("token");
+}
+
+function authHeaders(json = false) {
+  const headers = {
+    "Authorization": `Bearer ${getToken()}`
+  };
+
+  if (json) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
+}
+
+function resetForm() {
+  editingStoreId = null;
+  document.getElementById("formTitle").textContent = "إضافة متجر جديد";
+  document.getElementById("saveBtn").textContent = "حفظ المتجر";
+  document.getElementById("name").value = "";
+  document.getElementById("description").value = "";
+  document.getElementById("image").value = "";
+  document.getElementById("page").value = "";
+  document.getElementById("deliveryFee").value = "";
+  document.getElementById("deliveryTime").value = "";
+  document.getElementById("rating").value = "4.5";
+  document.getElementById("isActive").value = "true";
+
+  const storeTypeSelect = document.getElementById("storeType");
+  if (storeTypeSelect.options.length > 0) {
+    storeTypeSelect.selectedIndex = 0;
+  }
+}
+
+async function loadStoreTypes() {
+  try {
+    const response = await fetch("/api/admin/store-types", {
+      headers: authHeaders()
+    });
+
+    const data = await response.json();
+
+    const select = document.getElementById("storeType");
+    select.innerHTML = "";
+    storeTypesMap = {};
+
+    if (!response.ok) {
+      showToast(data.message || "فشل تحميل أنواع المتاجر", "error");
+      return;
+    }
+
+    if (!Array.isArray(data) || !data.length) {
+      select.innerHTML = `<option value="">لا توجد أنواع متاحة</option>`;
+      return;
+    }
+
+    data.forEach(type => {
+      const option = document.createElement("option");
+      option.value = type.type_key;
+      option.textContent = type.name;
+      select.appendChild(option);
+
+      storeTypesMap[type.type_key] = type.name;
+    });
+  } catch (error) {
+    console.error(error);
+    showToast("فشل الاتصال بالسيرفر", "error");
+  }
+}
+
+async function loadStores() {
+  try {
+    const response = await fetch("/api/admin/stores", {
+      headers: authHeaders()
+    });
+
+    const data = await response.json();
+
+    const tbody = document.getElementById("storesTableBody");
+    tbody.innerHTML = "";
+
+    if (!response.ok) {
+      showToast(data.message || "فشل جلب المتاجر", "error");
+      return;
+    }
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = `<tr><td colspan="9">لا توجد متاجر حاليًا</td></tr>`;
+      return;
+    }
+
+    data.forEach(store => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td><img class="store-img" src="${store.image || ''}" onerror="this.src='https://via.placeholder.com/70?text=No+Image'"></td>
+        <td>${store.name || ""}</td>
+        <td>${translateStoreType(store.store_type || store.type)}</td>
+        <td>${store.delivery_fee ?? ""}</td>
+        <td>${store.delivery_time || ""}</td>
+        <td>${store.rating ?? ""}</td>
+        <td>
+          <span class="status-badge ${store.is_active ? 'active-badge' : 'inactive-badge'}">
+            ${store.is_active ? 'نشط' : 'غير نشط'}
+          </span>
+        </td>
+        <td>${store.page || ""}</td>
+        <td>
+          <button class="mini-btn edit-btn" onclick='fillFormForEdit(${JSON.stringify(store).replace(/'/g, "&apos;")})'>تعديل</button>
+          <button class="mini-btn delete-btn" onclick="deleteStore(${store.id})">حذف</button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+  } catch (error) {
+    console.error(error);
+    showToast("فشل الاتصال بالسيرفر", "error");
+  }
+}
+
+function translateStoreType(type) {
+  return storeTypesMap[type] || type || "";
+}
+
+function fillFormForEdit(store) {
+  editingStoreId = store.id;
+  document.getElementById("formTitle").textContent = "تعديل المتجر";
+  document.getElementById("saveBtn").textContent = "حفظ التعديلات";
+
+  document.getElementById("name").value = store.name || "";
+  document.getElementById("storeType").value = store.store_type || store.type || "";
+  document.getElementById("description").value = store.description || "";
+  document.getElementById("image").value = store.image || "";
+  document.getElementById("page").value = store.page || "";
+  document.getElementById("deliveryFee").value = store.delivery_fee ?? "";
+  document.getElementById("deliveryTime").value = store.delivery_time || "";
+  document.getElementById("rating").value = store.rating ?? "4.5";
+  document.getElementById("isActive").value = String(store.is_active);
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function saveStore() {
+  const payload = {
+    name: document.getElementById("name").value.trim(),
+    store_type: document.getElementById("storeType").value,
+    type: document.getElementById("storeType").value,
+    description: document.getElementById("description").value.trim(),
+    image: document.getElementById("image").value.trim(),
+    page: document.getElementById("page").value.trim(),
+    delivery_fee: document.getElementById("deliveryFee").value.trim(),
+    delivery_time: document.getElementById("deliveryTime").value.trim(),
+    rating: document.getElementById("rating").value.trim(),
+    is_active: document.getElementById("isActive").value === "true"
+  };
+
+  if (!payload.name || !payload.store_type || !payload.image || !payload.page) {
+    showToast("الرجاء تعبئة الحقول الأساسية", "error");
+    return;
+  }
+
+  try {
+    let response;
+
+    if (editingStoreId) {
+      response = await fetch(`/api/admin/stores/${editingStoreId}`, {
+        method: "PUT",
+        headers: authHeaders(true),
+        body: JSON.stringify(payload)
+      });
+    } else {
+      response = await fetch("/api/admin/stores", {
+        method: "POST",
+        headers: authHeaders(true),
+        body: JSON.stringify(payload)
+      });
+    }
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast(data.message || "فشل حفظ المتجر", "error");
+      return;
+    }
+
+    showToast(editingStoreId ? "تم تعديل المتجر بنجاح" : "تم إضافة المتجر بنجاح");
+    resetForm();
+    await loadStoreTypes();
+    await loadStores();
+  } catch (error) {
+    console.error(error);
+    showToast("فشل الاتصال بالسيرفر", "error");
+  }
+}
+
+async function deleteStore(storeId) {
+  const confirmed = confirm("هل أنت متأكد من حذف هذا المتجر؟");
+  if (!confirmed) return;
+
+  try {
+    const response = await fetch(`/api/admin/stores/${storeId}`, {
+      method: "DELETE",
+      headers: authHeaders()
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast(data.message || "فشل حذف المتجر", "error");
+      return;
+    }
+
+    showToast("تم حذف المتجر بنجاح");
+    await loadStores();
+  } catch (error) {
+    console.error(error);
+    showToast("فشل الاتصال بالسيرفر", "error");
+  }
+}
+
+async function initPage() {
+  guardAdmin();
+  await loadStoreTypes();
+  resetForm();
+  await loadStores();
+}
+
+initPage();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,445 @@
+ <!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إدارة الطلبات - WH Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #A3B18A;
+      color: white;
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .menu-item {
+      display: block;
+      width: 100%;
+      text-decoration: none;
+      color: white;
+      background: transparent;
+      border: none;
+      padding: 14px 16px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      text-align: right;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .content {
+      flex: 1;
+      padding: 24px;
+    }
+
+    .topbar {
+      background: white;
+      border-radius: 20px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #344E41;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #EDE0D4;
+      color: #344E41;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .section {
+      background: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 18px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1250px;
+    }
+
+    th, td {
+      padding: 14px 10px;
+      border-bottom: 1px solid #eee;
+      text-align: right;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    th {
+      color: #344E41;
+      font-size: 15px;
+      background: #FAF3E0;
+    }
+
+    .status-select {
+      width: 100%;
+      min-width: 140px;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #DAD7CD;
+      background: #FAF3E0;
+      outline: none;
+      font-size: 13px;
+    }
+
+    .mini-btn {
+      border: none;
+      padding: 9px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      background: #344E41;
+      color: white;
+    }
+
+    .items-list {
+      line-height: 1.8;
+      color: #555;
+      font-size: 13px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .pending-badge {
+      background: #fff4db;
+      color: #9a6700;
+    }
+
+    .preparing-badge {
+      background: #e7f0ff;
+      color: #1d4ed8;
+    }
+
+    .delivering-badge {
+      background: #ede9fe;
+      color: #6d28d9;
+    }
+
+    .delivered-badge {
+      background: #dff3e1;
+      color: #2e7d32;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #344E41;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+      z-index: 9999;
+      min-width: 240px;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+      background: #b00020;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+const role = localStorage.getItem("userRole");
+if (role !== "admin") {
+  window.location.href = "admin-login.html";
+}
+</script>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="logo">WH Admin</div>
+
+    <button class="menu-item" onclick="window.location.href='admin-dashboard.html'">الرئيسية</button>
+    <button class="menu-item" onclick="window.location.href='admin-stores.html'">إدارة المتاجر</button>
+    <button class="menu-item" onclick="window.location.href='admin-admins.html'">إدارة الأدمنات</button>
+    <button class="menu-item active" onclick="window.location.href='admin-orders.html'">إدارة الطلبات</button>
+  </div>
+
+  <div class="content">
+    <div class="topbar">
+      <div class="page-title">إدارة الطلبات</div>
+      <button class="logout-btn" onclick="logoutAdmin()">تسجيل الخروج</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">كل الطلبات</div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>رقم الطلب</th>
+              <th>العميل</th>
+              <th>الهاتف</th>
+              <th>العنوان</th>
+              <th>المتجر</th>
+              <th>العناصر</th>
+              <th>طريقة الدفع</th>
+              <th>الإجمالي</th>
+              <th>الحالة الحالية</th>
+              <th>تغيير الحالة</th>
+              <th>التاريخ</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script>
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.className = "toast show " + type;
+
+  setTimeout(() => {
+    toast.className = "toast";
+  }, 2500);
+}
+
+function logoutAdmin() {
+  localStorage.clear();
+  window.location.href = "admin-login.html";
+}
+
+function getStatusLabel(status) {
+  const map = {
+    pending: "قيد الانتظار",
+    preparing: "جاري التجهيز",
+    delivering: "قيد التوصيل",
+    delivered: "تم التسليم"
+  };
+  return map[status] || status || "-";
+}
+
+function getStatusClass(status) {
+  if (status === "pending") return "pending-badge";
+  if (status === "preparing") return "preparing-badge";
+  if (status === "delivering") return "delivering-badge";
+  if (status === "delivered") return "delivered-badge";
+  return "pending-badge";
+}
+
+function getPaymentLabel(payment) {
+  if (payment === "cash") return "الدفع عند الاستلام";
+  if (payment === "card") return "بطاقة مصرفية";
+  return payment || "-";
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (isNaN(date)) return value;
+  return date.toLocaleString("ar-EG");
+}
+
+function formatOrderNumber(id) {
+  return "#WH-" + String(id).padStart(4, "0");
+}
+
+function getToken() {
+  return localStorage.getItem("token");
+}
+
+function authHeaders(json = false) {
+  const headers = {
+    "Authorization": `Bearer ${getToken()}`
+  };
+
+  if (json) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
+}
+
+async function loadOrders() {
+  try {
+    const response = await fetch("/api/admin/orders", {
+      headers: authHeaders()
+    });
+
+    const data = await response.json();
+
+    const tbody = document.getElementById("ordersTableBody");
+    tbody.innerHTML = "";
+
+    if (!response.ok) {
+      showToast(data.message || "فشل جلب الطلبات", "error");
+      return;
+    }
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = `<tr><td colspan="11">لا توجد طلبات حاليًا</td></tr>`;
+      return;
+    }
+
+    data.forEach(order => {
+      const tr = document.createElement("tr");
+
+      const itemsHtml = Array.isArray(order.items) && order.items.length
+        ? order.items.map(item => `${item.product_name} × ${item.qty}`).join("<br>")
+        : "لا توجد عناصر";
+
+      tr.innerHTML = `
+        <td>${formatOrderNumber(order.id)}</td>
+        <td>${order.customer_name || "-"}</td>
+        <td>${order.customer_phone || "-"}</td>
+        <td>${order.customer_address || "-"}</td>
+        <td>${order.store_name || "-"}</td>
+        <td><div class="items-list">${itemsHtml}</div></td>
+        <td>${getPaymentLabel(order.payment_method)}</td>
+        <td>${order.total_price ?? "-"} د.ل</td>
+        <td>
+          <span class="status-badge ${getStatusClass(order.status)}">
+            ${getStatusLabel(order.status)}
+          </span>
+        </td>
+        <td>
+          <select class="status-select" id="status-${order.id}">
+            <option value="pending" ${order.status === "pending" ? "selected" : ""}>قيد الانتظار</option>
+            <option value="preparing" ${order.status === "preparing" ? "selected" : ""}>جاري التجهيز</option>
+            <option value="delivering" ${order.status === "delivering" ? "selected" : ""}>قيد التوصيل</option>
+            <option value="delivered" ${order.status === "delivered" ? "selected" : ""}>تم التسليم</option>
+          </select>
+          <br><br>
+          <button class="mini-btn" onclick="updateOrderStatus(${order.id})">حفظ</button>
+        </td>
+        <td>${formatDate(order.created_at)}</td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+  } catch (error) {
+    console.error(error);
+    showToast("فشل الاتصال بالسيرفر", "error");
+  }
+}
+
+async function updateOrderStatus(orderId) {
+  const status = document.getElementById(`status-${orderId}`).value;
+
+  try {
+    const response = await fetch(`/api/admin/orders/${orderId}/status`, {
+      method: "PUT",
+      headers: authHeaders(true),
+      body: JSON.stringify({
+        status
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast(data.message || "فشل تحديث الحالة", "error");
+      return;
+    }
+
+    showToast("تم تحديث حالة الطلب بنجاح");
+    loadOrders();
+  } catch (error) {
+    console.error(error);
+    showToast("فشل الاتصال بالسيرفر", "error");
+  }
+}
+
+loadOrders();
+</script>
+
+</body>
+</html>

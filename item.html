@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تفاصيل المنتج</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    direction: rtl;
+    background: #FAF3E0;
+    color: #2F3E46;
+}
+
+.page {
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: #FAF3E0;
+    padding-bottom: 100px;
+}
+
+.topbar {
+    background: #A3B18A;
+    color: white;
+    padding: 16px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.back-btn {
+    background: white;
+    color: #344E41;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.product-image {
+    width: calc(100% - 28px);
+    height: 220px;
+    object-fit: cover;
+    border-radius: 22px;
+    display: block;
+    margin: 14px auto;
+}
+
+.content {
+    padding: 0 14px;
+}
+
+.product-name {
+    font-size: 26px;
+    font-weight: bold;
+    color: #344E41;
+    margin-bottom: 8px;
+}
+
+.product-desc {
+    color: #666;
+    line-height: 1.7;
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.price {
+    font-size: 22px;
+    font-weight: bold;
+    color: #344E41;
+    margin-bottom: 18px;
+}
+
+.box {
+    background: white;
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+
+.box-title {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #344E41;
+}
+
+.option-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.option-row:last-child {
+    margin-bottom: 0;
+}
+
+.note-box textarea {
+    width: 100%;
+    min-height: 85px;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 12px;
+    resize: none;
+    outline: none;
+    background: #FAF3E0;
+}
+
+.qty-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.qty-btn {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 12px;
+    background: #A3B18A;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.qty-value {
+    font-size: 20px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #eee;
+    padding: 12px 16px;
+}
+
+.bottom-inner {
+    max-width: 430px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.total-box {
+    flex: 1;
+    background: #FAF3E0;
+    border-radius: 14px;
+    padding: 12px;
+    text-align: center;
+    color: #344E41;
+    font-weight: bold;
+}
+
+.add-cart-btn {
+    flex: 2;
+    border: none;
+    background: #344E41;
+    color: white;
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 16px;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+    <div class="topbar">
+        <button class="back-btn" onclick="history.back()">→</button>
+        <div>تفاصيل المنتج</div>
+        <div style="width:38px;"></div>
+    </div>
+
+    <img src="images/dolce1.jpg.jpg" alt="آيس لاتيه" class="product-image">
+
+    <div class="content">
+        <div class="product-name">آيس لاتيه</div>
+        <div class="product-desc">
+            مشروب قهوة بارد كريمي ومنعش، مناسب للأجواء الحارة.
+        </div>
+        <div class="price">10 دينار</div>
+
+        <div class="box">
+            <div class="box-title">الخيارات</div>
+
+            <div class="option-row">
+                <label>إزالة الثلج</label>
+                <input type="checkbox" id="noIce">
+            </div>
+
+            <div class="option-row">
+                <label>إزالة السكر</label>
+                <input type="checkbox" id="noSugar">
+            </div>
+
+            <div class="option-row">
+                <label>نكهة فانيلا</label>
+                <input type="checkbox" id="vanilla">
+            </div>
+
+            <div class="option-row">
+                <label>نكهة كراميل</label>
+                <input type="checkbox" id="caramel">
+            </div>
+        </div>
+
+        <div class="box note-box">
+            <div class="box-title">ملاحظة</div>
+            <textarea id="note" placeholder="اكتبي ملاحظتك هنا..."></textarea>
+        </div>
+
+        <div class="box">
+            <div class="box-title">الكمية</div>
+            <div class="qty-row">
+                <div>اختاري عدد القطع</div>
+                <div class="qty-controls">
+                    <button class="qty-btn" onclick="decreaseQty()">-</button>
+                    <div class="qty-value" id="qty">1</div>
+                    <button class="qty-btn" onclick="increaseQty()">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-bar">
+    <div class="bottom-inner">
+        <div class="total-box" id="totalPrice">10 دينار</div>
+        <button class="add-cart-btn" onclick="addToCart()">إضافة للسلة</button>
+    </div>
+</div>
+<script>
+let quantity = 1;
+const basePrice = 10;
+
+function updateTotal() {
+    document.getElementById("qty").textContent = quantity;
+    document.getElementById("totalPrice").textContent = (quantity * basePrice) + " دينار";
+}
+
+function increaseQty() {
+    quantity++;
+    updateTotal();
+}
+
+function decreaseQty() {
+    if (quantity > 1) {
+        quantity--;
+        updateTotal();
+    }
+}
+
+function addToCart() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const item = {
+        name: "آيس لاتيه",
+        price: basePrice,
+        qty: quantity,
+        note: document.getElementById("note").value,
+        options: {
+            noIce: document.getElementById("noIce").checked,
+            noSugar: document.getElementById("noSugar").checked,
+            vanilla: document.getElementById("vanilla").checked,
+            caramel: document.getElementById("caramel").checked
+        }
+    };
+
+    cart.push(item);
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    // 🔥 بدل alert
+    window.location.href = "cart.html";
+}
+</script>
+
+</body>
+</html>

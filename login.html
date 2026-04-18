@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WH App</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+      opacity: 0;
+      animation: pageFade 0.45s ease forwards;
+    }
+
+    @keyframes pageFade {
+      to { opacity: 1; }
+    }
+
+    .page {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #FAF3E0;
+      padding-bottom: 95px;
+    }
+
+    .topbar {
+      background: #A3B18A;
+      color: white;
+      padding: 16px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-icon {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .hero {
+      margin: 16px;
+      background: #EDE0D4;
+      border-radius: 24px;
+      padding: 22px 18px;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: 30px;
+      font-weight: bold;
+      color: #344E41;
+      line-height: 1.6;
+    }
+
+    .hero-subtitle {
+      margin-top: 8px;
+      color: #6B705C;
+      font-size: 15px;
+    }
+
+    .search-box {
+      margin: 0 16px 18px;
+      background: white;
+      border-radius: 18px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      flex: 1;
+      background: transparent;
+      font-size: 15px;
+      color: #2F3E46;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #344E41;
+      padding: 0 16px 12px;
+    }
+
+    .chips {
+      display: flex;
+      gap: 10px;
+      padding: 0 16px 18px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+    }
+
+    .chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      border: none;
+      background: #EDE0D4;
+      color: #344E41;
+      padding: 11px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: 0.2s ease;
+    }
+
+    .chip.active {
+      background: #A3B18A;
+      color: white;
+    }
+
+    .places {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 0 16px;
+    }
+
+    .place-card {
+      background: white;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .place-card:active {
+      transform: scale(0.98);
+    }
+
+    .place-card img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .place-content {
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+    }
+
+    .place-info {
+      flex: 1;
+    }
+
+    .place-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2F3E46;
+      margin-bottom: 6px;
+    }
+
+    .place-type {
+      color: #6B705C;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .place-meta {
+      color: #888;
+      font-size: 13px;
+    }
+
+    .open-btn {
+      border: none;
+      background: #A3B18A;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #e8dfcf;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+      z-index: 999;
+    }
+
+    .nav-item {
+      text-align: center;
+      font-size: 12px;
+      color: #8a8f98;
+      cursor: pointer;
+      min-width: 60px;
+    }
+
+    .nav-item div {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .material-icons {
+      font-size: 22px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #344E41;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .loading-text,
+    .empty-text {
+      text-align: center;
+      color: #777;
+      padding: 18px 0;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+    <div>WH App</div>
+    <div class="topbar-icon" onclick="window.location.href='profile.html'">👤</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-title">اطلب كل اللي تحتاجه بسهولة 🌿</div>
+    <div class="hero-subtitle">مطاعم، كافيهات، وصيدليات في مكان واحد</div>
+  </div>
+
+  <div class="search-box">
+    <span>🔍</span>
+    <input type="text" id="searchInput" placeholder="ابحث عن مطعم، كافيه، أو صيدلية">
+  </div>
+
+  <div class="section-title">التصنيفات</div>
+  <div class="chips">
+    <button class="chip active" onclick="filterCards('all', this)">الكل</button>
+    <button class="chip" onclick="filterCards('restaurant', this)">مطاعم 🍔</button>
+    <button class="chip" onclick="filterCards('cafe', this)">كافيهات ☕</button>
+    <button class="chip" onclick="filterCards('pharmacy', this)">صيدليات 💊</button>
+  </div>
+
+  <div class="section-title">أماكن مشهورة</div>
+
+  <div class="places" id="placesContainer">
+  <div class="loading-text">جاري تحميل الأماكن...</div>
+</div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="window.location.href='index.html'">
+    <div>🏠</div>
+    <span>الرئيسية</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='orders.html'">
+    <div>📦</div>
+    <span>طلباتي</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='cart.html'">
+    <div>🛒</div>
+    <span>السلة</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='profile.html'">    
+    <div>👤</div>
+    <span>حسابي</span>
+  </div>
+</div>
+
+<script>
+  const searchInput = document.getElementById("searchInput");
+  const placesContainer = document.getElementById("placesContainer");
+
+  let storesData = [];
+  let currentFilter = "all";
+
+  function getTypeLabel(type) {
+    if (type === "restaurant") return "مطعم";
+    if (type === "cafe") return "كافيه";
+    if (type === "pharmacy") return "صيدلية";
+    return type;
+  }
+
+  function renderStores() {
+    const searchValue = searchInput.value.trim().toLowerCase();
+
+    const filteredStores = storesData.filter(store => {
+      const storeType = store.type;
+      const storeName = (store.name || "").toLowerCase();
+
+      const matchesType = currentFilter === "all" || storeType === currentFilter;
+      const matchesSearch = storeName.includes(searchValue);
+
+      return matchesType && matchesSearch;
+    });
+
+    placesContainer.innerHTML = "";
+
+    if (filteredStores.length === 0) {
+      placesContainer.innerHTML = '<div class="empty-text">لا توجد أماكن مطابقة</div>';
+      return;
+    }
+
+    filteredStores.forEach(store => {
+      const card = document.createElement("div");
+      card.className = "place-card";
+
+      card.innerHTML = `
+        <img src="${store.image}" alt="${store.name}">
+        <div class="place-content">
+          <div class="place-info">
+            <div class="place-name">${store.name}</div>
+            <div class="place-type">${getTypeLabel(store.type)}</div>
+            <div class="place-meta">رسوم التوصيل • ${store.delivery_fee} د.ل</div>
+          </div>
+          <button class="open-btn" type="button">افتح</button>
+        </div>
+      `;
+
+      card.addEventListener("click", function () {
+        goToPage(store.page, card);
+      });
+
+      placesContainer.appendChild(card);
+    });
+  }
+
+  async function loadStores() {
+    try {
+      const response = await fetch("/api/stores");
+      const data = await response.json();
+      storesData = data;
+      renderStores();
+    } catch (error) {
+      placesContainer.innerHTML = '<div class="empty-text">فشل تحميل الأماكن</div>';
+      console.error("Error loading stores:", error);
+    }
+  }
+
+  function filterCards(type, element) {
+    currentFilter = type;
+
+    document.querySelectorAll(".chip").forEach(chip => chip.classList.remove("active"));
+    element.classList.add("active");
+
+    renderStores();
+  }
+
+  searchInput.addEventListener("input", function () {
+    renderStores();
+  });
+
+  function goToPage(page, card) {
+    card.style.transform = "scale(0.97)";
+    setTimeout(() => {
+      window.location.href = page;
+    }, 120);
+  }
+
+  loadStores();
+</script>
+
+</body>
+</html>

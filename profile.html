@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>حسابي</title>
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+    }
+
+    .page {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #FAF3E0;
+      padding-bottom: 100px;
+    }
+
+    .topbar {
+      background: #A3B18A;
+      color: white;
+      padding: 16px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .topbar-space {
+      width: 40px;
+      height: 40px;
+    }
+
+    .profile-header {
+      background: white;
+      margin: 16px;
+      border-radius: 24px;
+      padding: 28px 18px 22px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .avatar {
+      width: 104px;
+      height: 104px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: #EDE0D4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #344E41;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    .avatar .material-icons {
+      font-size: 44px;
+      margin: 0;
+    }
+
+    .profile-name {
+      font-size: 22px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .profile-phone {
+      font-size: 18px;
+      color: #53636b;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .profile-email {
+      font-size: 15px;
+      color: #7a8790;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #344E41;
+      padding: 10px 16px 12px;
+    }
+
+    .info-card,
+    .menu-card {
+      background: white;
+      margin: 0 16px 14px;
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f2eee6;
+      align-items: center;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: #777;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .info-value {
+      color: #2F3E46;
+      font-size: 15px;
+      font-weight: bold;
+      text-align: left;
+      line-height: 1.7;
+      word-break: break-word;
+    }
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f2eee6;
+      cursor: pointer;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .menu-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #344E41;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .menu-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: #F5F6FA;
+      color: #344E41;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-icon .material-icons {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .arrow {
+      color: #999;
+      font-size: 22px;
+    }
+
+    .logout-btn {
+      width: calc(100% - 32px);
+      margin: 4px 16px 0;
+      border: none;
+      background: #344E41;
+      color: white;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0 12px;
+      border-top: 1px solid #e8dfcf;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+      z-index: 999;
+    }
+
+    .nav-item {
+      text-align: center;
+      font-size: 12px;
+      color: #8a8f98;
+      cursor: pointer;
+      min-width: 60px;
+    }
+
+    .nav-item .material-icons {
+      font-size: 30px;
+      display: block;
+      margin-bottom: 4px;
+      line-height: 1;
+    }
+
+    .nav-item.active {
+      color: #344E41;
+      font-weight: bold;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 86px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #344E41;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+      z-index: 9999;
+      min-width: 220px;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">→</button>
+    <div>حسابي</div>
+    <div class="topbar-space"></div>
+  </div>
+
+  <div class="profile-header">
+    <div class="avatar">
+      <span class="material-icons">person</span>
+    </div>
+    <div class="profile-name" id="profileName">---</div>
+    <div class="profile-phone" id="profilePhone">---</div>
+    <div class="profile-email" id="profileEmail">---</div>
+  </div>
+
+  <div class="section-title">بياناتي</div>
+
+  <div class="info-card">
+    <div class="info-row">
+      <div class="info-label">الاسم الكامل</div>
+      <div class="info-value" id="fullNameValue">---</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">رقم الهاتف</div>
+      <div class="info-value" id="phoneValue">---</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">البريد الإلكتروني</div>
+      <div class="info-value" id="emailValue">---</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">العنوان</div>
+      <div class="info-value" id="addressValue">الدائري الثالث، بالقرب من جزيرة المهمل</div>
+    </div>
+  </div>
+
+  <div class="section-title">الخدمات</div>
+
+  <div class="menu-card">
+    <div class="menu-item" onclick="window.location.href='edit-profile.html'">
+      <div class="menu-right">
+        <div class="menu-icon">
+          <span class="material-icons">edit</span>
+        </div>
+        <div>تعديل البيانات</div>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+
+<div class="menu-item" onclick="window.location.href='addresses.html'">
+        <div class="menu-right">
+        <div class="menu-icon">
+          <span class="material-icons">location_on</span>
+        </div>
+        <div>العناوين</div>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='orders.html'">
+      <div class="menu-right">
+        <div class="menu-icon">
+          <span class="material-icons">receipt_long</span>
+        </div>
+        <div>طلباتي</div>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+
+    <div class="menu-item" onclick="contactSupport()">
+      <div class="menu-right">
+        <div class="menu-icon">
+          <span class="material-icons">support_agent</span>
+        </div>
+        <div>خدمة العملاء</div>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+  </div>
+
+  <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='index.html'">
+    <span class="material-icons">home</span>
+    <span>الرئيسية</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='orders.html'">
+    <span class="material-icons">receipt_long</span>
+    <span>طلباتي</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='cart.html'">
+    <span class="material-icons">shopping_cart</span>
+    <span>السلة</span>
+  </div>
+
+  <div class="nav-item active" onclick="window.location.href='profile.html'">
+    <span class="material-icons">person</span>
+    <span>حسابي</span>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+function loadProfileData() {
+  const fullName = localStorage.getItem("userFullName") || "---";
+  const phone = localStorage.getItem("userPhone") || "---";
+  const email = localStorage.getItem("userEmail") || "---";
+  const address = localStorage.getItem("userAddress") || "الدائري الثالث، بالقرب من جزيرة المهمل";
+
+  document.getElementById("profileName").textContent = fullName;
+  document.getElementById("profilePhone").textContent = phone;
+  document.getElementById("profileEmail").textContent = email;
+
+  document.getElementById("fullNameValue").textContent = fullName;
+  document.getElementById("phoneValue").textContent = phone;
+  document.getElementById("emailValue").textContent = email;
+  document.getElementById("addressValue").textContent = address;
+}
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 1800);
+}
+
+function manageAddresses() {
+  showToast("إدارة العناوين لاحقًا");
+}
+
+function contactSupport() {
+  showToast("خدمة العملاء لاحقًا");
+}
+
+function logout() {
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userFullName");
+  localStorage.removeItem("userPhone");
+  localStorage.removeItem("userEmail");
+  localStorage.removeItem("isLoggedIn");
+
+  showToast("تم تسجيل الخروج");
+
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 800);
+}
+
+loadProfileData();
+</script>
+
+</body>
+</html>

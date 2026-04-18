@@ -1,1 +1,300 @@
-<h1>Hello Haneen 👩‍💻🔥</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - WH App</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FAF3E0, #EDE0D4);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #2F3E46;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background-color: #FFFFFF;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 34px;
+            font-weight: bold;
+            color: #344E41;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6B705C;
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+
+        .success-message {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 14px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #344E41;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #DAD7CD;
+            border-radius: 14px;
+            font-size: 15px;
+            background-color: #FAF3E0;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #A3B18A;
+            background-color: #FFFFFF;
+        }
+
+        .error {
+            color: #b00020;
+            font-size: 13px;
+            margin-top: 6px;
+            display: block;
+            min-height: 18px;
+        }
+
+        .forgot {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot a {
+            text-decoration: none;
+            color: #344E41;
+            font-size: 14px;
+        }
+
+        .forgot a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            width: 100%;
+            background-color: #A3B18A;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 14px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #8FA17A;
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .secondary-btn {
+            width: 100%;
+            background-color: #EDE0D4;
+            color: #344E41;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .secondary-btn:hover {
+            background-color: #DAD7CD;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .guest-link {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .guest-link a {
+            text-decoration: none;
+            color: #344E41;
+            font-size: 14px;
+        }
+
+        .guest-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+        <div class="logo">WH App</div>
+        <div class="subtitle">Login to continue ordering your favorites</div>
+        <div class="success-message" id="successMessage"></div>
+
+        <form onsubmit="return loginUser(event)">
+            <div class="input-group">
+                <label>Email or Phone Number</label>
+                <input id="phoneOrEmail" type="text" placeholder="Enter your email or phone number">
+                <small class="error" id="emailError"></small>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input id="password" type="password" placeholder="Enter your password">
+                <small class="error" id="passwordError"></small>
+            </div>
+
+            <div class="forgot">
+                <a href="forgot-password.html">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn" id="loginBtn">Sign In</button>
+        </form>
+
+        <div class="divider">or</div>
+
+        <button class="secondary-btn" onclick="window.location.href='signup.html'">
+            Create Account
+        </button>
+
+        <div class="guest-link">
+            <a href="index.html">Continue as Guest</a>
+        </div>
+    </div>
+<script>
+async function loginUser(event) {
+    event.preventDefault();
+
+    let phoneOrEmail = document.getElementById("phoneOrEmail").value.trim();
+    let password = document.getElementById("password").value.trim();
+
+    let emailError = document.getElementById("emailError");
+    let passwordError = document.getElementById("passwordError");
+    let successMessage = document.getElementById("successMessage");
+    let loginBtn = document.getElementById("loginBtn");
+
+    emailError.textContent = "";
+    passwordError.textContent = "";
+    successMessage.textContent = "";
+
+    let valid = true;
+
+    if (phoneOrEmail === "") {
+        emailError.textContent = "Email or phone is required";
+        valid = false;
+    } else {
+        let isEmail = phoneOrEmail.includes("@") && phoneOrEmail.includes(".");
+        let isPhone = /^(091|092|093)[0-9]{7}$/.test(phoneOrEmail);
+
+        if (!isEmail && !isPhone) {
+            emailError.textContent = "Enter valid email or Libyan phone (091/092/093)";
+            valid = false;
+        }
+    }
+
+    if (password === "") {
+        passwordError.textContent = "Password is required";
+        valid = false;
+    } else if (password.length < 6) {
+        passwordError.textContent = "Password must be at least 6 characters";
+        valid = false;
+    }
+
+    if (!valid) {
+        return false;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Signing in...";
+
+    try {
+        const response = await fetch("/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                phoneOrEmail: phoneOrEmail,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            successMessage.style.color = "#b00020";
+            successMessage.textContent = data.message || "Login failed";
+            loginBtn.disabled = false;
+            loginBtn.textContent = "Sign In";
+            return false;
+        }
+
+        localStorage.setItem("userId", data.user.id);
+        localStorage.setItem("userFullName", data.user.full_name);
+        localStorage.setItem("userPhone", data.user.phone);
+        localStorage.setItem("userEmail", data.user.email);
+        localStorage.setItem("userRole", data.user.role || "customer");
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("token", data.token);
+
+        successMessage.style.color = "#2e7d32";
+        successMessage.textContent = "Logged in successfully";
+
+      setTimeout(() => {
+    window.location.href = "login.html";
+}, 500);
+
+} catch (error) {
+    console.error(error);
+    successMessage.style.color = "#b00020";
+    successMessage.textContent = "Server connection failed";
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Sign In";
+}
+
+return false;
+}
+</script>

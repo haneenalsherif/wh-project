@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>منتجات أوميقا</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #ffffff;
+      color: #2F3E46;
+    }
+
+    .page {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #ffffff;
+      padding-bottom: 110px;
+    }
+
+    .topbar {
+      background: #A3B18A;
+      padding: 16px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      font-size: 22px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+
+    .hero {
+      margin: 16px;
+      background: linear-gradient(135deg, #F7F8FC, #EEF3EA);
+      border-radius: 24px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid #e7ece3;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+    }
+
+    .hero-icon {
+      width: 78px;
+      height: 78px;
+      border-radius: 22px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+      border: 3px solid white;
+      flex-shrink: 0;
+    }
+
+    .hero-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-content {
+      flex: 1;
+    }
+
+    .hero-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2F3E46;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      color: #6B705C;
+      line-height: 1.7;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #344E41;
+      padding: 0 16px 14px;
+    }
+
+    .products {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 0 16px 18px;
+    }
+
+    .product-card {
+      background: white;
+      border: 1px solid #ececec;
+      border-radius: 22px;
+      padding: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .product-card img {
+      width: 90px;
+      height: 90px;
+      border-radius: 18px;
+      object-fit: cover;
+      background: #F7F8FC;
+      flex-shrink: 0;
+    }
+
+    .product-content {
+      flex: 1;
+    }
+
+    .product-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2F3E46;
+      margin-bottom: 6px;
+    }
+
+    .product-desc {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .product-price {
+      font-size: 16px;
+      font-weight: bold;
+      color: #344E41;
+    }
+
+    .add-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: none;
+      background: #A3B18A;
+      color: white;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .add-btn:hover {
+      background: #8FA17A;
+    }
+
+    .cart-bar {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 406px;
+      background: #344E41;
+      color: white;
+      border-radius: 18px;
+      padding: 14px 16px;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+      z-index: 999;
+    }
+
+    .cart-bar-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cart-count {
+      font-size: 14px;
+      color: #EDE0D4;
+    }
+
+    .cart-total {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .view-cart-btn {
+      border: none;
+      background: #A3B18A;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .loading-text {
+      text-align: center;
+      color: #777;
+      padding: 18px 0;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <button class="back-btn" onclick="history.back()">→</button>
+      <div>صيدلية أوميقا</div>
+      <div style="width:42px;"></div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-icon">
+        <img id="heroImage" src="" alt="الفئة">
+      </div>
+      <div class="hero-content">
+        <div class="hero-title" id="heroTitle">الفئة</div>
+        <div class="hero-subtitle" id="heroSubtitle">وصف الفئة</div>
+      </div>
+    </div>
+
+    <div class="section-title">المنتجات المتوفرة</div>
+
+    <div class="products" id="productsContainer">
+      <div class="loading-text">جاري تحميل المنتجات...</div>
+    </div>
+
+  </div>
+
+  <div class="cart-bar" id="cartBar">
+    <div class="cart-bar-info">
+      <div class="cart-count" id="cartCount">0 عناصر</div>
+      <div class="cart-total" id="cartTotal">0 دينار</div>
+    </div>
+    <button class="view-cart-btn" onclick="window.location.href='cart.html'">عرض السلة</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get("category") || "pain-kids";
+
+    const categoriesData = {
+      "pain-kids": {
+        title: "المسكنات وخافض الحرارة أطفال",
+        subtitle: "منتجات مناسبة للأطفال لتخفيف الحرارة والآلام اليومية.",
+        heroImage: "https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=500&auto=format&fit=crop"
+      },
+      "cough": {
+        title: "أدوية السعال والاحتقان",
+        subtitle: "منتجات شائعة لتخفيف السعال وفتح مجرى التنفس.",
+        heroImage: "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?q=80&w=500&auto=format&fit=crop"
+      },
+      "pain-adults": {
+        title: "المسكنات وخافض الحرارة كبار",
+        subtitle: "منتجات شائعة لتخفيف الألم وخفض الحرارة للكبار.",
+        heroImage: "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?q=80&w=500&auto=format&fit=crop"
+      },
+      "wash": {
+        title: "غسول",
+        subtitle: "منتجات تنظيف وعناية يومية للبشرة والجسم.",
+        heroImage: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=500&auto=format&fit=crop"
+      },
+      "digestive": {
+        title: "العناية بصحة الجهاز الهضمي",
+        subtitle: "منتجات للمعدة والحموضة والراحة الهضمية.",
+        heroImage: "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?q=80&w=500&auto=format&fit=crop"
+      },
+      "antibiotic": {
+        title: "مضاد حيوي",
+        subtitle: "مجموعة من المنتجات العلاجية ضمن هذه الفئة.",
+        heroImage: "https://images.unsplash.com/photo-1580281657527-47c17e7d55b2?q=80&w=500&auto=format&fit=crop"
+      }
+    };
+
+    const categoryMap = {
+      "cough": 4,
+      "wash": 5,
+      "antibiotic": 6,
+      "pain-kids": 7,
+      "digestive": 8,
+      "pain-adults": 9
+    };
+
+    const currentCategory = categoriesData[category] || categoriesData["pain-kids"];
+
+    document.getElementById("heroTitle").textContent = currentCategory.title;
+    document.getElementById("heroSubtitle").textContent = currentCategory.subtitle;
+    document.getElementById("heroImage").src = currentCategory.heroImage;
+
+    function updateCartBar() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let cartBar = document.getElementById("cartBar");
+      let cartCount = document.getElementById("cartCount");
+      let cartTotal = document.getElementById("cartTotal");
+
+      if (cart.length === 0) {
+        cartBar.style.display = "none";
+        return;
+      }
+
+      let totalItems = 0;
+      let totalPrice = 0;
+
+      cart.forEach(item => {
+        totalItems += item.qty ? item.qty : 1;
+        totalPrice += item.price * (item.qty ? item.qty : 1);
+      });
+
+      cartCount.textContent = totalItems + " عناصر";
+      cartTotal.textContent = totalPrice + " دينار";
+      cartBar.style.display = "flex";
+    }
+
+    function addToCart(name, price, restaurant) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      if (cart.length > 0 && cart[0].restaurant !== restaurant) {
+        if (!confirm("السلة فيها منتجات من متجر آخر، هل تريد إفراغها؟")) {
+          return;
+        }
+        cart = [];
+        localStorage.removeItem("storeNote");
+      }
+
+      const existingItem = cart.find(item =>
+        item.name === name && item.restaurant === restaurant
+      );
+
+      if (existingItem) {
+        existingItem.qty = (existingItem.qty || 1) + 1;
+      } else {
+        cart.push({
+          name: name,
+          price: Number(price),
+          qty: 1,
+          restaurant: restaurant
+        });
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartBar();
+    }
+
+    async function loadProducts() {
+      try {
+        const categoryId = categoryMap[category];
+        const productsContainer = document.getElementById("productsContainer");
+
+        if (!categoryId) {
+          productsContainer.innerHTML = '<div class="loading-text">الفئة غير موجودة</div>';
+          return;
+        }
+
+        const response = await fetch(`/api/store/2/category/${categoryId}/products`);
+        const products = await response.json();
+
+        productsContainer.innerHTML = "";
+
+        if (!products.length) {
+          productsContainer.innerHTML = '<div class="loading-text">لا توجد منتجات حاليًا</div>';
+          return;
+        }
+
+        products.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "product-card";
+
+          card.innerHTML = `
+            <button class="add-btn" onclick="addToCart('${item.name.replace(/'/g, "\\'")}', ${Number(item.price)}, 'omega')">+</button>
+            <div class="product-content">
+              <div class="product-name">${item.name}</div>
+              <div class="product-desc">${item.description || ''}</div>
+              <div class="product-price">${item.price} دينار</div>
+            </div>
+            <img src="${item.image}" alt="${item.name}">
+          `;
+
+          productsContainer.appendChild(card);
+        });
+      } catch (error) {
+        document.getElementById("productsContainer").innerHTML =
+          '<div class="loading-text">فشل تحميل المنتجات</div>';
+        console.error("Error loading omega products:", error);
+      }
+    }
+
+    updateCartBar();
+    loadProducts();
+  </script>
+</body>
+</html>

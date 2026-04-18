@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم - WH Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #A3B18A;
+      color: white;
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .menu-item {
+      display: block;
+      width: 100%;
+      text-decoration: none;
+      color: white;
+      background: transparent;
+      border: none;
+      padding: 14px 16px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      text-align: right;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .content {
+      flex: 1;
+      padding: 24px;
+    }
+
+    .topbar {
+      background: white;
+      border-radius: 20px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #344E41;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #EDE0D4;
+      color: #344E41;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .card-title {
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #344E41;
+    }
+
+    .section {
+      background: white;
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 14px;
+    }
+
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .quick-btn {
+      border: none;
+      background: #344E41;
+      color: white;
+      padding: 13px 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="logo">WH Admin</div>
+
+    <button class="menu-item active" onclick="window.location.href='admin-dashboard.html'">الرئيسية</button>
+    <button class="menu-item" onclick="window.location.href='admin-stores.html'">إدارة المتاجر</button>
+    <button class="menu-item" onclick="window.location.href='admin-admins.html'">إدارة الأدمنات</button>
+    <button class="menu-item" onclick="window.location.href='admin-orders.html'">إدارة الطلبات</button>
+    <button class="menu-item" onclick="window.location.href='admin-store-types.html'">أنواع المتاجر</button>
+  </div>
+
+  <div class="content">
+    <div class="topbar">
+      <div class="page-title">لوحة التحكم</div>
+      <button class="logout-btn" onclick="logoutAdmin()">تسجيل الخروج</button>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">عدد المتاجر</div>
+        <div class="card-value" id="storesCount">0</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">عدد الأدمنات</div>
+        <div class="card-value" id="adminsCount">0</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">اختصارات سريعة</div>
+      <div class="quick-links">
+        <button class="quick-btn" onclick="window.location.href='admin-stores.html'">إدارة المتاجر</button>
+        <button class="quick-btn" onclick="window.location.href='admin-admins.html'">إدارة الأدمنات</button>
+        <button class="quick-btn" onclick="window.location.href='admin-orders.html'">إدارة الطلبات</button>
+        <button class="quick-btn" onclick="window.location.href='admin-store-types.html'">أنواع المتاجر</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function logoutAdmin() {
+  localStorage.clear();
+  window.location.href = "admin-login.html";
+}
+
+function getToken() {
+  return localStorage.getItem("token");
+}
+
+function authHeaders() {
+  return {
+    "Authorization": `Bearer ${getToken()}`
+  };
+}
+
+async function loadDashboardStats() {
+  try {
+    const storesRes = await fetch("/api/admin/stores", {
+      headers: authHeaders()
+    });
+    const storesData = await storesRes.json();
+
+    if (storesRes.ok && Array.isArray(storesData)) {
+      document.getElementById("storesCount").textContent = storesData.length;
+    } else {
+      document.getElementById("storesCount").textContent = "0";
+    }
+
+    const adminsRes = await fetch("/api/admin/admins", {
+      headers: authHeaders()
+    });
+    const adminsData = await adminsRes.json();
+
+    if (adminsRes.ok && Array.isArray(adminsData)) {
+      document.getElementById("adminsCount").textContent = adminsData.length;
+    } else {
+      document.getElementById("adminsCount").textContent = "0";
+    }
+
+  } catch (error) {
+    console.error("Dashboard error:", error);
+    document.getElementById("storesCount").textContent = "0";
+    document.getElementById("adminsCount").textContent = "0";
+  }
+}
+
+loadDashboardStats();
+</script>
+
+</body>
+</html>

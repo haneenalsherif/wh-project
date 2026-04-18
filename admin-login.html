@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>دخول الأدمن - WH Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #344E41, #588157);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #2F3E46;
+    }
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 980px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      background: white;
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    }
+
+    .login-side {
+      background: linear-gradient(160deg, #344E41, #3A5A40, #588157);
+      color: white;
+      padding: 50px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .brand-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      margin-bottom: 22px;
+      width: fit-content;
+    }
+
+    .brand-title {
+      font-size: 42px;
+      font-weight: bold;
+      margin-bottom: 14px;
+    }
+
+    .brand-subtitle {
+      font-size: 16px;
+      line-height: 1.9;
+      color: rgba(255,255,255,0.9);
+      max-width: 420px;
+      margin-bottom: 26px;
+    }
+
+    .brand-points {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .point {
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .form-side {
+      padding: 42px 34px;
+      background: #FFFDF9;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-header {
+      margin-bottom: 24px;
+    }
+
+    .form-title {
+      font-size: 30px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 8px;
+    }
+
+    .form-subtitle {
+      color: #6B705C;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .success-message {
+      color: #2e7d32;
+      font-size: 14px;
+      min-height: 20px;
+      margin-bottom: 12px;
+    }
+
+    .input-group {
+      margin-bottom: 18px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #344E41;
+      font-size: 14px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid #DAD7CD;
+      background: #FAF3E0;
+      font-size: 15px;
+      outline: none;
+      transition: 0.25s;
+    }
+
+    .input-group input:focus {
+      border-color: #588157;
+      background: white;
+    }
+
+    .error {
+      color: #b00020;
+      font-size: 13px;
+      margin-top: 6px;
+      display: block;
+      min-height: 18px;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      background: #344E41;
+      color: white;
+      padding: 15px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.25s;
+      margin-top: 6px;
+    }
+
+    .btn:hover {
+      background: #2E4238;
+    }
+
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 18px;
+    }
+
+    .back-link a {
+      text-decoration: none;
+      color: #344E41;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+      .login-wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      .login-side {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-wrapper">
+    <div class="login-side">
+      <div class="brand-badge">WH Admin Panel</div>
+      <div class="brand-title">لوحة تحكم الإدارة</div>
+      <div class="brand-subtitle">
+        هذه الصفحة مخصصة فقط لإدارة المنصة، مثل التحكم في المتاجر، متابعة الطلبات،
+        وإضافة أدمنات جدد حسب الصلاحيات.
+      </div>
+
+      <div class="brand-points">
+        <div class="point">• إدارة المتاجر وإظهارها للمستخدمين بشكل منظم.</div>
+        <div class="point">• التحكم في بيانات العرض مثل الصورة والوصف ووقت التوصيل.</div>
+        <div class="point">• فصل صلاحيات الأدمن عن المستخدم العادي بشكل واضح وآمن.</div>
+      </div>
+    </div>
+
+    <div class="form-side">
+      <div class="form-header">
+        <div class="form-title">تسجيل دخول الأدمن</div>
+        <div class="form-subtitle">
+          أدخلي بيانات حساب الأدمن للانتقال إلى لوحة التحكم.
+        </div>
+      </div>
+
+      <div class="success-message" id="successMessage"></div>
+
+      <form onsubmit="return loginAdmin(event)">
+        <div class="input-group">
+          <label>البريد الإلكتروني أو رقم الهاتف</label>
+          <input id="phoneOrEmail" type="text" placeholder="أدخلي البريد أو الرقم">
+          <small class="error" id="emailError"></small>
+        </div>
+
+        <div class="input-group">
+          <label>كلمة المرور</label>
+          <input id="password" type="password" placeholder="أدخلي كلمة المرور">
+          <small class="error" id="passwordError"></small>
+        </div>
+
+        <button type="submit" class="btn" id="loginBtn">دخول لوحة الأدمن</button>
+      </form>
+
+      <div class="back-link">
+        <a href="index.html">الرجوع لواجهة المستخدم</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loginAdmin(event) {
+      event.preventDefault();
+
+      const phoneOrEmail = document.getElementById("phoneOrEmail").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      const emailError = document.getElementById("emailError");
+      const passwordError = document.getElementById("passwordError");
+      const successMessage = document.getElementById("successMessage");
+      const loginBtn = document.getElementById("loginBtn");
+
+      emailError.textContent = "";
+      passwordError.textContent = "";
+      successMessage.textContent = "";
+
+      let valid = true;
+
+      if (!phoneOrEmail) {
+        emailError.textContent = "البريد أو رقم الهاتف مطلوب";
+        valid = false;
+      }
+
+      if (!password) {
+        passwordError.textContent = "كلمة المرور مطلوبة";
+        valid = false;
+      }
+
+      if (!valid) return false;
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = "جاري تسجيل الدخول...";
+
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            phoneOrEmail,
+            password
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          successMessage.style.color = "#b00020";
+          successMessage.textContent = data.message || "فشل تسجيل الدخول";
+          loginBtn.disabled = false;
+          loginBtn.textContent = "دخول لوحة الأدمن";
+          return false;
+        }
+
+        if ((data.user.role || "").trim() !== "admin") {
+          successMessage.style.color = "#b00020";
+          successMessage.textContent = "هذا الحساب ليس لديه صلاحية دخول كأدمن";
+          loginBtn.disabled = false;
+          loginBtn.textContent = "دخول لوحة الأدمن";
+          return false;
+        }
+
+        localStorage.setItem("userId", data.user.id);
+        localStorage.setItem("userFullName", data.user.full_name);
+        localStorage.setItem("userPhone", data.user.phone);
+        localStorage.setItem("userEmail", data.user.email);
+        localStorage.setItem("userRole", data.user.role);
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("token", data.token);
+
+        successMessage.style.color = "#2e7d32";
+        successMessage.textContent = "تم تسجيل الدخول بنجاح";
+
+       setTimeout(() => {
+    window.location.href = "admin-dashboard.html";
+}, 500);
+
+} catch (error) {
+    console.error(error);
+    successMessage.style.color = "#b00020";
+    successMessage.textContent = "فشل الاتصال بالسيرفر";
+    loginBtn.disabled = false;
+    loginBtn.textContent = "دخول لوحة الأدمن";
+}
+
+return false;
+}
+  </script>
+
+</body>
+</html>

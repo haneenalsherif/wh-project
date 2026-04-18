@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تعديل البيانات</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+    }
+
+    .page {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #FAF3E0;
+      padding-bottom: 40px;
+    }
+
+    .topbar {
+      background: #A3B18A;
+      color: white;
+      padding: 16px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .topbar-space {
+      width: 40px;
+      height: 40px;
+    }
+
+    .form-card {
+      background: white;
+      margin: 16px;
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #344E41;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #ddd;
+      background: #FAF3E0;
+      border-radius: 14px;
+      padding: 13px;
+      outline: none;
+      font-size: 14px;
+      color: #2F3E46;
+    }
+
+    .field textarea {
+      min-height: 90px;
+      resize: none;
+    }
+
+    .error-text {
+      color: #b00020;
+      font-size: 13px;
+      margin-top: 6px;
+      min-height: 18px;
+    }
+
+    .save-btn {
+      width: calc(100% - 32px);
+      margin: 0 16px;
+      border: none;
+      background: #344E41;
+      color: white;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .save-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 86px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #344E41;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+      z-index: 9999;
+      min-width: 220px;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+      background: #b00020;
+    }
+
+    .toast.success {
+      background: #344E41;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">→</button>
+    <div>تعديل البيانات</div>
+    <div class="topbar-space"></div>
+  </div>
+
+  <div class="form-card">
+    <div class="field">
+      <label>الاسم الكامل</label>
+      <input type="text" id="fullName">
+      <div class="error-text" id="nameError"></div>
+    </div>
+
+    <div class="field">
+      <label>رقم الهاتف</label>
+      <input type="text" id="phone">
+      <div class="error-text" id="phoneError"></div>
+    </div>
+
+    <div class="field">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="email">
+      <div class="error-text" id="emailError"></div>
+    </div>
+
+    <div class="field">
+      <label>العنوان</label>
+      <textarea id="address"></textarea>
+    </div>
+  </div>
+
+  <button class="save-btn" id="saveBtn" onclick="saveProfile()">حفظ التعديلات</button>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  function showToast(message, type = "success") {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = "toast show " + type;
+
+    setTimeout(() => {
+      toast.className = "toast";
+    }, 2200);
+  }
+
+  function clearErrors() {
+    document.getElementById("nameError").textContent = "";
+    document.getElementById("phoneError").textContent = "";
+    document.getElementById("emailError").textContent = "";
+  }
+
+  function loadData() {
+    document.getElementById("fullName").value = localStorage.getItem("userFullName") || "";
+    document.getElementById("phone").value = localStorage.getItem("userPhone") || "";
+    document.getElementById("email").value = localStorage.getItem("userEmail") || "";
+    document.getElementById("address").value = localStorage.getItem("userAddress") || "الدائري الثالث، بالقرب من جزيرة المهمل";
+  }
+
+  async function saveProfile() {
+    clearErrors();
+
+    const userId = localStorage.getItem("userId");
+    const fullName = document.getElementById("fullName").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const saveBtn = document.getElementById("saveBtn");
+
+    let valid = true;
+
+    if (!fullName) {
+      document.getElementById("nameError").textContent = "الاسم الكامل مطلوب";
+      valid = false;
+    }
+
+    const isPhone = /^(091|092|093)[0-9]{7}$/.test(phone);
+    if (!phone) {
+      document.getElementById("phoneError").textContent = "رقم الهاتف مطلوب";
+      valid = false;
+    } else if (!isPhone) {
+      document.getElementById("phoneError").textContent = "رقم الهاتف يجب أن يبدأ بـ 091 أو 092 أو 093";
+      valid = false;
+    }
+
+    const isEmail = email.includes("@") && email.includes(".");
+    if (!email) {
+      document.getElementById("emailError").textContent = "البريد الإلكتروني مطلوب";
+      valid = false;
+    } else if (!isEmail) {
+      document.getElementById("emailError").textContent = "أدخلي بريدًا إلكترونيًا صحيحًا";
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    if (!userId) {
+      showToast("يجب تسجيل الدخول أولًا", "error");
+      return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = "جاري الحفظ...";
+
+    try {
+      const response = await fetch(`/api/users/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          full_name: fullName,
+          phone: phone,
+          email: email
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          showToast("رقم الهاتف أو البريد مستخدم بالفعل", "error");
+        } else {
+          showToast(data.message || "فشل حفظ التعديلات", "error");
+        }
+
+        saveBtn.disabled = false;
+        saveBtn.textContent = "حفظ التعديلات";
+        return;
+      }
+
+      localStorage.setItem("userFullName", data.user.full_name);
+      localStorage.setItem("userPhone", data.user.phone);
+      localStorage.setItem("userEmail", data.user.email);
+      localStorage.setItem("userAddress", address);
+
+      showToast("تم حفظ التعديلات بنجاح", "success");
+
+      setTimeout(() => {
+        window.location.href = "profile.html";
+      }, 900);
+
+    } catch (error) {
+      console.error(error);
+      showToast("فشل الاتصال بالسيرفر", "error");
+      saveBtn.disabled = false;
+      saveBtn.textContent = "حفظ التعديلات";
+    }
+  }
+
+  loadData();
+</script>
+
+</body>
+</html>

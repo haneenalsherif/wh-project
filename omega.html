@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>صيدلية أوميقا</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #ffffff;
+      color: #2F3E46;
+    }
+
+    .page {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #ffffff;
+      padding-bottom: 40px;
+    }
+
+    .hero-wrapper {
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .cover {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+      border-bottom-left-radius: 28px;
+      border-bottom-right-radius: 28px;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      border: none;
+      background: rgba(255,255,255,0.95);
+      color: #344E41;
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    .store-logo {
+      position: absolute;
+      left: 18px;
+      bottom: -28px;
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: white;
+      padding: 6px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+      border: 4px solid white;
+      object-fit: cover;
+    }
+
+    .store-info {
+      padding: 42px 18px 18px;
+      background: white;
+    }
+
+    .store-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .store-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2F3E46;
+      line-height: 1.5;
+    }
+
+    .store-status {
+      color: #5d9c59;
+      font-size: 16px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .stats-box {
+      background: white;
+      border: 1px solid #e7e7e7;
+      border-radius: 22px;
+      padding: 16px 10px;
+      display: flex;
+      justify-content: space-between;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .stat {
+      flex: 1;
+    }
+
+    .stat-title {
+      color: #8a8f98;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      color: #2F3E46;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .search-box {
+      margin: 18px 16px 10px;
+      background: #F5F6FA;
+      border-radius: 20px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #8a8f98;
+      font-size: 15px;
+    }
+
+    .search-icon {
+      font-size: 24px;
+      color: #2F3E46;
+      flex-shrink: 0;
+    }
+
+    .search-text {
+      flex: 1;
+      text-align: right;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2F3E46;
+      padding: 18px 16px 8px;
+    }
+
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      padding: 10px 16px 24px;
+    }
+
+    .cat-box {
+      background: white;
+      border: 1px solid #e8e8e8;
+      border-radius: 24px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .cat-box:hover {
+      transform: translateY(-3px);
+    }
+
+    .cat-image-wrap {
+      width: 100%;
+      height: 130px;
+      background: #f8f9fc;
+      border: 1px solid #ececec;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .cat-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cat-name {
+      font-size: 15px;
+      font-weight: bold;
+      color: #2F3E46;
+      line-height: 1.6;
+    }
+
+    .loading-text {
+      text-align: center;
+      color: #777;
+      padding: 18px 0;
+      font-size: 15px;
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="hero-wrapper">
+      <img
+        class="cover"
+        src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?q=80&w=1200&auto=format&fit=crop"
+        alt="صيدلية أوميقا"
+      >
+
+      <button class="back-btn" onclick="history.back()">→</button>
+
+      <img
+        class="store-logo"
+        src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=300&auto=format&fit=crop"
+        alt="شعار أوميقا"
+      >
+    </div>
+
+    <div class="store-info">
+      <div class="store-header">
+        <div class="store-name">صيدلية أوميقا - المقابة</div>
+        <div class="store-status">مفتوح ✓</div>
+      </div>
+
+      <div class="stats-box">
+        <div class="stat">
+          <div class="stat-title">التقييم</div>
+          <div class="stat-value">4.7 ⭐️</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-title">التوصيل</div>
+          <div class="stat-value">3 د.ل</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-title">المسافة</div>
+          <div class="stat-value">0 كم</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <div class="search-icon">🔍</div>
+      <div class="search-text">بحث</div>
+    </div>
+
+    <div class="section-title">تصفح حسب الفئة</div>
+
+    <div class="categories" id="categoriesContainer">
+      <div class="loading-text">جاري تحميل الفئات...</div>
+    </div>
+
+  </div>
+
+  <script>
+    const categorySlugMap = {
+      "أطفال": "pain-kids",
+      "أدوية السعال": "cough",
+      "المسكنات وخافض الحرارة كبار": "pain-adults",
+      "غسول": "wash",
+      "الجهاز الهضمي": "digestive",
+      "مضاد حيوي": "antibiotic"
+    };
+
+    const categoryImageMap = {
+      "pain-kids": "https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=500&auto=format&fit=crop",
+      "cough": "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?q=80&w=500&auto=format&fit=crop",
+      "pain-adults": "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?q=80&w=500&auto=format&fit=crop",
+      "wash": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=500&auto=format&fit=crop",
+      "digestive": "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?q=80&w=500&auto=format&fit=crop",
+      "antibiotic": "https://images.unsplash.com/photo-1580281657527-47c17e7d55b2?q=80&w=500&auto=format&fit=crop"
+    };
+
+    function goCategory(slug) {
+      window.location.href = "omega-products.html?category=" + encodeURIComponent(slug);
+    }
+
+    async function loadCategories() {
+      try {
+        const response = await fetch("/api/store/2/categories");
+        const categories = await response.json();
+
+        const container = document.getElementById("categoriesContainer");
+        container.innerHTML = "";
+
+        if (!categories.length) {
+          container.innerHTML = '<div class="loading-text">لا توجد فئات حاليًا</div>';
+          return;
+        }
+
+        categories.forEach(category => {
+          const slug = categorySlugMap[category.name];
+          const image = categoryImageMap[slug] || "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=500&auto=format&fit=crop";
+
+          const card = document.createElement("div");
+          card.className = "cat-box";
+
+          card.innerHTML = `
+            <div class="cat-image-wrap">
+              <img src="${image}" alt="${category.name}">
+            </div>
+            <div class="cat-name">${category.name}</div>
+          `;
+
+          card.addEventListener("click", function () {
+            if (slug) {
+              goCategory(slug);
+            }
+          });
+
+          container.appendChild(card);
+        });
+      } catch (error) {
+        document.getElementById("categoriesContainer").innerHTML =
+          '<div class="loading-text">فشل تحميل الفئات</div>';
+        console.error("Error loading omega categories:", error);
+      }
+    }
+
+    loadCategories();
+  </script>
+</body>
+</html>

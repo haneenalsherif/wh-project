@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تم تأكيد الطلب</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+    }
+
+    .page {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #FAF3E0;
+      padding-bottom: 110px;
+    }
+
+    .topbar {
+      background: #A3B18A;
+      color: white;
+      padding: 16px 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .section {
+      padding: 14px;
+    }
+
+    .success-card,
+    .box {
+      background: white;
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .success-icon {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: #E8F3E1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+    }
+
+    .success-title {
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 8px;
+    }
+
+    .success-subtitle {
+      text-align: center;
+      color: #6B705C;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .order-badges {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .badge {
+      flex: 1;
+      background: #FAF3E0;
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .badge-label {
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .badge-value {
+      color: #344E41;
+      font-weight: bold;
+      font-size: 15px;
+      word-break: break-word;
+    }
+
+    .box-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 14px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      color: #555;
+    }
+
+    .summary-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .summary-row strong {
+      color: #344E41;
+      text-align: left;
+    }
+
+    .summary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .summary-item {
+      background: #FAF3E0;
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .item-name {
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 4px;
+    }
+
+    .item-sub {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .tracking {
+      position: relative;
+      padding-right: 8px;
+    }
+
+    .tracking-step {
+      display: flex;
+      gap: 12px;
+      position: relative;
+      padding-bottom: 22px;
+    }
+
+    .tracking-step:last-child {
+      padding-bottom: 0;
+    }
+
+    .tracking-step::before {
+      content: "";
+      position: absolute;
+      right: 13px;
+      top: 28px;
+      width: 2px;
+      height: calc(100% - 8px);
+      background: #E1D8C7;
+    }
+
+    .tracking-step:last-child::before {
+      display: none;
+    }
+
+    .step-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      background: #ddd;
+      color: white;
+    }
+
+    .tracking-step.done .step-dot {
+      background: #A3B18A;
+    }
+
+    .tracking-step.active .step-dot {
+      background: #344E41;
+    }
+
+    .step-content {
+      flex: 1;
+    }
+
+    .step-title {
+      font-weight: bold;
+      color: #344E41;
+      margin-bottom: 4px;
+    }
+
+    .step-sub {
+      color: #777;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #ddd;
+      padding: 12px 16px;
+    }
+
+    .bottom-inner {
+      max-width: 430px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      border: none;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #344E41;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #EDE0D4;
+      color: #344E41;
+    }
+
+    .loading-text {
+      text-align: center;
+      color: #777;
+      padding: 18px 0;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <div class="topbar">تم تأكيد الطلب</div>
+
+  <div class="section">
+    <div class="success-card">
+      <div class="success-icon">✓</div>
+      <div class="success-title">تم استلام طلبك بنجاح</div>
+      <div class="success-subtitle">
+        طلبك الآن قيد المعالجة، وسنوافيك بحالة الطلب خطوة بخطوة.
+      </div>
+
+      <div class="order-badges">
+        <div class="badge">
+          <div class="badge-label">رقم الطلب</div>
+          <div class="badge-value" id="orderNumber">#---</div>
+        </div>
+
+        <div class="badge">
+          <div class="badge-label">المتجر</div>
+          <div class="badge-value" id="storeName">---</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-title">ملخص سريع</div>
+
+      <div class="summary-row">
+        <span>العنوان</span>
+        <strong id="orderAddress">---</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>طريقة الدفع</span>
+        <strong id="paymentMethod">---</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>عدد العناصر</span>
+        <strong id="itemsCount">0</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>الإجمالي التقريبي</span>
+        <strong id="orderTotal">0 دينار</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>ملاحظة الطلب</span>
+        <strong id="deliveryNote">---</strong>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-title">مسار الطلب</div>
+
+      <div class="tracking">
+        <div class="tracking-step done">
+          <div class="step-dot">✓</div>
+          <div class="step-content">
+            <div class="step-title">تم استلام الطلب</div>
+            <div class="step-sub">وصل طلبك للنظام بنجاح.</div>
+          </div>
+        </div>
+
+        <div class="tracking-step active">
+          <div class="step-dot">2</div>
+          <div class="step-content">
+            <div class="step-title">جاري تجهيز الطلب</div>
+            <div class="step-sub">المتجر يراجع ويجهز العناصر المطلوبة.</div>
+          </div>
+        </div>
+
+        <div class="tracking-step">
+          <div class="step-dot">3</div>
+          <div class="step-content">
+            <div class="step-title">خرج للتوصيل</div>
+            <div class="step-sub">سيتم تحديث هذه المرحلة عند خروج الطلب.</div>
+          </div>
+        </div>
+
+        <div class="tracking-step">
+          <div class="step-dot">4</div>
+          <div class="step-content">
+            <div class="step-title">تم التسليم</div>
+            <div class="step-sub">عند اكتمال التوصيل ستظهر هذه المرحلة كمكتملة.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-title">العناصر المطلوبة</div>
+      <div class="summary-list" id="itemsList">
+        <div class="loading-text">جاري تحميل الطلب...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <div class="bottom-inner">
+    <button class="btn btn-secondary" onclick="window.location.href='index.html'">الرجوع للرئيسية</button>
+    <button class="btn btn-primary" onclick="window.location.href='orders.html'">طلباتي</button>
+  </div>
+</div>
+
+<script>
+function getPaymentLabel(payment) {
+  if (payment === "cash") return "الدفع عند الاستلام";
+  if (payment === "card") return "بطاقة مصرفية";
+  return "الدفع عند الاستلام";
+}
+
+function formatOrderNumber(id) {
+  return "#WH-" + String(id).padStart(4, "0");
+}
+
+async function loadSuccessData() {
+  const lastOrderId = localStorage.getItem("lastOrderId");
+  const userId = localStorage.getItem("userId");
+
+  if (!userId) {
+    document.getElementById("itemsList").innerHTML =
+      '<div class="item-sub">يجب تسجيل الدخول أولًا.</div>';
+    return;
+  }
+
+  if (!lastOrderId) {
+    document.getElementById("itemsList").innerHTML =
+      '<div class="item-sub">لا يوجد طلب محفوظ.</div>';
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/orders/${lastOrderId}?user_id=${userId}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      document.getElementById("itemsList").innerHTML =
+        '<div class="item-sub">تعذر تحميل بيانات الطلب.</div>';
+      return;
+    }
+
+    const order = data.order;
+    const items = data.items || [];
+
+    let totalItems = 0;
+    items.forEach(item => {
+      totalItems += item.qty;
+    });
+
+    document.getElementById("orderNumber").textContent = formatOrderNumber(order.id);
+    document.getElementById("storeName").textContent = order.store_name || "---";
+    document.getElementById("orderAddress").textContent = order.customer_address || "---";
+    document.getElementById("paymentMethod").textContent = getPaymentLabel(order.payment_method);
+    document.getElementById("itemsCount").textContent = totalItems;
+    document.getElementById("orderTotal").textContent = order.total_price + " دينار";
+    document.getElementById("deliveryNote").textContent = order.delivery_note?.trim() ? order.delivery_note : "لا توجد";
+
+    const itemsList = document.getElementById("itemsList");
+    itemsList.innerHTML = "";
+
+    if (!items.length) {
+      itemsList.innerHTML = '<div class="item-sub">لا توجد عناصر في هذا الطلب.</div>';
+      return;
+    }
+
+    items.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "summary-item";
+      div.innerHTML = `
+        <div class="item-name">${item.product_name}</div>
+        <div class="item-sub">الكمية: ${item.qty} • السعر: ${item.price * item.qty} دينار</div>
+      `;
+      itemsList.appendChild(div);
+    });
+  } catch (error) {
+    document.getElementById("itemsList").innerHTML =
+      '<div class="item-sub">فشل الاتصال بالسيرفر.</div>';
+    console.error("Error loading success order:", error);
+  }
+}
+
+loadSuccessData();
+</script>
+
+</body>
+</html>
