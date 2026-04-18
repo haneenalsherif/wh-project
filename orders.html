@@ -318,7 +318,6 @@
 </div>
 
 <div id="toast" class="toast"></div>
-
 <script>
 function showToast(message) {
   const toast = document.getElementById("toast");
@@ -369,16 +368,29 @@ function getRestaurantKeyFromStoreId(storeId) {
   return map[storeId] || "dolce";
 }
 
-async function reorder(orderId, storeId) {
-  const userId = localStorage.getItem("userId");
+function getToken() {
+  return localStorage.getItem("token");
+}
 
-  if (!userId) {
+function authHeaders() {
+  return {
+    "Authorization": `Bearer ${getToken()}`
+  };
+}
+
+async function reorder(orderId, storeId) {
+  const token = getToken();
+
+  if (!token) {
     showToast("يجب تسجيل الدخول أولًا");
     return;
   }
 
   try {
-    const response = await fetch(`/api/orders/${orderId}?user_id=${userId}`);
+    const response = await fetch(`/api/orders/${orderId}`, {
+      headers: authHeaders()
+    });
+
     const data = await response.json();
 
     if (!response.ok) {
@@ -411,9 +423,9 @@ async function reorder(orderId, storeId) {
 
 async function loadOrders() {
   const container = document.getElementById("ordersContainer");
-  const userId = localStorage.getItem("userId");
+  const token = getToken();
 
-  if (!userId) {
+  if (!token) {
     container.innerHTML = `
       <div class="empty-box">
         <div class="empty-icon">🔒</div>
@@ -426,7 +438,10 @@ async function loadOrders() {
   }
 
   try {
-    const response = await fetch(`/api/orders?user_id=${userId}`);
+    const response = await fetch(`/api/orders`, {
+      headers: authHeaders()
+    });
+
     const orders = await response.json();
 
     if (!response.ok) {
@@ -458,7 +473,10 @@ async function loadOrders() {
       let itemsPreviewHtml = '<div class="item-line">جاري تحميل العناصر...</div>';
 
       try {
-        const detailsResponse = await fetch(`/api/orders/${order.id}?user_id=${userId}`);
+        const detailsResponse = await fetch(`/api/orders/${order.id}`, {
+          headers: authHeaders()
+        });
+
         const detailsData = await detailsResponse.json();
 
         if (detailsResponse.ok) {

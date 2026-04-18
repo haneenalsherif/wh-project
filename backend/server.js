@@ -34,8 +34,13 @@ function requireAdmin(req, res, next) {
 }
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.use(express.static(path.join(__dirname, "..")));
+
+app.use(express.static(__dirname));
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
 require("dotenv").config();
 
@@ -220,6 +225,24 @@ app.post("/api/login", async (req, res) => {
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     res.status(500).json({ message: "خطأ في السيرفر" });
+  }
+});
+
+app.get("/api/profile", authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, full_name, phone, email FROM users WHERE id = $1",
+      [req.user.id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({ message: "المستخدم غير موجود" });
+    }
+
+    res.json({ user: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل جلب البيانات" });
   }
 });
 app.post("/api/orders", async (req, res) => {
@@ -579,10 +602,14 @@ await pool.query(
   }
 });
 
-app.put("/api/users/:id", async (req, res) => {
+app.put("/api/users/:id", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { full_name, phone, email } = req.body;
+
+    if (String(id) !== String(req.user.id)) {
+      return res.status(403).json({ message: "غير مصرح" });
+    }
 
     if (!full_name || !phone || !email) {
       return res.status(400).json({ message: "البيانات ناقصة" });

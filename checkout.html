@@ -402,6 +402,22 @@ function getStoreIdFromCart(cart) {
   return 1;
 }
 
+function getToken() {
+  return localStorage.getItem("token");
+}
+
+function authHeaders(json = false) {
+  const headers = {
+    "Authorization": `Bearer ${getToken()}`
+  };
+
+  if (json) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
+}
+
 function loadSummary() {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   let itemsTotal = 0;
@@ -421,21 +437,30 @@ function loadSummary() {
 }
 
 async function loadSavedAddresses() {
+  const token = getToken();
   const userId = localStorage.getItem("userId");
   const select = document.getElementById("savedAddress");
 
   select.innerHTML = "";
 
-  if (!userId) {
+  if (!token || !userId) {
     select.innerHTML = '<option>يجب تسجيل الدخول</option>';
     return;
   }
 
   try {
-    const response = await fetch(`/api/users/${userId}/addresses`);
+    const response = await fetch(`/api/users/${userId}/addresses`, {
+      headers: authHeaders()
+    });
+
     const addresses = await response.json();
 
     addressesData = addresses;
+
+    if (!response.ok) {
+      select.innerHTML = '<option>فشل تحميل العناوين</option>';
+      return;
+    }
 
     if (!addresses.length) {
       select.innerHTML = '<option>لا توجد عناوين محفوظة</option>';
@@ -516,12 +541,9 @@ function selectPayment(value, element) {
 async function confirmOrder() {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   let deliveryNote = document.getElementById("deliveryNote").value.trim();
+  const token = getToken();
 
-  const userId = localStorage.getItem("userId");
-  const savedName = localStorage.getItem("userFullName");
-  const savedPhone = localStorage.getItem("userPhone");
-
-  if (!userId || !savedName || !savedPhone) {
+  if (!token) {
     showToast("يجب تسجيل الدخول أولًا");
     return;
   }
@@ -550,24 +572,19 @@ async function confirmOrder() {
     };
   });
 
- const orderData = {
-  user_id: userId,
-  customer_name: savedName,
-  customer_phone: savedPhone,
-  customer_address: selectedAddress.details,
-  store_id: getStoreIdFromCart(cart),
-  total_price: itemsTotal,
-  items: items,
-  payment_method: selectedPayment,
-  delivery_note: deliveryNote
-};
+  const orderData = {
+    customer_address: selectedAddress.details,
+    store_id: getStoreIdFromCart(cart),
+    total_price: itemsTotal,
+    items: items,
+    payment_method: selectedPayment,
+    delivery_note: deliveryNote
+  };
 
   try {
     const response = await fetch("/api/orders", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: authHeaders(true),
       body: JSON.stringify(orderData)
     });
 

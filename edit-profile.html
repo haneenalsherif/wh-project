@@ -192,7 +192,6 @@
 </div>
 
 <div id="toast" class="toast"></div>
-
 <script>
   function showToast(message, type = "success") {
     const toast = document.getElementById("toast");
@@ -210,16 +209,59 @@
     document.getElementById("emailError").textContent = "";
   }
 
-  function loadData() {
-    document.getElementById("fullName").value = localStorage.getItem("userFullName") || "";
-    document.getElementById("phone").value = localStorage.getItem("userPhone") || "";
-    document.getElementById("email").value = localStorage.getItem("userEmail") || "";
-    document.getElementById("address").value = localStorage.getItem("userAddress") || "الدائري الثالث، بالقرب من جزيرة المهمل";
+  function getToken() {
+    return localStorage.getItem("token");
+  }
+
+  function authHeaders(json = false) {
+    const headers = {
+      "Authorization": `Bearer ${getToken()}`
+    };
+
+    if (json) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    return headers;
+  }
+
+  async function loadData() {
+    const token = getToken();
+
+    if (!token) {
+      showToast("يجب تسجيل الدخول أولًا", "error");
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 800);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/profile", {
+        headers: authHeaders()
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showToast(data.message || "فشل تحميل البيانات", "error");
+        return;
+      }
+
+      document.getElementById("fullName").value = data.user.full_name || "";
+      document.getElementById("phone").value = data.user.phone || "";
+      document.getElementById("email").value = data.user.email || "";
+      document.getElementById("address").value = localStorage.getItem("userAddress") || "الدائري الثالث، بالقرب من جزيرة المهمل";
+    } catch (error) {
+      console.error(error);
+      showToast("فشل الاتصال بالسيرفر", "error");
+    }
   }
 
   async function saveProfile() {
     clearErrors();
 
+    const token = getToken();
     const userId = localStorage.getItem("userId");
     const fullName = document.getElementById("fullName").value.trim();
     const phone = document.getElementById("phone").value.trim();
@@ -254,7 +296,7 @@
 
     if (!valid) return;
 
-    if (!userId) {
+    if (!token || !userId) {
       showToast("يجب تسجيل الدخول أولًا", "error");
       return;
     }
@@ -265,9 +307,7 @@
     try {
       const response = await fetch(`/api/users/${userId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: authHeaders(true),
         body: JSON.stringify({
           full_name: fullName,
           phone: phone,

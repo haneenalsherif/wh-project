@@ -282,7 +282,6 @@
 </div>
 
 <div id="toast" class="toast"></div>
-
 <script>
   let currentLat = null;
   let currentLng = null;
@@ -297,8 +296,24 @@
     }, 2200);
   }
 
+  function getToken() {
+    return localStorage.getItem("token");
+  }
+
   function getUserId() {
     return localStorage.getItem("userId");
+  }
+
+  function authHeaders(json = false) {
+    const headers = {
+      "Authorization": `Bearer ${getToken()}`
+    };
+
+    if (json) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    return headers;
   }
 
   function getCurrentLocation() {
@@ -330,10 +345,11 @@ Lat: ${currentLat.toFixed(6)} | Lng: ${currentLng.toFixed(6)}`;
   }
 
   async function loadAddresses() {
+    const token = getToken();
     const userId = getUserId();
     const container = document.getElementById("addressesContainer");
 
-    if (!userId) {
+    if (!token || !userId) {
       container.innerHTML = `
         <div class="empty-box">
           يجب تسجيل الدخول أولًا لإدارة العناوين.
@@ -343,7 +359,10 @@ Lat: ${currentLat.toFixed(6)} | Lng: ${currentLng.toFixed(6)}`;
     }
 
     try {
-      const response = await fetch(`/api/users/${userId}/addresses`);
+      const response = await fetch(`/api/users/${userId}/addresses`, {
+        headers: authHeaders()
+      });
+
       const addresses = await response.json();
 
       if (!response.ok) {
@@ -387,12 +406,13 @@ Lat: ${currentLat.toFixed(6)} | Lng: ${currentLng.toFixed(6)}`;
   }
 
   async function saveAddress() {
+    const token = getToken();
     const userId = getUserId();
     const title = document.getElementById("title").value.trim();
     const details = document.getElementById("details").value.trim();
     const saveBtn = document.getElementById("saveBtn");
 
-    if (!userId) {
+    if (!token || !userId) {
       showToast("يجب تسجيل الدخول أولًا", "error");
       return;
     }
@@ -408,9 +428,7 @@ Lat: ${currentLat.toFixed(6)} | Lng: ${currentLng.toFixed(6)}`;
     try {
       const response = await fetch(`/api/users/${userId}/addresses`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: authHeaders(true),
         body: JSON.stringify({
           title,
           details,
@@ -453,7 +471,8 @@ Lat: ${currentLat.toFixed(6)} | Lng: ${currentLng.toFixed(6)}`;
   async function deleteAddress(addressId) {
     try {
       const response = await fetch(`/api/addresses/${addressId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: authHeaders()
       });
 
       const data = await response.json();

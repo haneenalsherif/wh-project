@@ -378,7 +378,6 @@
     <button class="btn btn-primary" onclick="window.location.href='orders.html'">طلباتي</button>
   </div>
 </div>
-
 <script>
 function getPaymentLabel(payment) {
   if (payment === "cash") return "الدفع عند الاستلام";
@@ -390,11 +389,21 @@ function formatOrderNumber(id) {
   return "#WH-" + String(id).padStart(4, "0");
 }
 
+function getToken() {
+  return localStorage.getItem("token");
+}
+
+function authHeaders() {
+  return {
+    "Authorization": `Bearer ${getToken()}`
+  };
+}
+
 async function loadSuccessData() {
   const lastOrderId = localStorage.getItem("lastOrderId");
-  const userId = localStorage.getItem("userId");
+  const token = getToken();
 
-  if (!userId) {
+  if (!token) {
     document.getElementById("itemsList").innerHTML =
       '<div class="item-sub">يجب تسجيل الدخول أولًا.</div>';
     return;
@@ -407,7 +416,10 @@ async function loadSuccessData() {
   }
 
   try {
-    const response = await fetch(`/api/orders/${lastOrderId}?user_id=${userId}`);
+    const response = await fetch(`/api/orders/${lastOrderId}`, {
+      headers: authHeaders()
+    });
+
     const data = await response.json();
 
     if (!response.ok) {
