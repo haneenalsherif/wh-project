@@ -580,6 +580,8 @@ async function confirmOrder() {
     payment_method: selectedPayment,
     delivery_note: deliveryNote
   };
+  console.log("ADDRESS:", selectedAddress);
+console.log("ORDER DATA:", orderData);
 
   try {
     const response = await fetch("/api/orders", {

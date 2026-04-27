@@ -244,8 +244,8 @@ app.get("/api/profile", authenticateToken, async (req, res) => {
     res.status(500).json({ message: "فشل جلب البيانات" });
   }
 });
-app.post("/api/orders", async (req, res) => {
-  const client = await pool.connect();
+app.post("/api/orders", authenticateToken, async (req, res) => {
+    const client = await pool.connect();
 
   try {
     const {
@@ -264,10 +264,7 @@ app.post("/api/orders", async (req, res) => {
     const finalPayment = payment_method || payment || "cash";
 
     if (
-      !user_id ||
-      !customer_name ||
-      !customer_phone ||
-      !customer_address ||
+      
       !store_id ||
       !total_price ||
       !items ||
@@ -389,48 +386,18 @@ app.get("/api/orders/:id", async (req, res) => {
   }
 });
 
-app.put("/api/orders/:id/status", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
 
-    const allowed = ["pending", "preparing", "delivering", "delivered"];
-
-    if (!allowed.includes(status)) {
-      return res.status(400).json({ message: "حالة غير صالحة" });
-    }
-
-    const result = await pool.query(
-      `UPDATE orders
-       SET status = $1
-       WHERE id = $2
-       RETURNING *`,
-      [status, id]
-    );
-
-    if (!result.rows.length) {
-      return res.status(404).json({ message: "الطلب غير موجود" });
-    }
-
-    res.json({
-      message: "تم تحديث الحالة",
-      order: result.rows[0]
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "فشل تحديث الحالة" });
-  }
-});
-
-
-app.get("/api/users/:userId/addresses", async (req, res) => {
+app.get("/api/users/:userId/addresses", authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
 
+    if (String(userId) !== String(req.user.id)) {
+      return res.status(403).json({ message: "غير مصرح" });
+    }
+
     const result = await pool.query(
       "SELECT * FROM addresses WHERE user_id = $1 ORDER BY id DESC",
-      [userId]
+      [req.user.id]
     );
 
     res.json(result.rows);
@@ -440,10 +407,14 @@ app.get("/api/users/:userId/addresses", async (req, res) => {
   }
 });
 
-app.post("/api/users/:userId/addresses", async (req, res) => {
+app.post("/api/users/:userId/addresses", authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
     const { title, details, lat, lng } = req.body;
+
+    if (String(userId) !== String(req.user.id)) {
+      return res.status(403).json({ message: "غير مصرح" });
+    }
 
     if (!title || !details) {
       return res.status(400).json({ message: "البيانات ناقصة" });
@@ -453,7 +424,7 @@ app.post("/api/users/:userId/addresses", async (req, res) => {
       `INSERT INTO addresses (user_id, title, details, lat, lng)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [userId, title, details, lat || null, lng || null]
+      [req.user.id, title, details, lat || null, lng || null]
     );
 
     res.status(201).json({
@@ -466,7 +437,7 @@ app.post("/api/users/:userId/addresses", async (req, res) => {
   }
 });
 
-app.put("/api/addresses/:id", async (req, res) => {
+app.put("/api/addresses/:id", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { title, details, lat, lng } = req.body;
@@ -478,13 +449,13 @@ app.put("/api/addresses/:id", async (req, res) => {
     const result = await pool.query(
       `UPDATE addresses
        SET title = $1, details = $2, lat = $3, lng = $4
-       WHERE id = $5
+       WHERE id = $5 AND user_id = $6
        RETURNING *`,
-      [title, details, lat || null, lng || null, id]
+      [title, details, lat || null, lng || null, id, req.user.id]
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: "العنوان غير موجود" });
+      return res.status(404).json({ message: "العنوان غير موجود أو غير مصرح" });
     }
 
     res.json({
@@ -497,17 +468,17 @@ app.put("/api/addresses/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/addresses/:id", async (req, res) => {
+app.delete("/api/addresses/:id", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
     const result = await pool.query(
-      "DELETE FROM addresses WHERE id = $1 RETURNING id",
-      [id]
+      "DELETE FROM addresses WHERE id = $1 AND user_id = $2 RETURNING id",
+      [id, req.user.id]
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: "العنوان غير موجود" });
+      return res.status(404).json({ message: "العنوان غير موجود أو غير مصرح" });
     }
 
     res.json({ message: "تم حذف العنوان بنجاح" });
@@ -516,6 +487,7 @@ app.delete("/api/addresses/:id", async (req, res) => {
     res.status(500).json({ message: "فشل حذف العنوان" });
   }
 });
+
 app.post("/api/send-reset-link", async (req, res) => {
   try {
     const { email } = req.body;
