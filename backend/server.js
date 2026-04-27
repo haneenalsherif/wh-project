@@ -245,13 +245,12 @@ app.get("/api/profile", authenticateToken, async (req, res) => {
   }
 });
 app.post("/api/orders", authenticateToken, async (req, res) => {
-    const client = await pool.connect();
+  const client = await pool.connect();
 
   try {
+    const userId = req.user.id;
+
     const {
-      user_id,
-      customer_name,
-      customer_phone,
       customer_address,
       store_id,
       total_price,
@@ -263,15 +262,20 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
 
     const finalPayment = payment_method || payment || "cash";
 
-    if (
-      
-      !store_id ||
-      !total_price ||
-      !items ||
-      !items.length
-    ) {
+    if (!customer_address || !store_id || !total_price || !items || !items.length) {
       return res.status(400).json({ message: "بيانات الطلب ناقصة" });
     }
+
+    const userResult = await client.query(
+      "SELECT full_name, phone FROM users WHERE id = $1",
+      [userId]
+    );
+
+    if (!userResult.rows.length) {
+      return res.status(404).json({ message: "المستخدم غير موجود" });
+    }
+
+    const user = userResult.rows[0];
 
     await client.query("BEGIN");
 
@@ -281,9 +285,9 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id`,
       [
-        user_id,
-        customer_name,
-        customer_phone,
+        userId,
+        user.full_name,
+        user.phone,
         customer_address,
         store_id,
         total_price,
@@ -315,6 +319,7 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
       message: "تم حفظ الطلب بنجاح",
       order_id: orderId
     });
+
   } catch (err) {
     await client.query("ROLLBACK");
     console.error(err);
@@ -324,13 +329,9 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
   }
 });
 
-app.get("/api/orders", async (req, res) => {
+app.get("/api/orders", authenticateToken, async (req, res) => {
   try {
-    const { user_id } = req.query;
-
-    if (!user_id) {
-      return res.status(400).json({ message: "user_id مطلوب" });
-    }
+    const userId = req.user.id;
 
     const result = await pool.query(
       `SELECT orders.*, stores.name AS store_name
@@ -338,7 +339,7 @@ app.get("/api/orders", async (req, res) => {
        LEFT JOIN stores ON orders.store_id = stores.id
        WHERE orders.user_id = $1
        ORDER BY orders.id DESC`,
-      [user_id]
+      [userId]
     );
 
     res.json(result.rows);
@@ -347,22 +348,17 @@ app.get("/api/orders", async (req, res) => {
     res.status(500).json({ message: "فشل جلب الطلبات" });
   }
 });
-
-app.get("/api/orders/:id", async (req, res) => {
+app.get("/api/orders/:id", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { user_id } = req.query;
-
-    if (!user_id) {
-      return res.status(400).json({ message: "user_id مطلوب" });
-    }
+    const userId = req.user.id;
 
     const orderResult = await pool.query(
       `SELECT orders.*, stores.name AS store_name
        FROM orders
        LEFT JOIN stores ON orders.store_id = stores.id
        WHERE orders.id = $1 AND orders.user_id = $2`,
-      [id, user_id]
+      [id, userId]
     );
 
     if (orderResult.rows.length === 0) {
@@ -385,8 +381,6 @@ app.get("/api/orders/:id", async (req, res) => {
     res.status(500).json({ message: "فشل جلب الطلب" });
   }
 });
-
-
 app.get("/api/users/:userId/addresses", authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
