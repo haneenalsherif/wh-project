@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة المتجر</title>
+</head>
+<body>
+
+<h2>إضافة منتج</h2>
+
+<input id="name" placeholder="اسم المنتج"><br>
+<input id="price" placeholder="السعر"><br>
+<input id="image" placeholder="رابط الصورة"><br>
+<input id="category" placeholder="category_key"><br>
+<textarea id="description" placeholder="وصف المنتج"></textarea><br>
+
+<button onclick="addProduct()">إضافة</button>
+
+<script>
+async function addProduct() {
+  const token = sessionStorage.getItem("token");
+
+  const res = await fetch("/api/store/products", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+   body: JSON.stringify({
+  name: document.getElementById("name").value,
+  price: document.getElementById("price").value,
+  image: document.getElementById("image").value,
+  category_key: document.getElementById("category").value,
+  description: document.getElementById("description").value
+})
+  });
+
+  const data = await res.json();
+  alert(data.message);
+}
+</script>
+
+</body>
+</html>

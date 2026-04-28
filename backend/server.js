@@ -1025,6 +1025,42 @@ app.delete("/api/admin/store-types/:id", authenticateToken, requireAdmin, async 
     res.status(500).json({ message: "فشل حذف النوع" });
   }
 });
+
+app.post("/api/store/products", authenticateToken, async (req, res) => {
+  try {
+    const { name, price, image, category_key, description } = req.body;
+    const userId = req.user.id;
+
+    if (!name || !price || !image || !category_key) {
+      return res.status(400).json({ message: "البيانات ناقصة" });
+    }
+
+    const storeResult = await pool.query(
+      "SELECT id FROM stores WHERE owner_user_id = $1",
+      [userId]
+    );
+
+    if (!storeResult.rows.length) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    const storeId = storeResult.rows[0].id;
+
+    await pool.query(
+      `INSERT INTO products 
+       (name, price, image, description, store_id, category_key, is_available)
+       VALUES ($1, $2, $3, $4, $5, $6, true)`,
+      [name, price, image, description || "", storeId, category_key]
+    );
+
+    res.status(201).json({ message: "تمت إضافة المنتج بنجاح" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل إضافة المنتج" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
