@@ -84,6 +84,22 @@ app.get("/api/products/:storeId", async (req, res) => {
   }
 });
 
+app.get("/api/store-types", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, type_key
+       FROM store_types
+       ORDER BY id ASC`
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل جلب أنواع المتاجر" });
+  }
+});
+
+
 app.get("/api/products/:storeId/:category", async (req, res) => {
   try {
     const { storeId, category } = req.params;

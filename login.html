@@ -273,12 +273,7 @@
   </div>
 
   <div class="section-title">التصنيفات</div>
-  <div class="chips">
-    <button class="chip active" onclick="filterCards('all', this)">الكل</button>
-    <button class="chip" onclick="filterCards('restaurant', this)">مطاعم 🍔</button>
-    <button class="chip" onclick="filterCards('cafe', this)">كافيهات ☕</button>
-    <button class="chip" onclick="filterCards('pharmacy', this)">صيدليات 💊</button>
-  </div>
+  <div class="chips" id="chipsContainer"></div>
 
   <div class="section-title">أماكن مشهورة</div>
 
@@ -400,6 +395,38 @@
   }
 
   loadStores();
+
+async function loadStoreTypes() {
+  const container = document.getElementById("chipsContainer");
+
+  try {
+    const res = await fetch("/api/store-types");
+    const types = await res.json();
+
+    container.innerHTML = `
+      <button class="chip active" onclick="filterCards('all', this)">الكل</button>
+    `;
+
+    types.forEach(type => {
+      const btn = document.createElement("button");
+      btn.className = "chip";
+      btn.textContent = type.name;
+
+      btn.onclick = function () {
+        filterCards(type.type_key, this);
+      };
+
+      container.appendChild(btn);
+    });
+
+  } catch (err) {
+    console.error("فشل تحميل التصنيفات", err);
+  }
+}
+
+loadStoreTypes();
+
+
 </script>
 
 </body>
