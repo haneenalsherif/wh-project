@@ -272,7 +272,7 @@ async function loginUser(event) {
             loginBtn.textContent = "Sign In";
             return false;
         }
-        
+
 sessionStorage.setItem("userId", data.user.id);
 sessionStorage.setItem("userFullName", data.user.full_name);
 sessionStorage.setItem("userPhone", data.user.phone);
@@ -285,7 +285,13 @@ sessionStorage.setItem("token", data.token);
 
 
       setTimeout(() => {
+  if (data.user.role === "store_owner") {
+    window.location.href = "store-dashboard.html";
+  } else if (data.user.role === "admin") {
+    window.location.href = "admin-dashboard.html";
+  } else {
     window.location.href = "login.html";
+  }
 }, 500);
 
 } catch (error) {
