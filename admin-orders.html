@@ -333,7 +333,7 @@ function formatOrderNumber(id) {
 }
 
 function getToken() {
-  return localStorage.getItem("token");
+  return sessionStorage.getItem("token");
 }
 
 function authHeaders(json = false) {

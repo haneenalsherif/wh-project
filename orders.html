@@ -369,7 +369,7 @@ function getRestaurantKeyFromStoreId(storeId) {
 }
 
 function getToken() {
-  return localStorage.getItem("token");
+  return sessionStorage.getItem("token");
 }
 
 function authHeaders() {

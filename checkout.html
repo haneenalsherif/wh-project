@@ -403,7 +403,7 @@ function getStoreIdFromCart(cart) {
 }
 
 function getToken() {
-  return localStorage.getItem("token");
+  return sessionStorage.getItem("token");
 }
 
 function authHeaders(json = false) {
@@ -438,7 +438,7 @@ function loadSummary() {
 
 async function loadSavedAddresses() {
   const token = getToken();
-  const userId = localStorage.getItem("userId");
+  const userId = sessionStorage.getItem("userId");
   const select = document.getElementById("savedAddress");
 
   select.innerHTML = "";

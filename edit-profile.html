@@ -210,7 +210,7 @@
   }
 
   function getToken() {
-    return localStorage.getItem("token");
+    return sessionStorage.getItem("token");
   }
 
   function authHeaders(json = false) {
@@ -262,7 +262,7 @@
     clearErrors();
 
     const token = getToken();
-    const userId = localStorage.getItem("userId");
+    const userId = sessionStorage.getItem("userId");
     const fullName = document.getElementById("fullName").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const email = document.getElementById("email").value.trim();
