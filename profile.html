@@ -421,11 +421,12 @@ function contactSupport() {
 }
 
 function logout() {
-  localStorage.removeItem("userId");
-  localStorage.removeItem("userFullName");
-  localStorage.removeItem("userPhone");
-  localStorage.removeItem("userEmail");
-  localStorage.removeItem("isLoggedIn");
+  sessionStorage.removeItem("userId");
+  sessionStorage.removeItem("userFullName");
+  sessionStorage.removeItem("userPhone");
+  sessionStorage.removeItem("userEmail");
+  sessionStorage.removeItem("isLoggedIn");
+  sessionStorage.removeItem("token");
 
   showToast("تم تسجيل الخروج");
 

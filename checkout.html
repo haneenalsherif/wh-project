@@ -594,9 +594,8 @@ console.log("ORDER DATA:", orderData);
 
     if (response.ok) {
      sessionStorage.setItem("lastOrderId", data.order_id);
-      localStorage.removeItem("cart");
-      localStorage.removeItem("storeNote");
-
+      sessionStorage.removeItem("cart");
+sessionStorage.removeItem("storeNote");
       showToast("تم حفظ الطلب بنجاح");
 
       setTimeout(() => {

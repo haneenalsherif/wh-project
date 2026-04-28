@@ -315,8 +315,7 @@ function showToast(message, type = "success") {
 }
 
 function logoutAdmin() {
-  localStorage.clear();
-  window.location.href = "admin-login.html";
+sessionStorage.clear();  window.location.href = "admin-login.html";
 }
 
 function resetForm() {

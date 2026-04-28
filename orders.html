@@ -408,8 +408,8 @@ async function reorder(orderId, storeId) {
     }));
 
     sessionStorage.setItem("cart", JSON.stringify(cart));
-    localStorage.removeItem("storeNote");
-
+sessionStorage.removeItem("cart");
+sessionStorage.removeItem("storeNote");
     showToast("تمت إضافة الطلب إلى السلة");
 
     setTimeout(() => {

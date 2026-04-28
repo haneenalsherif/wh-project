@@ -501,8 +501,8 @@ function deleteItem(index) {
 }
 
 function clearCart() {
-    localStorage.removeItem("cart");
-    localStorage.removeItem("storeNote");
+    sessionStorage.removeItem("cart");
+sessionStorage.removeItem("storeNote");
     loadCart();
     showToast("تم إفراغ السلة");
 }

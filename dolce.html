@@ -385,8 +385,8 @@
           return;
         }
         cart = [];
-        localStorage.removeItem("storeNote");
-      }
+sessionStorage.removeItem("cart");
+sessionStorage.removeItem("storeNote");      }
 
       const existingItem = cart.find(item =>
         item.name === name && item.restaurant === restaurant
