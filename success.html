@@ -400,7 +400,7 @@ function authHeaders() {
 }
 
 async function loadSuccessData() {
-  const lastOrderId = localStorage.getItem("lastOrderId");
+  const lastOrderId = sessionStorage.getItem("lastOrderId");
   const token = getToken();
 
   if (!token) {

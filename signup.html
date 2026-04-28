@@ -267,11 +267,11 @@ async function signupUser(event) {
             return false;
         }
 
-        localStorage.setItem("userId", data.user.id);
-        localStorage.setItem("userFullName", data.user.full_name);
-        localStorage.setItem("userPhone", data.user.phone);
-        localStorage.setItem("userEmail", data.user.email);
-        localStorage.setItem("isLoggedIn", "true");
+       sessionStorage.setItem("userId", data.user.id);
+       sessionStorage.setItem("userFullName", data.user.full_name);
+        sessionStorage.setItem("userPhone", data.user.phone);
+       sessionStorage.setItem("userEmail", data.user.email);
+       sessionStorage.setItem("isLoggedIn", "true");
 
         successMessage.style.color = "#2e7d32";
         successMessage.textContent = "Account created successfully";

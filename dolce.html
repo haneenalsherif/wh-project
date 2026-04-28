@@ -354,7 +354,7 @@
     }
 
     function updateCartBar() {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
       let cartBar = document.getElementById("cartBar");
       let cartCount = document.getElementById("cartCount");
       let cartTotal = document.getElementById("cartTotal");
@@ -378,7 +378,7 @@
     }
 
     function addToCart(name, price, restaurant) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
 
       if (cart.length > 0 && cart[0].restaurant !== restaurant) {
         if (!confirm("السلة فيها منتجات من متجر آخر، هل تريد إفراغها؟")) {
@@ -403,7 +403,7 @@
         });
       }
 
-      localStorage.setItem("cart", JSON.stringify(cart));
+      sessionStorage.setItem("cart", JSON.stringify(cart));
       updateCartBar();
     }
 

@@ -251,7 +251,7 @@
       document.getElementById("fullName").value = data.user.full_name || "";
       document.getElementById("phone").value = data.user.phone || "";
       document.getElementById("email").value = data.user.email || "";
-      document.getElementById("address").value = localStorage.getItem("userAddress") || "الدائري الثالث، بالقرب من جزيرة المهمل";
+      document.getElementById("address").value = sessionStorage.getItem("userAddress") || "الدائري الثالث، بالقرب من جزيرة المهمل";
     } catch (error) {
       console.error(error);
       showToast("فشل الاتصال بالسيرفر", "error");
@@ -329,10 +329,10 @@
         return;
       }
 
-      localStorage.setItem("userFullName", data.user.full_name);
-      localStorage.setItem("userPhone", data.user.phone);
-      localStorage.setItem("userEmail", data.user.email);
-      localStorage.setItem("userAddress", address);
+      sessionStorage.setItem("userFullName", data.user.full_name);
+      sessionStorage.setItem("userPhone", data.user.phone);
+     sessionStorage.setItem("userEmail", data.user.email);
+    sessionStorage.setItem("userAddress", address);
 
       showToast("تم حفظ التعديلات بنجاح", "success");
 

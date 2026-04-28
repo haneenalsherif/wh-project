@@ -282,7 +282,7 @@ function decreaseQty() {
 }
 
 function addToCart() {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
 
     const item = {
         name: "آيس لاتيه",
@@ -298,7 +298,7 @@ function addToCart() {
     };
 
     cart.push(item);
-    localStorage.setItem("cart", JSON.stringify(cart));
+   sessionStorage.setItem("cart", JSON.stringify(cart));
 
     // 🔥 بدل alert
     window.location.href = "cart.html";

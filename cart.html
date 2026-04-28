@@ -403,7 +403,7 @@ function showToast(message) {
 }
 
 function loadCart() {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
     let container = document.getElementById("cartContainer");
     let total = 0;
 
@@ -457,7 +457,7 @@ function loadCart() {
         container.appendChild(div);
     });
 
-    let savedNote = localStorage.getItem("storeNote") || "";
+    let savedNote = sessionStorage.getItem("storeNote") || "";
 
     let noteCard = document.createElement("div");
     noteCard.className = "note-card";
@@ -472,11 +472,11 @@ function loadCart() {
 
 function saveStoreNote() {
     const note = document.getElementById("storeNoteInput").value;
-    localStorage.setItem("storeNote", note);
+    sessionStorage.setItem("storeNote", note);
 }
 
 function changeQty(index, change) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let cart = JSON.parse(sessionStorage.setItem("cart")) || [];
 
     if (!cart[index].qty) {
         cart[index].qty = 1;
@@ -488,14 +488,14 @@ function changeQty(index, change) {
         cart.splice(index, 1);
     }
 
-    localStorage.setItem("cart", JSON.stringify(cart));
+    sessionStorage.setItem("cart", JSON.stringify(cart));
     loadCart();
 }
 
 function deleteItem(index) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let cart = JSON.parse(sessionStorage.setItem("cart")) || [];
     cart.splice(index, 1);
-    localStorage.setItem("cart", JSON.stringify(cart));
+    sessionStorage.setItem("cart", JSON.stringify(cart));
     loadCart();
     showToast("تم حذف المنتج من السلة");
 }
@@ -508,7 +508,7 @@ function clearCart() {
 }
 
 function goCheckout() {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
     if (cart.length === 0) {
         showToast("السلة فارغة");
         return;

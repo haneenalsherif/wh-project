@@ -231,7 +231,7 @@
 <body>
 
 <script>
-const role = localStorage.getItem("userRole");
+const role = sessionStorage.getItem("userRole");
 if (role !== "admin") {
   window.location.href = "admin-login.html";
 }

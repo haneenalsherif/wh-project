@@ -387,10 +387,10 @@
 
 <script>
 function loadProfileData() {
-  const fullName = localStorage.getItem("userFullName") || "---";
-  const phone = localStorage.getItem("userPhone") || "---";
-  const email = localStorage.getItem("userEmail") || "---";
-  const address = localStorage.getItem("userAddress") || "الدائري الثالث، بالقرب من جزيرة المهمل";
+  const fullName = lsessionStorage.getItem("userFullName") || "---";
+  const phone = sessionStorage.getItem("userPhone") || "---";
+  const email =sessionStorage.getItem("userEmail") || "---";
+  const address = sessionStorage.getItem("userAddress") || "الدائري الثالث، بالقرب من جزيرة المهمل";
 
   document.getElementById("profileName").textContent = fullName;
   document.getElementById("profilePhone").textContent = phone;

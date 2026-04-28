@@ -407,7 +407,7 @@ async function reorder(orderId, storeId) {
       restaurant: restaurantKey
     }));
 
-    localStorage.setItem("cart", JSON.stringify(cart));
+    sessionStorage.setItem("cart", JSON.stringify(cart));
     localStorage.removeItem("storeNote");
 
     showToast("تمت إضافة الطلب إلى السلة");
@@ -534,7 +534,7 @@ async function loadOrders() {
         </div>
 
         <div class="order-actions">
-          <button class="action-btn action-secondary" onclick="localStorage.setItem('lastOrderId', '${order.id}'); window.location.href='success.html'">عرض التفاصيل</button>
+          <button class="action-btn action-secondary" onclick="sessionStorage.setItem('lastOrderId', '${order.id}'); window.location.href='success.html'">عرض التفاصيل</button>
           <button class="action-btn action-primary" onclick="reorder(${order.id}, ${order.store_id})">إعادة الطلب</button>
         </div>
       `;
