@@ -32,6 +32,15 @@ function requireAdmin(req, res, next) {
 
   next();
 }
+
+
+function requireStoreOwner(req, res, next) {
+  if (!req.user || !["store_owner", "admin"].includes(req.user.role)) {
+    return res.status(403).json({ message: "غير مصرح لصاحب المتجر" });
+  }
+
+  next();
+}
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -1025,41 +1034,275 @@ app.delete("/api/admin/store-types/:id", authenticateToken, requireAdmin, async 
     res.status(500).json({ message: "فشل حذف النوع" });
   }
 });
+/* =========================
+   STORE OWNER
+========================= */
 
-app.post("/api/store/products", authenticateToken, async (req, res) => {
+async function getMyStore(userId) {
+  const result = await pool.query(
+    "SELECT * FROM stores WHERE owner_user_id = $1",
+    [userId]
+  );
+
+  return result.rows[0];
+}
+
+/* بيانات المتجر */
+app.get("/api/store/me", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const store = await getMyStore(req.user.id);
+
+    if (!store) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    res.json({ store });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل جلب بيانات المتجر" });
+  }
+});
+
+/* فتح / إغلاق المتجر */
+app.put("/api/store/toggle-status", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const store = await getMyStore(req.user.id);
+
+    if (!store) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    const result = await pool.query(
+      `UPDATE stores
+       SET is_active = NOT is_active
+       WHERE id = $1
+       RETURNING *`,
+      [store.id]
+    );
+
+    res.json({
+      message: result.rows[0].is_active ? "تم فتح المتجر" : "تم إغلاق المتجر",
+      store: result.rows[0]
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل تغيير حالة المتجر" });
+  }
+});
+
+/* جلب منتجات المتجر */
+app.get("/api/store/products", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const store = await getMyStore(req.user.id);
+
+    if (!store) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    const result = await pool.query(
+      `SELECT *
+       FROM products
+       WHERE store_id = $1
+       ORDER BY id DESC`,
+      [store.id]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل جلب المنتجات" });
+  }
+});
+
+/* إضافة منتج */
+app.post("/api/store/products", authenticateToken, requireStoreOwner, async (req, res) => {
   try {
     const { name, price, image, category_key, description } = req.body;
-    const userId = req.user.id;
 
     if (!name || !price || !image || !category_key) {
       return res.status(400).json({ message: "البيانات ناقصة" });
     }
 
-    const storeResult = await pool.query(
-      "SELECT id FROM stores WHERE owner_user_id = $1",
-      [userId]
-    );
+    const store = await getMyStore(req.user.id);
 
-    if (!storeResult.rows.length) {
+    if (!store) {
       return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
     }
 
-    const storeId = storeResult.rows[0].id;
-
     await pool.query(
-      `INSERT INTO products 
+      `INSERT INTO products
        (name, price, image, description, store_id, category_key, is_available)
        VALUES ($1, $2, $3, $4, $5, $6, true)`,
-      [name, price, image, description || "", storeId, category_key]
+      [name, price, image, description || "", store.id, category_key]
     );
 
     res.status(201).json({ message: "تمت إضافة المنتج بنجاح" });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "فشل إضافة المنتج" });
   }
 });
+
+/* تعديل منتج */
+app.put("/api/store/products/:id", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, price, image, category_key, description } = req.body;
+
+    if (!name || !price || !image || !category_key) {
+      return res.status(400).json({ message: "البيانات ناقصة" });
+    }
+
+    const store = await getMyStore(req.user.id);
+
+    if (!store) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    const result = await pool.query(
+      `UPDATE products
+       SET name = $1,
+           price = $2,
+           image = $3,
+           category_key = $4,
+           description = $5
+       WHERE id = $6 AND store_id = $7
+       RETURNING *`,
+      [name, price, image, category_key, description || "", id, store.id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({ message: "المنتج غير موجود أو غير مصرح" });
+    }
+
+    res.json({ message: "تم تعديل المنتج بنجاح", product: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل تعديل المنتج" });
+  }
+});
+
+/* متاح / غير متاح */
+app.put("/api/store/products/:id/toggle", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const store = await getMyStore(req.user.id);
+
+    if (!store) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    const result = await pool.query(
+      `UPDATE products
+       SET is_available = NOT is_available
+       WHERE id = $1 AND store_id = $2
+       RETURNING *`,
+      [id, store.id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({ message: "المنتج غير موجود أو غير مصرح" });
+    }
+
+    res.json({
+      message: result.rows[0].is_available ? "تم إظهار المنتج" : "تم إخفاء المنتج",
+      product: result.rows[0]
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل تغيير حالة المنتج" });
+  }
+});
+
+/* حذف منتج */
+app.delete("/api/store/products/:id", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const store = await getMyStore(req.user.id);
+
+    if (!store) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    const result = await pool.query(
+      "DELETE FROM products WHERE id = $1 AND store_id = $2 RETURNING id",
+      [id, store.id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({ message: "المنتج غير موجود أو غير مصرح" });
+    }
+
+    res.json({ message: "تم حذف المنتج بنجاح" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل حذف المنتج" });
+  }
+});
+
+/* طلبات المتجر */
+app.get("/api/store/orders", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const store = await getMyStore(req.user.id);
+
+    if (!store) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    const result = await pool.query(
+      `SELECT *
+       FROM orders
+       WHERE store_id = $1
+       ORDER BY id DESC`,
+      [store.id]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل جلب طلبات المتجر" });
+  }
+});
+
+/* تغيير حالة طلب المتجر */
+app.put("/api/store/orders/:id/status", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const allowed = ["pending", "preparing", "delivering", "delivered"];
+
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ message: "حالة غير صالحة" });
+    }
+
+    const store = await getMyStore(req.user.id);
+
+    if (!store) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    const result = await pool.query(
+      `UPDATE orders
+       SET status = $1
+       WHERE id = $2 AND store_id = $3
+       RETURNING *`,
+      [status, id, store.id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({ message: "الطلب غير موجود أو غير مصرح" });
+    }
+
+    res.json({ message: "تم تحديث حالة الطلب", order: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل تحديث حالة الطلب" });
+  }
+});
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
