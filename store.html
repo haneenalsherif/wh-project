@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>المتجر</title>
+
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+    body{direction:rtl;background:#FAF3E0;color:#2F3E46}
+    .page{max-width:430px;margin:auto;min-height:100vh;padding-bottom:90px}
+    .topbar{background:#A3B18A;color:white;padding:16px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:bold}
+    .back-btn{background:white;border:none;border-radius:12px;width:38px;height:38px;font-size:20px;color:#344E41}
+    .store-hero{margin:14px;background:white;border-radius:24px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+    .store-hero img{width:100%;height:190px;object-fit:cover}
+    .store-info{padding:16px}
+    .store-name{font-size:24px;font-weight:bold;color:#344E41}
+    .store-meta{margin-top:8px;color:#666;font-size:14px;line-height:1.8}
+    .status{display:inline-block;margin-top:8px;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:bold}
+    .open{background:#dcebd7;color:#344E41}
+    .closed{background:#f3d7d7;color:#8a1d1d}
+    .section{padding:14px}
+    .section-title{font-size:22px;font-weight:bold;margin-bottom:12px;color:#344E41}
+    .chips{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px}
+    .chip{border:none;padding:10px 16px;border-radius:999px;background:#EDE0D4;color:#344E41;font-weight:bold;white-space:nowrap}
+    .chip.active{background:#A3B18A;color:white}
+    .products{display:grid;gap:12px}
+    .product-card{background:white;border-radius:20px;padding:12px;display:flex;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+    .product-card img{width:90px;height:90px;border-radius:16px;object-fit:cover;background:#ddd}
+    .product-info{flex:1}
+    .product-name{font-weight:bold;font-size:17px;color:#344E41}
+    .product-desc{font-size:13px;color:#666;margin:6px 0;line-height:1.5}
+    .product-price{font-weight:bold;margin-bottom:8px}
+    .add-btn{border:none;background:#344E41;color:white;border-radius:12px;padding:9px 12px;font-weight:bold}
+    .empty{text-align:center;background:white;border-radius:18px;padding:20px;color:#777}
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">→</button>
+    <div id="pageTitle">المتجر</div>
+    <div style="width:38px"></div>
+  </div>
+
+  <div class="store-hero">
+    <img id="storeImage" src="">
+    <div class="store-info">
+      <div class="store-name" id="storeName">جاري التحميل...</div>
+      <div class="store-meta" id="storeDescription"></div>
+      <div class="store-meta" id="storeDelivery"></div>
+      <span id="storeStatus" class="status"></span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">التصنيفات</div>
+    <div class="chips" id="categoriesContainer"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">المنتجات</div>
+    <div class="products" id="productsContainer">جاري تحميل المنتجات...</div>
+  </div>
+
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const storeId = params.get("id");
+
+let currentStore = null;
+let categories = [];
+
+function getCart() {
+  return JSON.parse(sessionStorage.getItem("cart")) || [];
+}
+
+function saveCart(cart) {
+  sessionStorage.setItem("cart", JSON.stringify(cart));
+}
+
+async function loadStore() {
+  const res = await fetch("/api/stores");
+  const stores = await res.json();
+
+  currentStore = stores.find(s => String(s.id) === String(storeId));
+
+  if (!currentStore) {
+    document.getElementById("productsContainer").innerHTML = `<div class="empty">المتجر غير موجود</div>`;
+    return;
+  }
+
+  document.getElementById("pageTitle").textContent = currentStore.name;
+  document.getElementById("storeName").textContent = currentStore.name;
+  document.getElementById("storeImage").src = currentStore.image;
+  document.getElementById("storeDescription").textContent = currentStore.description || "";
+  document.getElementById("storeDelivery").textContent =
+    `رسوم التوصيل: ${currentStore.delivery_fee || 0} دينار`;
+
+  const status = document.getElementById("storeStatus");
+  status.textContent = currentStore.is_active ? "🟢 مفتوح" : "🔴 مغلق";
+  status.className = currentStore.is_active ? "status open" : "status closed";
+}
+
+async function loadCategories() {
+  const res = await fetch(`/api/store/${storeId}/categories`);
+  categories = await res.json();
+
+  const container = document.getElementById("categoriesContainer");
+  container.innerHTML = "";
+
+  const allBtn = document.createElement("button");
+  allBtn.className = "chip active";
+  allBtn.textContent = "الكل";
+  allBtn.onclick = () => {
+    setActive(allBtn);
+    loadProducts();
+  };
+  container.appendChild(allBtn);
+
+  categories.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = "chip";
+    btn.textContent = cat.name;
+    btn.onclick = () => {
+      setActive(btn);
+      loadProductsByCategory(cat.id);
+    };
+    container.appendChild(btn);
+  });
+}
+
+function setActive(activeBtn) {
+  document.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
+  activeBtn.classList.add("active");
+}
+
+async function loadProducts() {
+  const res = await fetch(`/api/products/${storeId}`);
+  const products = await res.json();
+  renderProducts(products);
+}
+
+async function loadProductsByCategory(categoryId) {
+  const res = await fetch(`/api/store/${storeId}/category/${categoryId}/products`);
+  const products = await res.json();
+  renderProducts(products);
+}
+
+function renderProducts(products) {
+  const container = document.getElementById("productsContainer");
+
+  if (!products.length) {
+    container.innerHTML = `<div class="empty">لا توجد منتجات في هذا التصنيف</div>`;
+    return;
+  }
+
+  container.innerHTML = "";
+
+  products.forEach(product => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+
+    card.innerHTML = `
+      <img src="${product.image}" onerror="this.src='https://via.placeholder.com/100'">
+      <div class="product-info">
+        <div class="product-name">${product.name}</div>
+        <div class="product-desc">${product.description || "بدون وصف"}</div>
+        <div class="product-price">${product.price} دينار</div>
+        <button class="add-btn">إضافة للسلة</button>
+      </div>
+    `;
+
+    card.querySelector(".add-btn").onclick = () => addToCart(product);
+    container.appendChild(card);
+  });
+}
+
+function addToCart(product) {
+  if (currentStore && !currentStore.is_active) {
+    alert("المتجر مغلق حاليًا، لا يمكن الطلب منه");
+    return;
+  }
+
+  let cart = getCart();
+
+  const existing = cart.find(item => item.id === product.id);
+
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({
+      id: product.id,
+      product_id: product.id,
+      name: product.name,
+      price: Number(product.price),
+      image: product.image,
+      restaurant: currentStore.name,
+      store_id: currentStore.id,
+      qty: 1
+    });
+  }
+
+  saveCart(cart);
+  alert("تمت إضافة المنتج للسلة");
+}
+
+async function init() {
+  if (!storeId) {
+    document.getElementById("productsContainer").innerHTML = `<div class="empty">رقم المتجر غير موجود</div>`;
+    return;
+  }
+
+  await loadStore();
+  await loadCategories();
+  await loadProducts();
+}
+
+init();
+</script>
+
+</body>
+</html>

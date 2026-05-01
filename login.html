@@ -344,6 +344,9 @@
 
       card.innerHTML = `
         <img src="${store.image}" alt="${store.name}">
+        <div style="font-size:13px; margin-top:5px; color:#666;">
+  ${store.is_active ? "🟢 مفتوح" : "🔴 مغلق"}
+</div>
         <div class="place-content">
           <div class="place-info">
             <div class="place-name">${store.name}</div>
@@ -355,7 +358,9 @@
       `;
 
       card.addEventListener("click", function () {
-        goToPage(store.page, card);
+        
+        goToPage(`store.html?id=${store.id}`, card);
+
       });
 
       placesContainer.appendChild(card);

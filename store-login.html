@@ -285,7 +285,15 @@ sessionStorage.setItem("token", data.token);
 
 
     setTimeout(() => {
-  window.location.href = "login.html";
+  if (data.user.role === "store_owner") {
+    window.location.href = "store-dashboard.html";
+  } else {
+    successMessage.style.color = "#b00020";
+    successMessage.textContent = "هذا الحساب ليس صاحب متجر";
+    sessionStorage.clear();
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Sign In";
+  }
 }, 500);
 
 } catch (error) {

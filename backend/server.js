@@ -68,9 +68,13 @@ app.get("/api/test", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
 app.get("/api/stores", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM stores ORDER BY id ASC");
+    const result = await pool.query(
+      "SELECT id, name, image, type, store_type, is_active FROM stores ORDER BY id ASC"
+    );
+
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -78,19 +82,27 @@ app.get("/api/stores", async (req, res) => {
   }
 });
 
+
 app.get("/api/products/:storeId", async (req, res) => {
   try {
     const storeId = req.params.storeId;
+
     const result = await pool.query(
-      "SELECT * FROM products WHERE store_id = $1 ORDER BY id ASC",
+      `SELECT *
+       FROM products
+       WHERE store_id = $1
+       AND is_available = true
+       ORDER BY id ASC`,
       [storeId]
     );
+
     res.json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).send("Database error");
   }
 });
+
 
 app.get("/api/store-types", async (req, res) => {
   try {
@@ -129,7 +141,12 @@ app.get("/api/store/:storeId/category/:categoryId/products", async (req, res) =>
     const { storeId, categoryId } = req.params;
 
     const result = await pool.query(
-      "SELECT * FROM products WHERE store_id = $1 AND category_id = $2 ORDER BY id ASC",
+      `SELECT *
+       FROM products
+       WHERE store_id = $1
+       AND category_id = $2
+       AND is_available = true
+       ORDER BY id ASC`,
       [storeId, categoryId]
     );
 
@@ -930,8 +947,7 @@ app.put("/api/admin/orders/:id/status", authenticateToken, requireAdmin, async (
     const { id } = req.params;
     const { status } = req.body;
 
-    const allowedStatuses = ["pending", "preparing", "delivering", "delivered"];
-
+const allowedStatuses = ["pending", "accepted", "preparing", "delivering", "delivered", "rejected"];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({ message: "حالة غير صالحة" });
     }
@@ -1273,8 +1289,7 @@ app.put("/api/store/orders/:id/status", authenticateToken, requireStoreOwner, as
     const { id } = req.params;
     const { status } = req.body;
 
-    const allowed = ["pending", "preparing", "delivering", "delivered"];
-
+const allowed = ["pending", "accepted", "preparing", "delivering", "delivered", "rejected"];
     if (!allowed.includes(status)) {
       return res.status(400).json({ message: "حالة غير صالحة" });
     }

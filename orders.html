@@ -351,12 +351,15 @@ function formatOrderNumber(id) {
 
 function getStatusLabel(status) {
   const map = {
-    pending: "تم الاستلام",
-    preparing: "جاري التجهيز",
+    pending: "طلب جديد",
+    accepted: "تم القبول",
+    preparing: "قيد التجهيز",
     delivering: "خرج للتوصيل",
-    delivered: "تم التسليم"
+    delivered: "تم التسليم",
+    rejected: "مرفوض"
   };
-  return map[status] || "تم الاستلام";
+
+  return map[status] || "طلب جديد";
 }
 
 function getRestaurantKeyFromStoreId(storeId) {
@@ -407,8 +410,7 @@ async function reorder(orderId, storeId) {
       restaurant: restaurantKey
     }));
 
-    sessionStorage.setItem("cart", JSON.stringify(cart));
-sessionStorage.removeItem("cart");
+   sessionStorage.setItem("cart", JSON.stringify(cart));
 sessionStorage.removeItem("storeNote");
     showToast("تمت إضافة الطلب إلى السلة");
 

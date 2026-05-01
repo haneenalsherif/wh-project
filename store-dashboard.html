@@ -956,12 +956,14 @@ async function loadOrders() {
           ${itemsHtml}
         </div>
 
-        <select onchange="updateOrderStatus(${order.id}, this.value)">
-          <option value="pending" ${order.status === "pending" ? "selected" : ""}>تم الاستلام</option>
-          <option value="preparing" ${order.status === "preparing" ? "selected" : ""}>جاري التجهيز</option>
-          <option value="delivering" ${order.status === "delivering" ? "selected" : ""}>خرج للتوصيل</option>
-          <option value="delivered" ${order.status === "delivered" ? "selected" : ""}>تم التسليم</option>
-        </select>
+      <select onchange="updateOrderStatus(${order.id}, this.value)">
+  <option value="pending" ${order.status === "pending" ? "selected" : ""}>طلب جديد</option>
+  <option value="accepted" ${order.status === "accepted" ? "selected" : ""}>تم القبول</option>
+  <option value="preparing" ${order.status === "preparing" ? "selected" : ""}>قيد التجهيز</option>
+  <option value="delivering" ${order.status === "delivering" ? "selected" : ""}>خرج للتوصيل</option>
+  <option value="delivered" ${order.status === "delivered" ? "selected" : ""}>تم التسليم</option>
+  <option value="rejected" ${order.status === "rejected" ? "selected" : ""}>مرفوض</option>
+</select>
       `;
 
       container.appendChild(card);
