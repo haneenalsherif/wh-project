@@ -33,14 +33,13 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-
 function requireStoreOwner(req, res, next) {
   if (!req.user || !["store_owner", "admin"].includes(req.user.role)) {
     return res.status(403).json({ message: "غير مصرح لصاحب المتجر" });
   }
-
   next();
 }
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -1091,6 +1090,7 @@ app.put("/api/store/toggle-status", authenticateToken, requireStoreOwner, async 
 });
 
 /* جلب منتجات المتجر */
+
 app.get("/api/store/products", authenticateToken, requireStoreOwner, async (req, res) => {
   try {
     const store = await getMyStore(req.user.id);
@@ -1100,10 +1100,11 @@ app.get("/api/store/products", authenticateToken, requireStoreOwner, async (req,
     }
 
     const result = await pool.query(
-      `SELECT *
-       FROM products
-       WHERE store_id = $1
-       ORDER BY id DESC`,
+      `SELECT p.*, c.name AS category_name
+       FROM products p
+       LEFT JOIN categories c ON p.category_id = c.id
+       WHERE p.store_id = $1
+       ORDER BY p.id DESC`,
       [store.id]
     );
 
@@ -1114,12 +1115,12 @@ app.get("/api/store/products", authenticateToken, requireStoreOwner, async (req,
   }
 });
 
-/* إضافة منتج */
+
 app.post("/api/store/products", authenticateToken, requireStoreOwner, async (req, res) => {
   try {
-    const { name, price, image, category_key, description } = req.body;
+    const { name, price, image, category_id, description } = req.body;
 
-    if (!name || !price || !image || !category_key) {
+    if (!name || !price || !image || !category_id) {
       return res.status(400).json({ message: "البيانات ناقصة" });
     }
 
@@ -1131,9 +1132,9 @@ app.post("/api/store/products", authenticateToken, requireStoreOwner, async (req
 
     await pool.query(
       `INSERT INTO products
-       (name, price, image, description, store_id, category_key, is_available)
+       (name, price, image, description, store_id, category_id, is_available)
        VALUES ($1, $2, $3, $4, $5, $6, true)`,
-      [name, price, image, description || "", store.id, category_key]
+      [name, price, image, description || "", store.id, category_id]
     );
 
     res.status(201).json({ message: "تمت إضافة المنتج بنجاح" });
@@ -1143,13 +1144,13 @@ app.post("/api/store/products", authenticateToken, requireStoreOwner, async (req
   }
 });
 
-/* تعديل منتج */
+
 app.put("/api/store/products/:id", authenticateToken, requireStoreOwner, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, price, image, category_key, description } = req.body;
+    const { name, price, image, category_id, description } = req.body;
 
-    if (!name || !price || !image || !category_key) {
+    if (!name || !price || !image || !category_id) {
       return res.status(400).json({ message: "البيانات ناقصة" });
     }
 
@@ -1164,11 +1165,11 @@ app.put("/api/store/products/:id", authenticateToken, requireStoreOwner, async (
        SET name = $1,
            price = $2,
            image = $3,
-           category_key = $4,
+           category_id = $4,
            description = $5
        WHERE id = $6 AND store_id = $7
        RETURNING *`,
-      [name, price, image, category_key, description || "", id, store.id]
+      [name, price, image, category_id, description || "", id, store.id]
     );
 
     if (!result.rows.length) {
@@ -1181,6 +1182,8 @@ app.put("/api/store/products/:id", authenticateToken, requireStoreOwner, async (
     res.status(500).json({ message: "فشل تعديل المنتج" });
   }
 });
+
+
 
 /* متاح / غير متاح */
 app.put("/api/store/products/:id/toggle", authenticateToken, requireStoreOwner, async (req, res) => {
@@ -1302,6 +1305,45 @@ app.put("/api/store/orders/:id/status", authenticateToken, requireStoreOwner, as
 });
 
 
+app.get("/api/store/categories", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const store = await getMyStore(req.user.id);
+
+    if (!store) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    const result = await pool.query(
+      "SELECT * FROM categories WHERE store_id = $1 ORDER BY id ASC",
+      [store.id]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل جلب التصنيفات" });
+  }
+});
+
+
+app.post("/api/store/categories", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    const store = await getMyStore(req.user.id);
+
+    await pool.query(
+      "INSERT INTO categories (name, store_id) VALUES ($1, $2)",
+      [name, store.id]
+    );
+
+    res.json({ message: "تم إضافة التصنيف" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "فشل إضافة التصنيف" });
+  }
+});
 
 
 app.listen(PORT, () => {
