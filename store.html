@@ -33,6 +33,35 @@
     .product-price{font-weight:bold;margin-bottom:8px}
     .add-btn{border:none;background:#344E41;color:white;border-radius:12px;padding:9px 12px;font-weight:bold}
     .empty{text-align:center;background:white;border-radius:18px;padding:20px;color:#777}
+
+
+
+
+.toast {
+  position: fixed;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #344E41;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s ease;
+  z-index: 9999;
+  min-width: 200px;
+  text-align: center;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+
   </style>
 </head>
 
@@ -67,6 +96,10 @@
   </div>
 
 </div>
+
+
+
+
 
 <script>
 const params = new URLSearchParams(window.location.search);
@@ -166,8 +199,7 @@ function renderProducts(products) {
     card.className = "product-card";
 
     card.innerHTML = `
-      <img src="${product.image}" onerror="this.src='https://via.placeholder.com/100'">
-      <div class="product-info">
+<img src="${product.image || 'images/dolce1.jpg.jpg'}" onerror="this.src='images/dolce1.jpg.jpg'">      <div class="product-info">
         <div class="product-name">${product.name}</div>
         <div class="product-desc">${product.description || "بدون وصف"}</div>
         <div class="product-price">${product.price} دينار</div>
@@ -182,13 +214,18 @@ function renderProducts(products) {
 
 function addToCart(product) {
   if (currentStore && !currentStore.is_active) {
-    alert("المتجر مغلق حاليًا، لا يمكن الطلب منه");
+    showToast("المتجر مغلق حاليًا");
     return;
   }
 
   let cart = getCart();
 
-  const existing = cart.find(item => item.id === product.id);
+  if (cart.length > 0 && String(cart[0].store_id) !== String(currentStore.id)) {
+    showToast("لا يمكن الطلب من أكثر من متجر");
+    return;
+  }
+
+  const existing = cart.find(item => String(item.id) === String(product.id));
 
   if (existing) {
     existing.qty += 1;
@@ -199,15 +236,15 @@ function addToCart(product) {
       name: product.name,
       price: Number(product.price),
       image: product.image,
-     restaurant: currentStore.id,
-    store_id: currentStore.id,
+      restaurant: currentStore.name,
       store_id: currentStore.id,
       qty: 1
     });
   }
 
   saveCart(cart);
-showToast("تمت إضافة المنتج للسلة");}
+  showToast("تمت إضافة المنتج للسلة");
+}
 
 async function init() {
   if (!storeId) {
