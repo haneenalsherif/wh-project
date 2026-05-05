@@ -392,14 +392,7 @@ function showToast(message) {
 
 function getStoreIdFromCart(cart) {
   if (!cart.length) return null;
-
-  const restaurant = cart[0].restaurant;
-
-  if (restaurant === "dolce") return 1;
-  if (restaurant === "omega") return 2;
-  if (restaurant === "burger") return 3;
-
-  return 1;
+  return cart[0].store_id || null;
 }
 
 function getToken() {
@@ -422,13 +415,13 @@ function loadSummary() {
   let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
   let itemsTotal = 0;
   const delivery = 0.75;
-  const grand = itemsTotal + delivery;
 
   cart.forEach(item => {
     let qty = item.qty ? item.qty : 1;
-    itemsTotal += item.price * qty;
+    itemsTotal += Number(item.price) * qty;
   });
 
+  const grand = itemsTotal + delivery;
 
   document.getElementById("itemsTotal").textContent = itemsTotal + " دينار";
   document.getElementById("deliveryFee").textContent = delivery + " دينار";
@@ -561,17 +554,16 @@ async function confirmOrder() {
   let itemsTotal = 0;
 
   const items = cart.map(item => {
-    let qty = item.qty || 1;
-    itemsTotal += item.price * qty;
+  let qty = item.qty || 1;
+  itemsTotal += Number(item.price) * qty;
 
-    return {
-      product_id: null,
-      product_name: item.name,
-      price: Number(item.price),
-      qty: qty
-    };
-  });
-
+  return {
+    product_id: item.product_id || item.id,
+    product_name: item.name,
+    price: Number(item.price),
+    qty: qty
+  };
+});
   const orderData = {
     customer_address: selectedAddress.details,
     store_id: getStoreIdFromCart(cart),
