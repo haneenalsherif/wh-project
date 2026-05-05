@@ -37,7 +37,7 @@
 </head>
 
 <body>
-
+<div id="toast" class="toast"></div>
 <div class="page">
 
   <div class="topbar">
@@ -220,13 +220,19 @@ async function init() {
   await loadProducts();
 }
 function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.add("show");
+    let toast = document.getElementById("toast");
 
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 1500);
+    if (!toast) {
+        console.warn("toast element not found");
+        return;
+    }
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 1800);
 }
 
 init();
