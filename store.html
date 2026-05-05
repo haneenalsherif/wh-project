@@ -199,15 +199,15 @@ function addToCart(product) {
       name: product.name,
       price: Number(product.price),
       image: product.image,
-      restaurant: currentStore.name,
+     restaurant: currentStore.id,
+    store_id: currentStore.id,
       store_id: currentStore.id,
       qty: 1
     });
   }
 
   saveCart(cart);
-  alert("تمت إضافة المنتج للسلة");
-}
+showToast("تمت إضافة المنتج للسلة");}
 
 async function init() {
   if (!storeId) {
@@ -218,6 +218,15 @@ async function init() {
   await loadStore();
   await loadCategories();
   await loadProducts();
+}
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 1500);
 }
 
 init();

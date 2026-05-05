@@ -362,14 +362,6 @@ function getStatusLabel(status) {
   return map[status] || "طلب جديد";
 }
 
-function getRestaurantKeyFromStoreId(storeId) {
-  const map = {
-    1: "dolce",
-    2: "omega",
-    3: "burger"
-  };
-  return map[storeId] || "dolce";
-}
 
 function getToken() {
   return sessionStorage.getItem("token");

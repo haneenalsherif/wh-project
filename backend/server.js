@@ -3,9 +3,15 @@ const path = require("path");
 const { Pool } = require("pg");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const jwt = require("jsonwebtoken");
-const JWT_SECRET = "mysecretkey";
 require("dotenv").config();
+
+const jwt = require("jsonwebtoken");
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET is missing in .env file");
+}
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
@@ -49,7 +55,6 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "index.html"));
 });
-require("dotenv").config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -290,11 +295,9 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
 
   try {
     const userId = req.user.id;
-
     const {
       customer_address,
       store_id,
-      total_price,
       items,
       payment,
       payment_method,
@@ -303,8 +306,21 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
 
     const finalPayment = payment_method || payment || "cash";
 
-    if (!customer_address || !store_id || !total_price || !items || !items.length) {
+    if (!customer_address || !store_id || !items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "بيانات الطلب ناقصة" });
+    }
+
+    const storeResult = await client.query(
+      "SELECT id, is_active FROM stores WHERE id = $1",
+      [store_id]
+    );
+
+    if (!storeResult.rows.length) {
+      return res.status(404).json({ message: "المتجر غير موجود" });
+    }
+
+    if (!storeResult.rows[0].is_active) {
+      return res.status(400).json({ message: "المتجر مغلق حاليًا ولا يمكن الطلب منه" });
     }
 
     const userResult = await client.query(
@@ -317,6 +333,49 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
     }
 
     const user = userResult.rows[0];
+
+    let totalPrice = 0;
+    const safeItems = [];
+
+    for (const item of items) {
+      const productId = item.product_id || item.id;
+      const qty = Number(item.qty) || 1;
+
+      if (!productId || qty <= 0) {
+        return res.status(400).json({ message: "بيانات منتج غير صحيحة" });
+      }
+
+      const productResult = await client.query(
+        `SELECT id, name, price, store_id, is_available
+         FROM products
+         WHERE id = $1`,
+        [productId]
+      );
+
+      if (!productResult.rows.length) {
+        return res.status(404).json({ message: "أحد المنتجات غير موجود" });
+      }
+
+      const product = productResult.rows[0];
+
+      if (String(product.store_id) !== String(store_id)) {
+        return res.status(400).json({ message: "لا يمكن الطلب من أكثر من متجر في نفس الطلب" });
+      }
+
+      if (!product.is_available) {
+        return res.status(400).json({ message: `المنتج ${product.name} غير متاح حاليًا` });
+      }
+
+      const price = Number(product.price);
+      totalPrice += price * qty;
+
+      safeItems.push({
+        product_id: product.id,
+        product_name: product.name,
+        price,
+        qty
+      });
+    }
 
     await client.query("BEGIN");
 
@@ -331,7 +390,7 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
         user.phone,
         customer_address,
         store_id,
-        total_price,
+        totalPrice,
         finalPayment,
         delivery_note || ""
       ]
@@ -339,14 +398,14 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
 
     const orderId = orderResult.rows[0].id;
 
-    for (const item of items) {
+    for (const item of safeItems) {
       await client.query(
         `INSERT INTO order_items
         (order_id, product_id, product_name, price, qty)
         VALUES ($1, $2, $3, $4, $5)`,
         [
           orderId,
-          item.product_id || null,
+          item.product_id,
           item.product_name,
           item.price,
           item.qty
@@ -358,12 +417,13 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
 
     res.status(201).json({
       message: "تم حفظ الطلب بنجاح",
-      order_id: orderId
+      order_id: orderId,
+      total_price: totalPrice
     });
 
   } catch (err) {
     await client.query("ROLLBACK");
-    console.error(err);
+    console.error("ORDER ERROR:", err);
     res.status(500).json({ message: "فشل حفظ الطلب" });
   } finally {
     client.release();

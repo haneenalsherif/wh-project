@@ -422,13 +422,13 @@ function loadSummary() {
   let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
   let itemsTotal = 0;
   const delivery = 0.75;
+  const grand = itemsTotal + delivery;
 
   cart.forEach(item => {
     let qty = item.qty ? item.qty : 1;
     itemsTotal += item.price * qty;
   });
 
-  const grand = itemsTotal + delivery;
 
   document.getElementById("itemsTotal").textContent = itemsTotal + " دينار";
   document.getElementById("deliveryFee").textContent = delivery + " دينار";

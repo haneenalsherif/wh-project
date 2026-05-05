@@ -476,7 +476,9 @@ function saveStoreNote() {
 }
 
 function changeQty(index, change) {
-    let cart = JSON.parse(sessionStorage.setItem("cart")) || [];
+    let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+    if (!cart[index]) return;
 
     if (!cart[index].qty) {
         cart[index].qty = 1;
@@ -491,20 +493,16 @@ function changeQty(index, change) {
     sessionStorage.setItem("cart", JSON.stringify(cart));
     loadCart();
 }
-
 function deleteItem(index) {
-    let cart = JSON.parse(sessionStorage.setItem("cart")) || [];
+    let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+    if (!cart[index]) return;
+
     cart.splice(index, 1);
     sessionStorage.setItem("cart", JSON.stringify(cart));
+
     loadCart();
     showToast("تم حذف المنتج من السلة");
-}
-
-function clearCart() {
-    sessionStorage.removeItem("cart");
-sessionStorage.removeItem("storeNote");
-    loadCart();
-    showToast("تم إفراغ السلة");
 }
 
 function goCheckout() {
