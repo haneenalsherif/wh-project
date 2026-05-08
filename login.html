@@ -1,331 +1,349 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>WH App</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WH App</title>
 
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
-body {
-  direction: rtl;
-  background: #FAF3E0;
-  color: #2F3E46;
-  opacity: 0;
-  animation: pageFade 0.45s ease forwards;
-}
+    body {
+      direction: rtl;
+      background: #FAF3E0;
+      color: #2F3E46;
+      opacity: 0;
+      animation: pageFade 0.45s ease forwards;
+    }
 
-@keyframes pageFade {
-  to { opacity: 1; }
-}
+    @keyframes pageFade {
+      to { opacity: 1; }
+    }
 
-.page {
-  max-width: 430px;
-  margin: 0 auto;
-  min-height: 100vh;
-  background: #FAF3E0;
-  padding-bottom: 95px;
-}
+    .page {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #FAF3E0;
+      padding-bottom: 100px;
+      overflow-x: hidden;
+    }
 
-.topbar {
-  background: #FAF3E0;
-  color: #344E41;
-  padding: 18px 16px 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
+    .topbar {
+      padding: 18px 16px 8px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #FAF3E0;
+    }
 
-.delivery-box {
-  line-height: 1.5;
-}
+    .top-icons {
+      display: flex;
+      gap: 10px;
+    }
 
-.small-text {
-  font-size: 12px;
-  color: #6B705C;
-}
+    .circle-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: white;
+      color: #344E41;
+      font-size: 22px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-.delivery-place {
-  font-size: 18px;
-  font-weight: bold;
-  color: #344E41;
-}
+    .hero {
+      margin: 14px 16px 16px;
+      background: #EDE0D4;
+      border-radius: 28px;
+      padding: 26px 18px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
 
-.top-icons {
-  display: flex;
-  gap: 10px;
-}
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: rgba(163, 177, 138, 0.18);
+      top: -35px;
+      right: -30px;
+    }
 
-.circle-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: none;
-  background: white;
-  color: #344E41;
-  font-size: 22px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  cursor: pointer;
-}
+    .hero::after {
+      content: "🌿";
+      position: absolute;
+      left: 22px;
+      bottom: 18px;
+      font-size: 38px;
+      opacity: 0.35;
+    }
 
-.hero {
-  margin: 16px;
-  background: #EDE0D4;
-  border-radius: 26px;
-  padding: 24px 18px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
+    .hero-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #344E41;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
 
-.hero::after {
-  content: "🌿";
-  position: absolute;
-  left: 18px;
-  bottom: 14px;
-  font-size: 38px;
-  opacity: 0.35;
-}
+    .hero-subtitle {
+      margin-top: 8px;
+      color: #6B705C;
+      font-size: 15px;
+      line-height: 1.8;
+      position: relative;
+      z-index: 1;
+    }
 
-.hero-title {
-  font-size: 29px;
-  font-weight: bold;
-  color: #344E41;
-  line-height: 1.6;
-}
+    .search-box {
+      margin: 0 16px 20px;
+      background: white;
+      border-radius: 22px;
+      padding: 15px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
 
-.hero-subtitle {
-  margin-top: 8px;
-  color: #6B705C;
-  font-size: 15px;
-}
+    .search-box span {
+      font-size: 22px;
+    }
 
-.search-box {
-  margin: 0 16px 18px;
-  background: white;
-  border-radius: 20px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
+    .search-box input {
+      border: none;
+      outline: none;
+      flex: 1;
+      background: transparent;
+      font-size: 15px;
+      color: #2F3E46;
+    }
 
-.search-box input {
-  border: none;
-  outline: none;
-  flex: 1;
-  background: transparent;
-  font-size: 15px;
-  color: #2F3E46;
-}
+    .section-title {
+      font-size: 23px;
+      font-weight: bold;
+      color: #344E41;
+      padding: 0 16px 12px;
+    }
 
-.section-title {
-  font-size: 22px;
-  font-weight: bold;
-  color: #344E41;
-  padding: 0 16px 12px;
-}
+    .category-grid {
+      margin: 0 16px 24px;
+      background: white;
+      border-radius: 30px;
+      padding: 20px 14px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px 10px;
+      box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+      border: 1px solid #f0e7d8;
+    }
 
-.category-grid {
-  margin: 0 16px 22px;
-  background: white;
-  border-radius: 28px;
-  padding: 18px 14px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px 10px;
-  box-shadow: 0 5px 18px rgba(0,0,0,0.05);
-  border: 1px solid #f0e7d8;
-}
+    .cat-card {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      text-align: center;
+      color: #344E41;
+      font-weight: bold;
+      min-width: 0;
+    }
 
-.cat-card {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  text-align: center;
-  color: #344E41;
-  font-weight: bold;
-}
+    .cat-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 9px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #FAF3E0, #EDE0D4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 31px;
+      box-shadow: inset 0 0 0 1px #eadfce;
+      transition: 0.2s ease;
+    }
 
-.cat-icon {
-  width: 58px;
-  height: 58px;
-  margin: 0 auto 8px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #FAF3E0, #EDE0D4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  box-shadow: inset 0 0 0 1px #eadfce;
-}
+    .cat-card.active .cat-icon {
+      background: #A3B18A;
+      color: white;
+      transform: translateY(-2px);
+    }
 
-.cat-card.active .cat-icon {
-  background: #A3B18A;
-  color: white;
-}
+    .cat-card span {
+      font-size: 13px;
+      display: block;
+      line-height: 1.5;
+    }
 
-.cat-card span {
-  font-size: 13px;
-}
+    .horizontal-places {
+      display: flex;
+      gap: 14px;
+      padding: 0 16px 18px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+    }
 
-.places {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 0 16px;
-}
+    .horizontal-places::-webkit-scrollbar {
+      display: none;
+    }
 
-.place-card {
-  background: white;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-  cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-  position: relative;
-}
+    .place-card {
+      min-width: 285px;
+      max-width: 285px;
+      background: white;
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      position: relative;
+      flex-shrink: 0;
+    }
 
-.place-card:active {
-  transform: scale(0.98);
-}
+    .place-card:active {
+      transform: scale(0.98);
+    }
 
-.place-card img {
-  width: 100%;
-  height: 170px;
-  object-fit: cover;
-  display: block;
-}
+    .place-card img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      display: block;
+      background: #EDE0D4;
+    }
 
-.status-pill {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: white;
-  color: #344E41;
-  border-radius: 999px;
-  padding: 7px 12px;
-  font-size: 13px;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
+    .status-pill {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: white;
+      color: #344E41;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
 
-.favorite-mini {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: white;
-  color: #344E41;
-  border: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  font-size: 21px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
+    .favorite-mini {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: white;
+      color: #344E41;
+      border: none;
+      width: 39px;
+      height: 39px;
+      border-radius: 50%;
+      font-size: 21px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
 
-.place-content {
-  padding: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 12px;
-}
+    .place-content {
+      padding: 15px;
+    }
 
-.place-info {
-  flex: 1;
-}
+    .place-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2F3E46;
+      margin-bottom: 6px;
+    }
 
-.place-name {
-  font-size: 20px;
-  font-weight: bold;
-  color: #2F3E46;
-  margin-bottom: 6px;
-}
+    .place-type {
+      color: #6B705C;
+      font-size: 14px;
+      margin-bottom: 9px;
+    }
 
-.place-type {
-  color: #6B705C;
-  font-size: 14px;
-  margin-bottom: 8px;
-}
+    .place-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
 
-.place-meta {
-  color: #888;
-  font-size: 13px;
-}
+    .place-meta {
+      color: #888;
+      font-size: 13px;
+      line-height: 1.5;
+    }
 
-.open-btn {
-  border: none;
-  background: #A3B18A;
-  color: white;
-  padding: 12px 16px;
-  border-radius: 14px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  flex-shrink: 0;
-}
+    .open-btn {
+      border: none;
+      background: #A3B18A;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
 
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  background: #ffffff;
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  border-top: 1px solid #e8dfcf;
-  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
-  z-index: 999;
-}
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #e8dfcf;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+      z-index: 999;
+    }
 
-.nav-item {
-  text-align: center;
-  font-size: 12px;
-  color: #8a8f98;
-  cursor: pointer;
-  min-width: 60px;
-}
+    .nav-item {
+      text-align: center;
+      font-size: 12px;
+      color: #8a8f98;
+      cursor: pointer;
+      min-width: 60px;
+    }
 
-.nav-item div {
-  font-size: 18px;
-  margin-bottom: 4px;
-}
+    .nav-item div {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
 
-.material-icons {
-  font-size: 22px;
-  display: block;
-  margin-bottom: 4px;
-}
+    .nav-item.active {
+      color: #344E41;
+      font-weight: bold;
+    }
 
-.nav-item.active {
-  color: #344E41;
-  font-weight: bold;
-}
-
-.loading-text,
-.empty-text {
-  text-align: center;
-  color: #777;
-  padding: 18px 0;
-  font-size: 15px;
-}
-</style>
+    .loading-text,
+    .empty-text {
+      text-align: center;
+      color: #777;
+      padding: 18px 0;
+      font-size: 15px;
+      min-width: 100%;
+    }
+  </style>
 </head>
 
 <body>
@@ -333,20 +351,15 @@ body {
 <div class="page">
 
   <div class="topbar">
-    <div class="delivery-box">
-      <div class="small-text">التوصيل إلى</div>
-      <div class="delivery-place">📍 مصراتة</div>
-    </div>
-
     <div class="top-icons">
+      <button class="circle-icon" onclick="window.location.href='wallet.html'">👛</button>
       <button class="circle-icon" onclick="window.location.href='favorites.html'">♡</button>
-      <button class="circle-icon" onclick="window.location.href='profile.html'">👤</button>
     </div>
   </div>
 
   <div class="hero">
-    <div class="hero-title">اطلب كل اللي تحتاجه بسهولة</div>
-    <div class="hero-subtitle">مطاعم، كافيهات، صيدليات ومتاجر في مكان واحد</div>
+    <div class="hero-title">كل طلباتك في مكان واحد</div>
+    <div class="hero-subtitle">اختاري اللي تحتاجيه من أقرب متجر وكملي طلبك بخطوات بسيطة</div>
   </div>
 
   <div class="search-box">
@@ -357,9 +370,8 @@ body {
   <div class="section-title">الخدمات</div>
   <div class="category-grid" id="chipsContainer"></div>
 
-  <div class="section-title">أماكن مشهورة</div>
-
-  <div class="places" id="placesContainer">
+  <div class="section-title">طلبتِ منها سابقًا</div>
+  <div class="horizontal-places" id="placesContainer">
     <div class="loading-text">جاري تحميل الأماكن...</div>
   </div>
 
@@ -388,173 +400,173 @@ body {
 </div>
 
 <script>
-const searchInput = document.getElementById("searchInput");
-const placesContainer = document.getElementById("placesContainer");
+  const searchInput = document.getElementById("searchInput");
+  const placesContainer = document.getElementById("placesContainer");
 
-let storesData = [];
-let currentFilter = "all";
+  let storesData = [];
+  let currentFilter = "all";
 
-function getTypeLabel(type) {
-  if (type === "restaurant") return "مطعم";
-  if (type === "cafe") return "كافيه";
-  if (type === "pharmacy") return "صيدلية";
-  if (type === "market") return "ماركت";
-  if (type === "bakery") return "مخبز";
-  if (type === "store") return "متجر";
-  return type;
-}
-
-function renderStores() {
-  const searchValue = searchInput.value.trim().toLowerCase();
-
-  const filteredStores = storesData.filter(store => {
-    const storeType = store.type;
-    const storeName = (store.name || "").toLowerCase();
-
-    const matchesType = currentFilter === "all" || storeType === currentFilter;
-    const matchesSearch = storeName.includes(searchValue);
-
-    return matchesType && matchesSearch;
-  });
-
-  placesContainer.innerHTML = "";
-
-  if (filteredStores.length === 0) {
-    placesContainer.innerHTML = '<div class="empty-text">لا توجد أماكن مطابقة</div>';
-    return;
+  function getTypeLabel(type) {
+    if (type === "restaurant") return "مطعم";
+    if (type === "cafe") return "كافيه";
+    if (type === "pharmacy") return "صيدلية";
+    if (type === "market") return "ماركت";
+    if (type === "bakery") return "مخبز";
+    if (type === "store") return "متجر";
+    return type || "متجر";
   }
 
-  filteredStores.forEach(store => {
-    const card = document.createElement("div");
-    card.className = "place-card";
+  function renderStores() {
+    const searchValue = searchInput.value.trim().toLowerCase();
 
-    card.innerHTML = `
-      <img src="${store.image}" alt="${store.name}" onerror="this.src='images/dolce1.jpg.jpg'">
+    const filteredStores = storesData.filter(store => {
+      const storeType = store.type;
+      const storeName = (store.name || "").toLowerCase();
 
-      <div class="status-pill">
-        ${store.is_active ? "🟢 مفتوح" : "🔴 مغلق"}
-      </div>
+      const matchesType = currentFilter === "all" || currentFilter === "offers" || storeType === currentFilter;
+      const matchesSearch = storeName.includes(searchValue);
 
-      <button class="favorite-mini" onclick="event.stopPropagation(); toggleFavorite(${store.id}, this)">♡</button>
+      return matchesType && matchesSearch;
+    });
 
-      <div class="place-content">
-        <div class="place-info">
-          <div class="place-name">${store.name}</div>
-          <div class="place-type">${getTypeLabel(store.type)}</div>
-          <div class="place-meta">رسوم التوصيل • ${store.delivery_fee || 0} د.ل</div>
+    placesContainer.innerHTML = "";
+
+    if (filteredStores.length === 0) {
+      placesContainer.innerHTML = '<div class="empty-text">لا توجد أماكن مطابقة</div>';
+      return;
+    }
+
+    filteredStores.forEach(store => {
+      const card = document.createElement("div");
+      card.className = "place-card";
+
+      card.innerHTML = `
+        <img src="${store.image}" alt="${store.name}" onerror="this.src='images/dolce1.jpg.jpg'">
+
+        <div class="status-pill">
+          ${store.is_active ? "🟢 مفتوح" : "🔴 مغلق"}
         </div>
 
-        <button class="open-btn" type="button">افتح</button>
-      </div>
-    `;
+        <button class="favorite-mini" onclick="event.stopPropagation(); toggleFavorite(${store.id}, this)">♡</button>
 
-    card.addEventListener("click", function () {
-      goToPage(`store.html?id=${store.id}`, card);
-    });
+        <div class="place-content">
+          <div class="place-name">${store.name}</div>
+          <div class="place-type">${getTypeLabel(store.type)}</div>
 
-    placesContainer.appendChild(card);
-  });
-}
-
-async function loadStores() {
-  try {
-    const response = await fetch("/api/stores");
-    const data = await response.json();
-    storesData = data;
-    renderStores();
-  } catch (error) {
-    placesContainer.innerHTML = '<div class="empty-text">فشل تحميل الأماكن</div>';
-    console.error("Error loading stores:", error);
-  }
-}
-
-function filterCards(type, element) {
-  currentFilter = type;
-
-  document.querySelectorAll(".cat-card").forEach(chip => chip.classList.remove("active"));
-  element.classList.add("active");
-
-  renderStores();
-}
-
-searchInput.addEventListener("input", function () {
-  renderStores();
-});
-
-function goToPage(page, card) {
-  card.style.transform = "scale(0.97)";
-  setTimeout(() => {
-    window.location.href = page;
-  }, 120);
-}
-
-function toggleFavorite(storeId, btn) {
-  let favorites = JSON.parse(sessionStorage.getItem("favorites")) || [];
-
-  if (favorites.includes(storeId)) {
-    favorites = favorites.filter(id => id !== storeId);
-    btn.textContent = "♡";
-  } else {
-    favorites.push(storeId);
-    btn.textContent = "♥";
-  }
-
-  sessionStorage.setItem("favorites", JSON.stringify(favorites));
-}
-
-async function loadStoreTypes() {
-  const container = document.getElementById("chipsContainer");
-
-  const icons = {
-    all: "✨",
-    restaurant: "🍔",
-    cafe: "☕",
-    pharmacy: "💊",
-    market: "🛒",
-    bakery: "🥐",
-    store: "🛍️",
-    games: "🎮"
-  };
-
-  try {
-    const res = await fetch("/api/store-types");
-    const types = await res.json();
-
-    container.innerHTML = "";
-
-    const allBtn = document.createElement("button");
-    allBtn.className = "cat-card active";
-    allBtn.innerHTML = `
-      <div class="cat-icon">${icons.all}</div>
-      <span>الكل</span>
-    `;
-    allBtn.onclick = function () {
-      filterCards("all", this);
-    };
-    container.appendChild(allBtn);
-
-    types.forEach(type => {
-      const btn = document.createElement("button");
-      btn.className = "cat-card";
-      btn.innerHTML = `
-        <div class="cat-icon">${icons[type.type_key] || "🏪"}</div>
-        <span>${type.name}</span>
+          <div class="place-bottom">
+            <div class="place-meta">رسوم التوصيل<br>${store.delivery_fee || 0} د.ل</div>
+            <button class="open-btn" type="button">افتح</button>
+          </div>
+        </div>
       `;
 
-      btn.onclick = function () {
-        filterCards(type.type_key, this);
-      };
+      card.addEventListener("click", function () {
+        goToPage(`store.html?id=${store.id}`, card);
+      });
 
-      container.appendChild(btn);
+      placesContainer.appendChild(card);
     });
-
-  } catch (err) {
-    console.error("فشل تحميل التصنيفات", err);
   }
-}
 
-loadStores();
-loadStoreTypes();
+  async function loadStores() {
+    try {
+      const response = await fetch("/api/stores");
+      const data = await response.json();
+      storesData = Array.isArray(data) ? data : [];
+      renderStores();
+    } catch (error) {
+      placesContainer.innerHTML = '<div class="empty-text">فشل تحميل الأماكن</div>';
+      console.error("Error loading stores:", error);
+    }
+  }
+
+  function filterCards(type, element) {
+    currentFilter = type;
+
+    document.querySelectorAll(".cat-card").forEach(chip => chip.classList.remove("active"));
+    element.classList.add("active");
+
+    renderStores();
+  }
+
+  searchInput.addEventListener("input", function () {
+    renderStores();
+  });
+
+  function goToPage(page, card) {
+    card.style.transform = "scale(0.97)";
+    setTimeout(() => {
+      window.location.href = page;
+    }, 120);
+  }
+
+  function toggleFavorite(storeId, btn) {
+    let favorites = JSON.parse(sessionStorage.getItem("favorites")) || [];
+
+    if (favorites.includes(storeId)) {
+      favorites = favorites.filter(id => id !== storeId);
+      btn.textContent = "♡";
+    } else {
+      favorites.push(storeId);
+      btn.textContent = "♥";
+    }
+
+    sessionStorage.setItem("favorites", JSON.stringify(favorites));
+  }
+
+  async function loadStoreTypes() {
+    const container = document.getElementById("chipsContainer");
+
+    const icons = {
+      offers: "🎁",
+      restaurant: "🍔",
+      cafe: "☕",
+      pharmacy: "💊",
+      market: "🛒",
+      bakery: "🥐",
+      store: "🛍️",
+      games: "🎮"
+    };
+
+    try {
+      const res = await fetch("/api/store-types");
+      const types = await res.json();
+
+      container.innerHTML = "";
+
+      const offersBtn = document.createElement("button");
+      offersBtn.className = "cat-card active";
+      offersBtn.innerHTML = `
+        <div class="cat-icon">${icons.offers}</div>
+        <span>العروض</span>
+      `;
+      offersBtn.onclick = function () {
+        filterCards("offers", this);
+      };
+      container.appendChild(offersBtn);
+
+      types.forEach(type => {
+        const btn = document.createElement("button");
+        btn.className = "cat-card";
+        btn.innerHTML = `
+          <div class="cat-icon">${icons[type.type_key] || "🏪"}</div>
+          <span>${type.name}</span>
+        `;
+
+        btn.onclick = function () {
+          filterCards(type.type_key, this);
+        };
+
+        container.appendChild(btn);
+      });
+
+    } catch (err) {
+      console.error("فشل تحميل التصنيفات", err);
+    }
+  }
+
+  loadStores();
+  loadStoreTypes();
 </script>
 
 </body>
