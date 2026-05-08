@@ -541,8 +541,9 @@
         <span>العروض</span>
       `;
       offersBtn.onclick = function () {
-        filterCards("offers", this);
-      };
+  window.location.href =
+  "category.html?type=restaurant&title=العروض";
+};
       container.appendChild(offersBtn);
 
       types.forEach(type => {
@@ -553,9 +554,10 @@
           <span>${type.name}</span>
         `;
 
-        btn.onclick = function () {
-          filterCards(type.type_key, this);
-        };
+       btn.onclick = function () {
+  window.location.href =
+  `category.html?type=${type.type_key}&title=${encodeURIComponent(type.name)}`;
+};
 
         container.appendChild(btn);
       });
