@@ -488,7 +488,6 @@ function changeAddress() {
       `https://maps.google.com/maps?q=${selectedAddress.lat},${selectedAddress.lng}&z=15&output=embed`;
   }
 }
-
 function getCurrentLocation() {
   if (!navigator.geolocation) {
     showToast("المتصفح لا يدعم الموقع");
@@ -502,25 +501,29 @@ function getCurrentLocation() {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
 
+      const locationText =
+        `الموقع الحالي:\nLatitude: ${lat.toFixed(5)}\nLongitude: ${lng.toFixed(5)}`;
+
       selectedAddress = {
         title: "موقعي الحالي",
-        details: "تم تحديد موقعي الحالي بنجاح",
+        details: locationText,
         lat: lat,
         lng: lng
       };
 
-      document.getElementById("addressPreview").textContent = "تم تحديد موقعي الحالي بنجاح";
+      document.getElementById("addressPreview").textContent = locationText;
+
       document.getElementById("mapFrame").src =
         `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
 
       showToast("تم تحديد الموقع بنجاح");
     },
-    function() {
+    function(error) {
+      console.error(error);
       showToast("فشل تحديد الموقع");
     }
   );
 }
-
 function selectPayment(value, element) {
   selectedPayment = value;
 

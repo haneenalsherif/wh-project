@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - WH App</title>
-
+    <title>دخول صاحب المتجر - WH App</title>
     <style>
         * {
             box-sizing: border-box;
@@ -23,13 +22,14 @@
         }
 
         .login-container {
-            width: 100%;
-            max-width: 420px;
-            background-color: #FFFFFF;
-            border-radius: 24px;
-            padding: 35px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        }
+    width: 100%;
+    max-width: 430px;
+    background-color: #FFFFFF;
+    border-radius: 28px;
+    padding: 34px;
+    box-shadow: 0 14px 35px rgba(52, 78, 65, 0.14);
+    border-top: 8px solid #344E41;
+}
 
         .logo {
             text-align: center;
@@ -170,8 +170,9 @@
 <body>
 
     <div class="login-container">
-        <div class="logo">WH App</div>
-        <div class="subtitle">Login to continue ordering your favorites</div>
+        <div style="text-align:center;font-size:46px;margin-bottom:10px;">🏪</div>
+<div class="logo">لوحة صاحب المتجر</div>
+<div class="subtitle">سجّل الدخول لإدارة المنتجات والطلبات وحالة المتجر</div>
         <div class="success-message" id="successMessage"></div>
 
         <form onsubmit="return loginUser(event)">
@@ -194,15 +195,9 @@
             <button type="submit" class="btn" id="loginBtn">Sign In</button>
         </form>
 
-        <div class="divider">or</div>
-
-        <button class="secondary-btn" onclick="window.location.href='signup.html'">
-            Create Account
-        </button>
-
         <div class="guest-link">
-            <a href="index.html">Continue as Guest</a>
-        </div>
+    <a href="index.html">الرجوع لواجهة المستخدم</a>
+</div>
     </div>
     
 <script>
@@ -309,3 +304,5 @@ sessionStorage.setItem("token", data.token);
 return false;
 }
 </script>
+</body>
+</html>

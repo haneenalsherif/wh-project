@@ -272,6 +272,31 @@
       padding: 18px 0;
       font-size: 15px;
     }
+    .status-pending {
+  background: #EDE0D4;
+  color: #344E41;
+}
+
+.status-accepted,
+.status-preparing {
+  background: #fff3cd;
+  color: #7a5b00;
+}
+
+.status-delivering {
+  background: #dceeff;
+  color: #1f5f8b;
+}
+
+.status-delivered {
+  background: #dcebd7;
+  color: #2e7d32;
+}
+
+.status-rejected {
+  background: #f3d7d7;
+  color: #8a1d1d;
+}
   </style>
 </head>
 <body>
@@ -349,6 +374,10 @@ function formatOrderNumber(id) {
   return "#WH-" + String(id).padStart(4, "0");
 }
 
+function formatPrice(value) {
+  return Number(value || 0).toFixed(2);
+}
+
 function getStatusLabel(status) {
   const map = {
     pending: "طلب جديد",
@@ -360,6 +389,10 @@ function getStatusLabel(status) {
   };
 
   return map[status] || "طلب جديد";
+}
+
+function getStatusClass(status) {
+  return `status-${status || "pending"}`;
 }
 
 
@@ -393,17 +426,24 @@ async function reorder(orderId, storeId) {
       return;
     }
 
-    const restaurantKey = getRestaurantKeyFromStoreId(storeId);
-
     const cart = (data.items || []).map(item => ({
+      id: item.product_id,
+      product_id: item.product_id,
       name: item.product_name,
       price: Number(item.price),
       qty: item.qty,
-      restaurant: restaurantKey
+      store_id: storeId,
+      restaurant: storeId
     }));
 
-   sessionStorage.setItem("cart", JSON.stringify(cart));
-sessionStorage.removeItem("storeNote");
+    if (!cart.length) {
+      showToast("لا توجد عناصر لإعادة الطلب");
+      return;
+    }
+
+    sessionStorage.setItem("cart", JSON.stringify(cart));
+    sessionStorage.removeItem("storeNote");
+
     showToast("تمت إضافة الطلب إلى السلة");
 
     setTimeout(() => {
@@ -497,8 +537,9 @@ async function loadOrders() {
             <div class="order-store">${order.store_name || "المتجر"}</div>
             <div class="order-number">${formatOrderNumber(order.id)}</div>
           </div>
-          <div class="order-status">${getStatusLabel(order.status)}</div>
-        </div>
+          <div class="order-status ${getStatusClass(order.status)}">${getStatusLabel(order.status)}
+            </div> 
+             </div>
 
         <div class="order-meta">
           <div class="meta-row">
@@ -513,7 +554,7 @@ async function loadOrders() {
 
           <div class="meta-row">
             <span>الإجمالي</span>
-            <strong>${order.total_price} دينار</strong>
+            <strong>${formatPrice(order.total_price)} دينار</strong>
           </div>
 
           <div class="meta-row">
@@ -549,6 +590,10 @@ async function loadOrders() {
 }
 
 loadOrders();
+
+setInterval(() => {
+  loadOrders();
+}, 10000);
 </script>
 
 </body>

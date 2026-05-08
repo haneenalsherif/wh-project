@@ -1336,7 +1336,21 @@ app.get("/api/store/orders", authenticateToken, requireStoreOwner, async (req, r
       [store.id]
     );
 
-    res.json(result.rows);
+    const orders = result.rows;
+
+    for (const order of orders) {
+      const itemsResult = await pool.query(
+        `SELECT product_name, qty, price
+         FROM order_items
+         WHERE order_id = $1
+         ORDER BY id ASC`,
+        [order.id]
+      );
+
+      order.items = itemsResult.rows;
+    }
+
+    res.json(orders);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "فشل جلب طلبات المتجر" });

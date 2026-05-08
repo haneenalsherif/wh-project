@@ -328,13 +328,9 @@
     <div class="box">
       <div class="box-title">مسار الطلب</div>
 
-      <div class="tracking">
-        <div class="tracking-step done">
-          <div class="step-dot">✓</div>
-          <div class="step-content">
-            <div class="step-title">تم استلام الطلب</div>
-            <div class="step-sub">وصل طلبك للنظام بنجاح.</div>
-          </div>
+      <div class="tracking" id="trackingSteps">
+  <!-- يتم تعبئة مسار الطلب من JavaScript -->
+</div>
         </div>
 
         <div class="tracking-step active">
@@ -379,6 +375,10 @@
   </div>
 </div>
 <script>
+
+
+
+
 function getPaymentLabel(payment) {
   if (payment === "cash") return "الدفع عند الاستلام";
   if (payment === "card") return "بطاقة مصرفية";
@@ -399,7 +399,81 @@ function authHeaders() {
   };
 }
 
+function renderTracking(status) {
+  const steps = [
+    {
+      key: "pending",
+      title: "تم استلام الطلب",
+      sub: "وصل طلبك للنظام بنجاح."
+    },
+    {
+      key: "preparing",
+      title: "جاري تجهيز الطلب",
+      sub: "المتجر يراجع ويجهز العناصر المطلوبة."
+    },
+    {
+      key: "delivering",
+      title: "خرج للتوصيل",
+      sub: "طلبك خرج للتوصيل وسيصل إليك قريبًا."
+    },
+    {
+      key: "delivered",
+      title: "تم التسليم",
+      sub: "تم تسليم الطلب بنجاح."
+    }
+  ];
+
+  const statusIndex = {
+    pending: 0,
+    accepted: 1,
+    preparing: 1,
+    delivering: 2,
+    delivered: 3,
+    rejected: -1
+  };
+
+  const currentIndex = statusIndex[status] ?? 0;
+  const container = document.getElementById("trackingSteps");
+
+  if (status === "rejected") {
+    container.innerHTML = `
+      <div class="tracking-step active">
+        <div class="step-dot">!</div>
+        <div class="step-content">
+          <div class="step-title">تم رفض الطلب</div>
+          <div class="step-sub">نعتذر، تم رفض الطلب من قبل المتجر.</div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = steps.map((step, index) => {
+    let className = "";
+
+    if (index < currentIndex) {
+      className = "done";
+    } else if (index === currentIndex) {
+      className = "active";
+    }
+
+    const dot = index < currentIndex ? "✓" : index + 1;
+
+    return `
+      <div class="tracking-step ${className}">
+        <div class="step-dot">${dot}</div>
+        <div class="step-content">
+          <div class="step-title">${step.title}</div>
+          <div class="step-sub">${step.sub}</div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+
 async function loadSuccessData() {
+
   const lastOrderId = sessionStorage.getItem("lastOrderId");
   const token = getToken();
 
@@ -430,6 +504,7 @@ async function loadSuccessData() {
 
     const order = data.order;
     const items = data.items || [];
+    renderTracking(order.status);
 
     let totalItems = 0;
     items.forEach(item => {
@@ -441,7 +516,8 @@ async function loadSuccessData() {
     document.getElementById("orderAddress").textContent = order.customer_address || "---";
     document.getElementById("paymentMethod").textContent = getPaymentLabel(order.payment_method);
     document.getElementById("itemsCount").textContent = totalItems;
-    document.getElementById("orderTotal").textContent = order.total_price + " دينار";
+    document.getElementById("orderTotal").textContent =
+  Number(order.total_price || 0).toFixed(2) + " دينار";
     document.getElementById("deliveryNote").textContent = order.delivery_note?.trim() ? order.delivery_note : "لا توجد";
 
     const itemsList = document.getElementById("itemsList");

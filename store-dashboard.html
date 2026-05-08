@@ -524,7 +524,7 @@
         <input id="productId" type="hidden">
         <input id="name" placeholder="اسم المنتج">
         <input id="price" type="number" placeholder="السعر">
-        <input id="image" placeholder="رابط الصورة">
+        <input id="image" placeholder="رابط الصورة أو مسار صورة داخل images">
         <select id="category">
           <option value="">اختاري تصنيف المنتج</option>
         </select>
@@ -730,9 +730,22 @@ async function saveProduct() {
   };
 
   if (!body.name || !body.price || !body.image || !body.category_id) {
-    showToast("كملي بيانات المنتج والتصنيف");
-    return;
-  }
+  showToast("كملي بيانات المنتج والتصنيف");
+  return;
+}
+
+if (Number(body.price) <= 0) {
+  showToast("السعر يجب أن يكون أكبر من صفر");
+  return;
+}
+
+if (
+  !body.image.startsWith("http") &&
+  !body.image.startsWith("images/")
+) {
+  showToast("رابط الصورة غير صحيح");
+  return;
+}
 
   const url = productId ? `/api/store/products/${productId}` : "/api/store/products";
   const method = productId ? "PUT" : "POST";
@@ -821,7 +834,7 @@ function renderProducts(errorMessage = "") {
 
     card.innerHTML = `
       <div class="product-top">
-        <img class="product-img" src="${product.image || ""}" onerror="this.src='https://via.placeholder.com/100'">
+<img class="product-img" src="${product.image || ""}" onerror="this.src='images/dolce1.jpg.jpg'">
         <div class="product-info">
           <div class="product-name">${product.name || "منتج"}</div>
           <div class="product-price">${product.price} دينار</div>
