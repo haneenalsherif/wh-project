@@ -2,284 +2,367 @@
 <html lang="ar">
 <head>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WH App</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WH App</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
 
-    body {
-      direction: rtl;
-      background: #FAF3E0;
-      color: #2F3E46;
-      opacity: 0;
-      animation: pageFade 0.45s ease forwards;
-    }
+body {
+  direction: rtl;
+  background: #FAF3E0;
+  color: #2F3E46;
+  opacity: 0;
+  animation: pageFade 0.45s ease forwards;
+}
 
-    @keyframes pageFade {
-      to { opacity: 1; }
-    }
+@keyframes pageFade {
+  to { opacity: 1; }
+}
 
-    .page {
-      max-width: 430px;
-      margin: 0 auto;
-      min-height: 100vh;
-      background: #FAF3E0;
-      padding-bottom: 95px;
-    }
+.page {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #FAF3E0;
+  padding-bottom: 95px;
+}
 
-    .topbar {
-      background: #A3B18A;
-      color: white;
-      padding: 16px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 22px;
-      font-weight: bold;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
+.topbar {
+  background: #FAF3E0;
+  color: #344E41;
+  padding: 18px 16px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
 
-    .topbar-icon {
-      font-size: 20px;
-      cursor: pointer;
-    }
+.delivery-box {
+  line-height: 1.5;
+}
 
-    .hero {
-      margin: 16px;
-      background: #EDE0D4;
-      border-radius: 24px;
-      padding: 22px 18px;
-      text-align: center;
-    }
+.small-text {
+  font-size: 12px;
+  color: #6B705C;
+}
 
-    .hero-title {
-      font-size: 30px;
-      font-weight: bold;
-      color: #344E41;
-      line-height: 1.6;
-    }
+.delivery-place {
+  font-size: 18px;
+  font-weight: bold;
+  color: #344E41;
+}
 
-    .hero-subtitle {
-      margin-top: 8px;
-      color: #6B705C;
-      font-size: 15px;
-    }
+.top-icons {
+  display: flex;
+  gap: 10px;
+}
 
-    .search-box {
-      margin: 0 16px 18px;
-      background: white;
-      border-radius: 18px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
+.circle-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: #344E41;
+  font-size: 22px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  cursor: pointer;
+}
 
-    .search-box input {
-      border: none;
-      outline: none;
-      flex: 1;
-      background: transparent;
-      font-size: 15px;
-      color: #2F3E46;
-    }
+.hero {
+  margin: 16px;
+  background: #EDE0D4;
+  border-radius: 26px;
+  padding: 24px 18px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
 
-    .section-title {
-      font-size: 22px;
-      font-weight: bold;
-      color: #344E41;
-      padding: 0 16px 12px;
-    }
+.hero::after {
+  content: "🌿";
+  position: absolute;
+  left: 18px;
+  bottom: 14px;
+  font-size: 38px;
+  opacity: 0.35;
+}
 
-    .chips {
-      display: flex;
-      gap: 10px;
-      padding: 0 16px 18px;
-      overflow-x: auto;
-      scroll-behavior: smooth;
-    }
+.hero-title {
+  font-size: 29px;
+  font-weight: bold;
+  color: #344E41;
+  line-height: 1.6;
+}
 
-    .chips::-webkit-scrollbar {
-      display: none;
-    }
+.hero-subtitle {
+  margin-top: 8px;
+  color: #6B705C;
+  font-size: 15px;
+}
 
-    .chip {
-      border: none;
-      background: #EDE0D4;
-      color: #344E41;
-      padding: 11px 16px;
-      border-radius: 16px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: 0.2s ease;
-    }
+.search-box {
+  margin: 0 16px 18px;
+  background: white;
+  border-radius: 20px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
 
-    .chip.active {
-      background: #A3B18A;
-      color: white;
-    }
+.search-box input {
+  border: none;
+  outline: none;
+  flex: 1;
+  background: transparent;
+  font-size: 15px;
+  color: #2F3E46;
+}
 
-    .places {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      padding: 0 16px;
-    }
+.section-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #344E41;
+  padding: 0 16px 12px;
+}
 
-    .place-card {
-      background: white;
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-      cursor: pointer;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
+.category-grid {
+  margin: 0 16px 22px;
+  background: white;
+  border-radius: 28px;
+  padding: 18px 14px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px 10px;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+  border: 1px solid #f0e7d8;
+}
 
-    .place-card:active {
-      transform: scale(0.98);
-    }
+.cat-card {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+  color: #344E41;
+  font-weight: bold;
+}
 
-    .place-card img {
-      width: 100%;
-      height: 170px;
-      object-fit: cover;
-      display: block;
-    }
+.cat-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 8px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #FAF3E0, #EDE0D4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: inset 0 0 0 1px #eadfce;
+}
 
-    .place-content {
-      padding: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 12px;
-    }
+.cat-card.active .cat-icon {
+  background: #A3B18A;
+  color: white;
+}
 
-    .place-info {
-      flex: 1;
-    }
+.cat-card span {
+  font-size: 13px;
+}
 
-    .place-name {
-      font-size: 20px;
-      font-weight: bold;
-      color: #2F3E46;
-      margin-bottom: 6px;
-    }
+.places {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 16px;
+}
 
-    .place-type {
-      color: #6B705C;
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
+.place-card {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
+}
 
-    .place-meta {
-      color: #888;
-      font-size: 13px;
-    }
+.place-card:active {
+  transform: scale(0.98);
+}
 
-    .open-btn {
-      border: none;
-      background: #A3B18A;
-      color: white;
-      padding: 12px 16px;
-      border-radius: 14px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
+.place-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  display: block;
+}
 
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
-      background: #ffffff;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0;
-      border-top: 1px solid #e8dfcf;
-      box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
-      z-index: 999;
-    }
+.status-pill {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: white;
+  color: #344E41;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
 
-    .nav-item {
-      text-align: center;
-      font-size: 12px;
-      color: #8a8f98;
-      cursor: pointer;
-      min-width: 60px;
-    }
+.favorite-mini {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: white;
+  color: #344E41;
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 21px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
 
-    .nav-item div {
-      font-size: 18px;
-      margin-bottom: 4px;
-    }
+.place-content {
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
 
-    .material-icons {
-      font-size: 22px;
-      display: block;
-      margin-bottom: 4px;
-    }
+.place-info {
+  flex: 1;
+}
 
-    .nav-item.active {
-      color: #344E41;
-      font-weight: bold;
-    }
+.place-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2F3E46;
+  margin-bottom: 6px;
+}
 
-    .hidden {
-      display: none;
-    }
+.place-type {
+  color: #6B705C;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
 
-    .loading-text,
-    .empty-text {
-      text-align: center;
-      color: #777;
-      padding: 18px 0;
-      font-size: 15px;
-    }
-  </style>
+.place-meta {
+  color: #888;
+  font-size: 13px;
+}
+
+.open-btn {
+  border: none;
+  background: #A3B18A;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  background: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-top: 1px solid #e8dfcf;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+  z-index: 999;
+}
+
+.nav-item {
+  text-align: center;
+  font-size: 12px;
+  color: #8a8f98;
+  cursor: pointer;
+  min-width: 60px;
+}
+
+.nav-item div {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.material-icons {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.nav-item.active {
+  color: #344E41;
+  font-weight: bold;
+}
+
+.loading-text,
+.empty-text {
+  text-align: center;
+  color: #777;
+  padding: 18px 0;
+  font-size: 15px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="page">
 
   <div class="topbar">
-    <div>WH App</div>
-    <div class="topbar-icon" onclick="window.location.href='profile.html'">👤</div>
+    <div class="delivery-box">
+      <div class="small-text">التوصيل إلى</div>
+      <div class="delivery-place">📍 مصراتة</div>
+    </div>
+
+    <div class="top-icons">
+      <button class="circle-icon" onclick="window.location.href='favorites.html'">♡</button>
+      <button class="circle-icon" onclick="window.location.href='profile.html'">👤</button>
+    </div>
   </div>
 
   <div class="hero">
-    <div class="hero-title">اطلب كل اللي تحتاجه بسهولة 🌿</div>
-    <div class="hero-subtitle">مطاعم، كافيهات، وصيدليات في مكان واحد</div>
+    <div class="hero-title">اطلب كل اللي تحتاجه بسهولة</div>
+    <div class="hero-subtitle">مطاعم، كافيهات، صيدليات ومتاجر في مكان واحد</div>
   </div>
 
   <div class="search-box">
     <span>🔍</span>
-    <input type="text" id="searchInput" placeholder="ابحث عن مطعم، كافيه، أو صيدلية">
+    <input type="text" id="searchInput" placeholder="ابحث عن مطعم، كافيه، صيدلية أو متجر">
   </div>
 
-  <div class="section-title">التصنيفات</div>
-  <div class="chips" id="chipsContainer"></div>
+  <div class="section-title">الخدمات</div>
+  <div class="category-grid" id="chipsContainer"></div>
 
   <div class="section-title">أماكن مشهورة</div>
 
   <div class="places" id="placesContainer">
-  <div class="loading-text">جاري تحميل الأماكن...</div>
-</div>
+    <div class="loading-text">جاري تحميل الأماكن...</div>
+  </div>
+
 </div>
 
 <div class="bottom-nav">
@@ -298,124 +381,165 @@
     <span>السلة</span>
   </div>
 
-  <div class="nav-item" onclick="window.location.href='profile.html'">    
+  <div class="nav-item" onclick="window.location.href='profile.html'">
     <div>👤</div>
     <span>حسابي</span>
   </div>
 </div>
 
 <script>
-  const searchInput = document.getElementById("searchInput");
-  const placesContainer = document.getElementById("placesContainer");
+const searchInput = document.getElementById("searchInput");
+const placesContainer = document.getElementById("placesContainer");
 
-  let storesData = [];
-  let currentFilter = "all";
+let storesData = [];
+let currentFilter = "all";
 
-  function getTypeLabel(type) {
-    if (type === "restaurant") return "مطعم";
-    if (type === "cafe") return "كافيه";
-    if (type === "pharmacy") return "صيدلية";
-    return type;
-  }
+function getTypeLabel(type) {
+  if (type === "restaurant") return "مطعم";
+  if (type === "cafe") return "كافيه";
+  if (type === "pharmacy") return "صيدلية";
+  if (type === "market") return "ماركت";
+  if (type === "bakery") return "مخبز";
+  if (type === "store") return "متجر";
+  return type;
+}
 
-  function renderStores() {
-    const searchValue = searchInput.value.trim().toLowerCase();
+function renderStores() {
+  const searchValue = searchInput.value.trim().toLowerCase();
 
-    const filteredStores = storesData.filter(store => {
-      const storeType = store.type;
-      const storeName = (store.name || "").toLowerCase();
+  const filteredStores = storesData.filter(store => {
+    const storeType = store.type;
+    const storeName = (store.name || "").toLowerCase();
 
-      const matchesType = currentFilter === "all" || storeType === currentFilter;
-      const matchesSearch = storeName.includes(searchValue);
+    const matchesType = currentFilter === "all" || storeType === currentFilter;
+    const matchesSearch = storeName.includes(searchValue);
 
-      return matchesType && matchesSearch;
-    });
-
-    placesContainer.innerHTML = "";
-
-    if (filteredStores.length === 0) {
-      placesContainer.innerHTML = '<div class="empty-text">لا توجد أماكن مطابقة</div>';
-      return;
-    }
-
-    filteredStores.forEach(store => {
-      const card = document.createElement("div");
-      card.className = "place-card";
-
-      card.innerHTML = `
-        <img src="${store.image}" alt="${store.name}">
-        <div style="font-size:13px; margin-top:5px; color:#666;">
-  ${store.is_active ? "🟢 مفتوح" : "🔴 مغلق"}
-</div>
-        <div class="place-content">
-          <div class="place-info">
-            <div class="place-name">${store.name}</div>
-            <div class="place-type">${getTypeLabel(store.type)}</div>
-            <div class="place-meta">رسوم التوصيل • ${store.delivery_fee} د.ل</div>
-          </div>
-          <button class="open-btn" type="button">افتح</button>
-        </div>
-      `;
-
-      card.addEventListener("click", function () {
-        
-        goToPage(`store.html?id=${store.id}`, card);
-
-      });
-
-      placesContainer.appendChild(card);
-    });
-  }
-
-  async function loadStores() {
-    try {
-      const response = await fetch("/api/stores");
-      const data = await response.json();
-      storesData = data;
-      renderStores();
-    } catch (error) {
-      placesContainer.innerHTML = '<div class="empty-text">فشل تحميل الأماكن</div>';
-      console.error("Error loading stores:", error);
-    }
-  }
-
-  function filterCards(type, element) {
-    currentFilter = type;
-
-    document.querySelectorAll(".chip").forEach(chip => chip.classList.remove("active"));
-    element.classList.add("active");
-
-    renderStores();
-  }
-
-  searchInput.addEventListener("input", function () {
-    renderStores();
+    return matchesType && matchesSearch;
   });
 
-  function goToPage(page, card) {
-    card.style.transform = "scale(0.97)";
-    setTimeout(() => {
-      window.location.href = page;
-    }, 120);
+  placesContainer.innerHTML = "";
+
+  if (filteredStores.length === 0) {
+    placesContainer.innerHTML = '<div class="empty-text">لا توجد أماكن مطابقة</div>';
+    return;
   }
 
-  loadStores();
+  filteredStores.forEach(store => {
+    const card = document.createElement("div");
+    card.className = "place-card";
+
+    card.innerHTML = `
+      <img src="${store.image}" alt="${store.name}" onerror="this.src='images/dolce1.jpg.jpg'">
+
+      <div class="status-pill">
+        ${store.is_active ? "🟢 مفتوح" : "🔴 مغلق"}
+      </div>
+
+      <button class="favorite-mini" onclick="event.stopPropagation(); toggleFavorite(${store.id}, this)">♡</button>
+
+      <div class="place-content">
+        <div class="place-info">
+          <div class="place-name">${store.name}</div>
+          <div class="place-type">${getTypeLabel(store.type)}</div>
+          <div class="place-meta">رسوم التوصيل • ${store.delivery_fee || 0} د.ل</div>
+        </div>
+
+        <button class="open-btn" type="button">افتح</button>
+      </div>
+    `;
+
+    card.addEventListener("click", function () {
+      goToPage(`store.html?id=${store.id}`, card);
+    });
+
+    placesContainer.appendChild(card);
+  });
+}
+
+async function loadStores() {
+  try {
+    const response = await fetch("/api/stores");
+    const data = await response.json();
+    storesData = data;
+    renderStores();
+  } catch (error) {
+    placesContainer.innerHTML = '<div class="empty-text">فشل تحميل الأماكن</div>';
+    console.error("Error loading stores:", error);
+  }
+}
+
+function filterCards(type, element) {
+  currentFilter = type;
+
+  document.querySelectorAll(".cat-card").forEach(chip => chip.classList.remove("active"));
+  element.classList.add("active");
+
+  renderStores();
+}
+
+searchInput.addEventListener("input", function () {
+  renderStores();
+});
+
+function goToPage(page, card) {
+  card.style.transform = "scale(0.97)";
+  setTimeout(() => {
+    window.location.href = page;
+  }, 120);
+}
+
+function toggleFavorite(storeId, btn) {
+  let favorites = JSON.parse(sessionStorage.getItem("favorites")) || [];
+
+  if (favorites.includes(storeId)) {
+    favorites = favorites.filter(id => id !== storeId);
+    btn.textContent = "♡";
+  } else {
+    favorites.push(storeId);
+    btn.textContent = "♥";
+  }
+
+  sessionStorage.setItem("favorites", JSON.stringify(favorites));
+}
 
 async function loadStoreTypes() {
   const container = document.getElementById("chipsContainer");
+
+  const icons = {
+    all: "✨",
+    restaurant: "🍔",
+    cafe: "☕",
+    pharmacy: "💊",
+    market: "🛒",
+    bakery: "🥐",
+    store: "🛍️",
+    games: "🎮"
+  };
 
   try {
     const res = await fetch("/api/store-types");
     const types = await res.json();
 
-    container.innerHTML = `
-      <button class="chip active" onclick="filterCards('all', this)">الكل</button>
+    container.innerHTML = "";
+
+    const allBtn = document.createElement("button");
+    allBtn.className = "cat-card active";
+    allBtn.innerHTML = `
+      <div class="cat-icon">${icons.all}</div>
+      <span>الكل</span>
     `;
+    allBtn.onclick = function () {
+      filterCards("all", this);
+    };
+    container.appendChild(allBtn);
 
     types.forEach(type => {
       const btn = document.createElement("button");
-      btn.className = "chip";
-      btn.textContent = type.name;
+      btn.className = "cat-card";
+      btn.innerHTML = `
+        <div class="cat-icon">${icons[type.type_key] || "🏪"}</div>
+        <span>${type.name}</span>
+      `;
 
       btn.onclick = function () {
         filterCards(type.type_key, this);
@@ -429,9 +553,8 @@ async function loadStoreTypes() {
   }
 }
 
+loadStores();
 loadStoreTypes();
-
-
 </script>
 
 </body>
