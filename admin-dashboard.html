@@ -1,213 +1,319 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لوحة التحكم - WH Admin</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>لوحة التحكم - WH Admin</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
 
-    body {
-      direction: rtl;
-      background: #FAF3E0;
-      color: #2F3E46;
-    }
+body{
+  direction:rtl;
+  background:#FAF3E0;
+  color:#2F3E46;
+}
 
-    .layout {
-      display: flex;
-      min-height: 100vh;
-    }
+.page{
+  max-width:1180px;
+  margin:0 auto;
+  min-height:100vh;
+  padding-bottom:30px;
+}
 
-    .sidebar {
-      width: 250px;
-      background: #A3B18A;
-      color: white;
-      padding: 24px 16px;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-    }
+.header{
+  padding:20px;
+}
 
-    .logo {
-      font-size: 28px;
-      font-weight: bold;
-      margin-bottom: 28px;
-      text-align: center;
-    }
+.header-card{
+  background:linear-gradient(135deg,#344E41,#A3B18A);
+  color:white;
+  border-radius:30px;
+  padding:24px;
+  box-shadow:0 10px 25px rgba(52,78,65,.18);
+}
 
-    .menu-item {
-      display: block;
-      width: 100%;
-      text-decoration: none;
-      color: white;
-      background: transparent;
-      border: none;
-      padding: 14px 16px;
-      border-radius: 14px;
-      margin-bottom: 10px;
-      text-align: right;
-      font-size: 15px;
-      cursor: pointer;
-    }
+.header-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  margin-bottom:18px;
+}
 
-    .menu-item:hover,
-    .menu-item.active {
-      background: rgba(255,255,255,0.18);
-    }
+.admin-title{
+  font-size:30px;
+  font-weight:bold;
+}
 
-    .content {
-      flex: 1;
-      padding: 24px;
-    }
+.admin-subtitle{
+  font-size:14px;
+  opacity:.9;
+  line-height:1.8;
+  margin-top:6px;
+}
 
-    .topbar {
-      background: white;
-      border-radius: 20px;
-      padding: 18px 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+.logout-btn{
+  border:none;
+  background:white;
+  color:#344E41;
+  padding:12px 16px;
+  border-radius:16px;
+  font-weight:bold;
+  cursor:pointer;
+  white-space:nowrap;
+}
 
-    .page-title {
-      font-size: 28px;
-      font-weight: bold;
-      color: #344E41;
-    }
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
 
-    .logout-btn {
-      border: none;
-      background: #EDE0D4;
-      color: #344E41;
-      padding: 12px 18px;
-      border-radius: 14px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.stat-card{
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:20px;
+  padding:16px;
+}
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-      margin-bottom: 20px;
-    }
+.stat-label{
+  font-size:13px;
+  opacity:.88;
+  margin-bottom:8px;
+}
 
-    .card {
-      background: white;
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
+.stat-value{
+  font-size:28px;
+  font-weight:bold;
+}
 
-    .card-title {
-      color: #777;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
+.content{
+  padding:0 20px 20px;
+}
 
-    .card-value {
-      font-size: 28px;
-      font-weight: bold;
-      color: #344E41;
-    }
+.section-title{
+  font-size:24px;
+  font-weight:bold;
+  color:#344E41;
+  margin-bottom:14px;
+}
 
-    .section {
-      background: white;
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
+.admin-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:16px;
+  margin-bottom:20px;
+}
 
-    .section-title {
-      font-size: 22px;
-      font-weight: bold;
-      color: #344E41;
-      margin-bottom: 14px;
-    }
+.admin-card{
+  background:white;
+  border-radius:26px;
+  padding:20px;
+  box-shadow:0 5px 16px rgba(0,0,0,.05);
+  border:1px solid #f0e7d8;
+  cursor:pointer;
+  transition:.2s ease;
+}
 
-    .quick-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+.admin-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 24px rgba(0,0,0,.08);
+}
 
-    .quick-btn {
-      border: none;
-      background: #344E41;
-      color: white;
-      padding: 13px 18px;
-      border-radius: 14px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.card-icon{
+  width:58px;
+  height:58px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#FAF3E0,#EDE0D4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  margin-bottom:14px;
+}
 
-    @media (max-width: 900px) {
-      .layout {
-        flex-direction: column;
-      }
+.card-title{
+  font-size:19px;
+  font-weight:bold;
+  color:#344E41;
+  margin-bottom:8px;
+}
 
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-      }
-    }
-  </style>
+.card-desc{
+  color:#6B705C;
+  font-size:14px;
+  line-height:1.8;
+}
+
+.quick-box{
+  background:white;
+  border-radius:26px;
+  padding:20px;
+  box-shadow:0 5px 16px rgba(0,0,0,.05);
+}
+
+.quick-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.quick-btn{
+  border:none;
+  background:#344E41;
+  color:white;
+  border-radius:16px;
+  padding:13px 18px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.quick-btn.soft{
+  background:#EDE0D4;
+  color:#344E41;
+}
+
+.notice{
+  margin-top:16px;
+  background:#FAF3E0;
+  border:1px dashed #DAD7CD;
+  border-radius:18px;
+  padding:14px;
+  color:#6B705C;
+  font-size:14px;
+  line-height:1.8;
+}
+
+.loading{
+  color:rgba(255,255,255,.8);
+  font-size:13px;
+}
+
+@media(max-width:800px){
+  .page{
+    max-width:430px;
+  }
+
+  .header{
+    padding:14px;
+  }
+
+  .content{
+    padding:0 14px 20px;
+  }
+
+  .header-top{
+    align-items:flex-start;
+  }
+
+  .admin-title{
+    font-size:25px;
+  }
+
+  .stats-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .admin-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
+
 <body>
 
-<div class="layout">
-  <div class="sidebar">
-    <div class="logo">WH Admin</div>
+<div class="page">
 
-    <button class="menu-item active" onclick="window.location.href='admin-dashboard.html'">الرئيسية</button>
-    <button class="menu-item" onclick="window.location.href='admin-stores.html'">إدارة المتاجر</button>
-    <button class="menu-item" onclick="window.location.href='admin-admins.html'">إدارة الأدمنات</button>
-    <button class="menu-item" onclick="window.location.href='admin-orders.html'">إدارة الطلبات</button>
-    <button class="menu-item" onclick="window.location.href='admin-store-types.html'">أنواع المتاجر</button>
+  <div class="header">
+    <div class="header-card">
+      <div class="header-top">
+        <div>
+          <div class="admin-title">WH Admin</div>
+          <div class="admin-subtitle">
+            لوحة تحكم لإدارة المتاجر، الطلبات، الأدمنات، وأنواع الخدمات داخل التطبيق.
+          </div>
+        </div>
+
+        <button class="logout-btn" onclick="logoutAdmin()">خروج</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">المتاجر</div>
+          <div class="stat-value" id="storesCount">0</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">الأدمنات</div>
+          <div class="stat-value" id="adminsCount">0</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">الطلبات</div>
+          <div class="stat-value" id="ordersCount">0</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">أنواع المتاجر</div>
+          <div class="stat-value" id="typesCount">0</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="content">
-    <div class="topbar">
-      <div class="page-title">لوحة التحكم</div>
-      <button class="logout-btn" onclick="logoutAdmin()">تسجيل الخروج</button>
-    </div>
 
-    <div class="cards">
-      <div class="card">
-        <div class="card-title">عدد المتاجر</div>
-        <div class="card-value" id="storesCount">0</div>
+    <div class="section-title">إدارة النظام</div>
+
+    <div class="admin-grid">
+      <div class="admin-card" onclick="window.location.href='admin-stores.html'">
+        <div class="card-icon">🏪</div>
+        <div class="card-title">إدارة المتاجر</div>
+        <div class="card-desc">إضافة وتعديل المتاجر وربطها بأصحاب المتاجر.</div>
       </div>
 
-      <div class="card">
-        <div class="card-title">عدد الأدمنات</div>
-        <div class="card-value" id="adminsCount">0</div>
+      <div class="admin-card" onclick="window.location.href='admin-orders.html'">
+        <div class="card-icon">📦</div>
+        <div class="card-title">إدارة الطلبات</div>
+        <div class="card-desc">متابعة جميع الطلبات وحالاتها داخل النظام.</div>
+      </div>
+
+      <div class="admin-card" onclick="window.location.href='admin-admins.html'">
+        <div class="card-icon">🛡️</div>
+        <div class="card-title">إدارة الأدمنات</div>
+        <div class="card-desc">إضافة أدمنات جدد وإدارة صلاحيات الدخول.</div>
+      </div>
+
+      <div class="admin-card" onclick="window.location.href='admin-store-types.html'">
+        <div class="card-icon">🧩</div>
+        <div class="card-title">أنواع المتاجر</div>
+        <div class="card-desc">إدارة التصنيفات الرئيسية مثل مطاعم، كافيهات، صيدليات.</div>
       </div>
     </div>
 
-    <div class="section">
+    <div class="quick-box">
       <div class="section-title">اختصارات سريعة</div>
-      <div class="quick-links">
-        <button class="quick-btn" onclick="window.location.href='admin-stores.html'">إدارة المتاجر</button>
-        <button class="quick-btn" onclick="window.location.href='admin-admins.html'">إدارة الأدمنات</button>
-        <button class="quick-btn" onclick="window.location.href='admin-orders.html'">إدارة الطلبات</button>
-        <button class="quick-btn" onclick="window.location.href='admin-store-types.html'">أنواع المتاجر</button>
+
+      <div class="quick-actions">
+        <button class="quick-btn" onclick="window.location.href='admin-stores.html'">+ متجر جديد</button>
+        <button class="quick-btn" onclick="window.location.href='admin-admins.html'">+ أدمن جديد</button>
+        <button class="quick-btn soft" onclick="window.location.href='index.html'">عرض التطبيق</button>
+        <button class="quick-btn soft" onclick="window.location.href='store-login.html'">دخول صاحب متجر</button>
+      </div>
+
+      <div class="notice">
+        هذه الصفحة مخصصة للإدارة العامة للنظام. أي تعديل هنا يؤثر على بيانات التطبيق بالكامل.
       </div>
     </div>
+
   </div>
 </div>
 
 <script>
 function logoutAdmin() {
- sessionStorage.clear();
+  sessionStorage.clear();
   window.location.href = "admin-login.html";
 }
 
@@ -222,6 +328,13 @@ function authHeaders() {
 }
 
 async function loadDashboardStats() {
+  const token = getToken();
+
+  if (!token) {
+    window.location.href = "admin-login.html";
+    return;
+  }
+
   try {
     const storesRes = await fetch("/api/admin/stores", {
       headers: authHeaders()
@@ -230,8 +343,6 @@ async function loadDashboardStats() {
 
     if (storesRes.ok && Array.isArray(storesData)) {
       document.getElementById("storesCount").textContent = storesData.length;
-    } else {
-      document.getElementById("storesCount").textContent = "0";
     }
 
     const adminsRes = await fetch("/api/admin/admins", {
@@ -241,14 +352,28 @@ async function loadDashboardStats() {
 
     if (adminsRes.ok && Array.isArray(adminsData)) {
       document.getElementById("adminsCount").textContent = adminsData.length;
-    } else {
-      document.getElementById("adminsCount").textContent = "0";
+    }
+
+    const ordersRes = await fetch("/api/admin/orders", {
+      headers: authHeaders()
+    });
+    const ordersData = await ordersRes.json();
+
+    if (ordersRes.ok && Array.isArray(ordersData)) {
+      document.getElementById("ordersCount").textContent = ordersData.length;
+    }
+
+    const typesRes = await fetch("/api/admin/store-types", {
+      headers: authHeaders()
+    });
+    const typesData = await typesRes.json();
+
+    if (typesRes.ok && Array.isArray(typesData)) {
+      document.getElementById("typesCount").textContent = typesData.length;
     }
 
   } catch (error) {
     console.error("Dashboard error:", error);
-    document.getElementById("storesCount").textContent = "0";
-    document.getElementById("adminsCount").textContent = "0";
   }
 }
 
