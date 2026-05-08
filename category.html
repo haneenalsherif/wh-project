@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الأماكن - WH App</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+
+body{
+  direction:rtl;
+  background:#FAF3E0;
+  color:#2F3E46;
+}
+
+.page{
+  max-width:430px;
+  margin:auto;
+  min-height:100vh;
+  background:#FAF3E0;
+  padding-bottom:95px;
+}
+
+.top-area{
+  background:#A3B18A;
+  color:white;
+  padding:18px 16px 28px;
+  border-bottom-left-radius:28px;
+  border-bottom-right-radius:28px;
+}
+
+.top-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.back-btn,.cart-btn{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:14px;
+  background:white;
+  color:#344E41;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.location{
+  text-align:center;
+  font-size:14px;
+  line-height:1.7;
+}
+
+.location strong{
+  display:block;
+  font-size:17px;
+}
+
+.search-box{
+  background:white;
+  border-radius:999px;
+  padding:13px 16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.search-box span{
+  font-size:22px;
+  color:#6B705C;
+}
+
+.search-box input{
+  border:none;
+  outline:none;
+  flex:1;
+  background:transparent;
+  font-size:15px;
+  color:#2F3E46;
+}
+
+.section{
+  padding:18px 16px 0;
+}
+
+.section-title{
+  font-size:22px;
+  font-weight:bold;
+  color:#344E41;
+  margin-bottom:14px;
+}
+
+.subcats{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+
+.subcats::-webkit-scrollbar{display:none}
+
+.subcat{
+  min-width:92px;
+  border:none;
+  background:white;
+  border-radius:20px;
+  padding:10px 8px;
+  text-align:center;
+  color:#344E41;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+
+.subcat img{
+  width:68px;
+  height:68px;
+  border-radius:18px;
+  object-fit:cover;
+  margin-bottom:8px;
+  background:#EDE0D4;
+}
+
+.subcat.active{
+  background:#EDE0D4;
+  border:2px solid #A3B18A;
+}
+
+.offers-row{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+
+.offers-row::-webkit-scrollbar{display:none}
+
+.offer-card{
+  min-width:250px;
+  height:135px;
+  border-radius:22px;
+  background:linear-gradient(135deg,#344E41,#A3B18A);
+  color:white;
+  padding:18px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
+}
+
+.offer-card::after{
+  content:"";
+  width:95px;
+  height:95px;
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+  position:absolute;
+  left:-25px;
+  bottom:-25px;
+}
+
+.offer-title{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.offer-sub{
+  font-size:14px;
+  line-height:1.7;
+  opacity:.92;
+}
+
+.featured-row{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+
+.featured-row::-webkit-scrollbar{display:none}
+
+.featured-card{
+  min-width:210px;
+  height:145px;
+  border-radius:20px;
+  overflow:hidden;
+  position:relative;
+  background:white;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  cursor:pointer;
+}
+
+.featured-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.featured-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.68),rgba(0,0,0,.05));
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:12px;
+  color:white;
+}
+
+.verified{
+  position:absolute;
+  bottom:12px;
+  left:12px;
+  background:#A3B18A;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.store-card{
+  background:white;
+  border-radius:22px;
+  padding:12px;
+  display:flex;
+  gap:12px;
+  box-shadow:0 4px 14px rgba(0,0,0,.05);
+  cursor:pointer;
+}
+
+.store-img{
+  width:112px;
+  height:112px;
+  border-radius:18px;
+  object-fit:cover;
+  flex-shrink:0;
+  background:#EDE0D4;
+}
+
+.store-info{
+  flex:1;
+  min-width:0;
+}
+
+.store-name{
+  font-size:18px;
+  font-weight:bold;
+  color:#344E41;
+  margin-bottom:6px;
+}
+
+.store-meta{
+  color:#6B705C;
+  font-size:13px;
+  line-height:1.8;
+}
+
+.rating{
+  color:#E59F00;
+  font-weight:bold;
+}
+
+.status-open{
+  display:inline-block;
+  margin-top:7px;
+  padding:5px 9px;
+  background:#dcebd7;
+  color:#344E41;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.status-closed{
+  display:inline-block;
+  margin-top:7px;
+  padding:5px 9px;
+  background:#f3d7d7;
+  color:#8a1d1d;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.empty{
+  background:white;
+  border-radius:20px;
+  padding:25px;
+  text-align:center;
+  color:#777;
+}
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:430px;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  border-top:1px solid #e8dfcf;
+  box-shadow:0 -4px 12px rgba(0,0,0,.05);
+  z-index:999;
+}
+
+.nav-item{
+  text-align:center;
+  font-size:12px;
+  color:#888;
+  cursor:pointer;
+}
+
+.nav-item div{
+  font-size:20px;
+  margin-bottom:4px;
+}
+
+.nav-item.active{
+  color:#344E41;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div class="top-area">
+    <div class="top-row">
+      <button class="back-btn" onclick="history.back()">›</button>
+
+      <div class="location">
+        التوصيل إلى
+        <strong>مصراتة</strong>
+      </div>
+
+      <button class="cart-btn" onclick="window.location.href='cart.html'">🛒</button>
+    </div>
+
+    <div class="search-box">
+      <span>🔍</span>
+      <input id="searchInput" type="text" placeholder="ابحث عن مكان معين...">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title" id="categoryTitle">الأماكن</div>
+
+    <div class="subcats" id="subcatsContainer"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">عروض اليوم 🔥</div>
+    <div class="offers-row" id="offersContainer"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">شركاؤنا المميزين</div>
+    <div class="featured-row" id="featuredContainer"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">بالقرب منك</div>
+    <div class="list" id="storesContainer">
+      <div class="empty">جاري تحميل الأماكن...</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="window.location.href='index.html'">
+    <div>🏠</div>
+    <span>الرئيسية</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='orders.html'">
+    <div>📦</div>
+    <span>طلباتي</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='cart.html'">
+    <div>🛒</div>
+    <span>السلة</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='profile.html'">
+    <div>👤</div>
+    <span>حسابي</span>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const type = params.get("type") || "restaurant";
+const title = params.get("title") || "الأماكن";
+
+const searchInput = document.getElementById("searchInput");
+const storesContainer = document.getElementById("storesContainer");
+const featuredContainer = document.getElementById("featuredContainer");
+const offersContainer = document.getElementById("offersContainer");
+const subcatsContainer = document.getElementById("subcatsContainer");
+
+let storesData = [];
+let activeSub = "all";
+
+document.getElementById("categoryTitle").textContent = title;
+
+const subCategories = {
+  restaurant: [
+    { key:"all", name:"الكل", img:"https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=300&auto=format&fit=crop" },
+    { key:"burger", name:"برجر", img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=300&auto=format&fit=crop" },
+    { key:"pizza", name:"بيتزا", img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=300&auto=format&fit=crop" },
+    { key:"breakfast", name:"إفطار", img:"https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?q=80&w=300&auto=format&fit=crop" }
+  ],
+  cafe: [
+    { key:"all", name:"الكل", img:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=300&auto=format&fit=crop" },
+    { key:"hot", name:"ساخنة", img:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=300&auto=format&fit=crop" },
+    { key:"cold", name:"باردة", img:"https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=300&auto=format&fit=crop" },
+    { key:"dessert", name:"حلويات", img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=300&auto=format&fit=crop" }
+  ],
+  pharmacy: [
+    { key:"all", name:"الكل", img:"https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=300&auto=format&fit=crop" },
+    { key:"pain", name:"مسكنات", img:"https://images.unsplash.com/photo-1587854692152-cbe660dbde88?q=80&w=300&auto=format&fit=crop" },
+    { key:"care", name:"عناية", img:"https://images.unsplash.com/photo-1556228578-8c89e6adf883?q=80&w=300&auto=format&fit=crop" },
+    { key:"kids", name:"أطفال", img:"https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=300&auto=format&fit=crop" }
+  ]
+};
+
+function renderSubCategories() {
+  const list = subCategories[type] || [
+    { key:"all", name:"الكل", img:"https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=300&auto=format&fit=crop" }
+  ];
+
+  subcatsContainer.innerHTML = "";
+
+  list.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = cat.key === activeSub ? "subcat active" : "subcat";
+    btn.innerHTML = `
+      <img src="${cat.img}">
+      <div>${cat.name}</div>
+    `;
+
+    btn.onclick = () => {
+      activeSub = cat.key;
+      renderSubCategories();
+      renderStores();
+    };
+
+    subcatsContainer.appendChild(btn);
+  });
+}
+
+function renderOffers() {
+  offersContainer.innerHTML = `
+    <div class="offer-card">
+      <div class="offer-title">عرض خاص</div>
+      <div class="offer-sub">خصومات وتوصيل بسعر مميز من المتاجر المشاركة.</div>
+    </div>
+
+    <div class="offer-card">
+      <div class="offer-title">الأكثر طلبًا</div>
+      <div class="offer-sub">اختاري من الأماكن اللي عليها طلب عالي اليوم.</div>
+    </div>
+  `;
+}
+
+function renderFeatured(list) {
+  featuredContainer.innerHTML = "";
+
+  const featured = list.slice(0, 5);
+
+  if (!featured.length) {
+    featuredContainer.innerHTML = `<div class="empty">لا توجد أماكن مميزة</div>`;
+    return;
+  }
+
+  featured.forEach(store => {
+    const card = document.createElement("div");
+    card.className = "featured-card";
+    card.innerHTML = `
+      <img src="${store.image || ""}" onerror="this.src='images/dolce1.jpg.jpg'">
+      <div class="featured-overlay">
+        <strong>${store.name}</strong>
+        <small>${store.is_active ? "مفتوح الآن" : "مغلق"}</small>
+      </div>
+      <div class="verified">✓</div>
+    `;
+
+    card.onclick = () => {
+      window.location.href = `store.html?id=${store.id}`;
+    };
+
+    featuredContainer.appendChild(card);
+  });
+}
+
+function renderStores() {
+  const q = searchInput.value.trim().toLowerCase();
+
+  let list = storesData.filter(store => {
+    const name = (store.name || "").toLowerCase();
+    const storeType = store.type || store.store_type;
+
+    const matchType = storeType === type;
+    const matchSearch = name.includes(q);
+
+    return matchType && matchSearch;
+  });
+
+  storesContainer.innerHTML = "";
+
+  if (!list.length) {
+    storesContainer.innerHTML = `<div class="empty">لا توجد أماكن مطابقة</div>`;
+    renderFeatured([]);
+    return;
+  }
+
+  renderFeatured(list);
+
+  list.forEach(store => {
+    const card = document.createElement("div");
+    card.className = "store-card";
+
+    card.innerHTML = `
+      <img class="store-img" src="${store.image || ""}" onerror="this.src='images/dolce1.jpg.jpg'">
+
+      <div class="store-info">
+        <div class="store-name">${store.name}</div>
+
+        <div class="store-meta">
+          <span class="rating">★ 4.7</span>
+          &nbsp; • &nbsp; 40 دقيقة
+          <br>
+          رسوم التوصيل: ${store.delivery_fee || 0} د.ل
+        </div>
+
+        <div class="${store.is_active ? "status-open" : "status-closed"}">
+          ${store.is_active ? "مفتوح" : "مغلق"}
+        </div>
+      </div>
+    `;
+
+    card.onclick = () => {
+      window.location.href = `store.html?id=${store.id}`;
+    };
+
+    storesContainer.appendChild(card);
+  });
+}
+
+async function loadStores() {
+  try {
+    const res = await fetch("/api/stores");
+    const data = await res.json();
+
+    storesData = Array.isArray(data) ? data : [];
+
+    renderSubCategories();
+    renderOffers();
+    renderStores();
+  } catch (err) {
+    console.error(err);
+    storesContainer.innerHTML = `<div class="empty">فشل تحميل الأماكن</div>`;
+  }
+}
+
+searchInput.addEventListener("input", renderStores);
+
+loadStores();
+</script>
+
+</body>
+</html>
