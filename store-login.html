@@ -273,19 +273,21 @@ async function loginUser(event) {
             return false;
         }
 
+const role = data.user.role || "customer";
+
 sessionStorage.setItem("userId", data.user.id);
 sessionStorage.setItem("userFullName", data.user.full_name);
 sessionStorage.setItem("userPhone", data.user.phone);
 sessionStorage.setItem("userEmail", data.user.email);
-sessionStorage.setItem("userRole", data.user.role || "customer");
+sessionStorage.setItem("userRole", role);
+sessionStorage.setItem("role", role);
 sessionStorage.setItem("isLoggedIn", "true");
 sessionStorage.setItem("token", data.token);
 
 
 
-
-    setTimeout(() => {
-  if (data.user.role === "store_owner") {
+   setTimeout(() => {
+  if (role === "store_owner") {
     window.location.href = "store-dashboard.html";
   } else {
     successMessage.style.color = "#b00020";
