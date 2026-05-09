@@ -1194,7 +1194,19 @@ app.get("/api/store/products", authenticateToken, requireStoreOwner, async (req,
 
 app.post("/api/store/products", authenticateToken, requireStoreOwner, async (req, res) => {
   try {
-    const { name, price, image, category_id, description } = req.body;
+    const {
+      name,
+      price,
+      image,
+      category_id,
+      description,
+      is_offer,
+      old_price,
+      offer_price,
+      offer_title,
+      offer_start_at,
+      offer_end_at
+    } = req.body;
 
     if (!name || !price || !image || !category_id) {
       return res.status(400).json({ message: "البيانات ناقصة" });
@@ -1208,9 +1220,23 @@ app.post("/api/store/products", authenticateToken, requireStoreOwner, async (req
 
     await pool.query(
       `INSERT INTO products
-       (name, price, image, description, store_id, category_id, is_available)
-       VALUES ($1, $2, $3, $4, $5, $6, true)`,
-      [name, price, image, description || "", store.id, category_id]
+       (name, price, image, description, store_id, category_id, is_available,
+        is_offer, old_price, offer_price, offer_title, offer_start_at, offer_end_at)
+       VALUES ($1, $2, $3, $4, $5, $6, true, $7, $8, $9, $10, $11, $12)`,
+      [
+        name,
+        price,
+        image,
+        description || "",
+        store.id,
+        category_id,
+        is_offer === true,
+        old_price || null,
+        offer_price || null,
+        offer_title || null,
+        offer_start_at || null,
+        offer_end_at || null
+      ]
     );
 
     res.status(201).json({ message: "تمت إضافة المنتج بنجاح" });
@@ -1220,11 +1246,23 @@ app.post("/api/store/products", authenticateToken, requireStoreOwner, async (req
   }
 });
 
-
 app.put("/api/store/products/:id", authenticateToken, requireStoreOwner, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, price, image, category_id, description } = req.body;
+
+    const {
+      name,
+      price,
+      image,
+      category_id,
+      description,
+      is_offer,
+      old_price,
+      offer_price,
+      offer_title,
+      offer_start_at,
+      offer_end_at
+    } = req.body;
 
     if (!name || !price || !image || !category_id) {
       return res.status(400).json({ message: "البيانات ناقصة" });
@@ -1242,10 +1280,30 @@ app.put("/api/store/products/:id", authenticateToken, requireStoreOwner, async (
            price = $2,
            image = $3,
            category_id = $4,
-           description = $5
-       WHERE id = $6 AND store_id = $7
+           description = $5,
+           is_offer = $6,
+           old_price = $7,
+           offer_price = $8,
+           offer_title = $9,
+           offer_start_at = $10,
+           offer_end_at = $11
+       WHERE id = $12 AND store_id = $13
        RETURNING *`,
-      [name, price, image, category_id, description || "", id, store.id]
+      [
+        name,
+        price,
+        image,
+        category_id,
+        description || "",
+        is_offer === true,
+        old_price || null,
+        offer_price || null,
+        offer_title || null,
+        offer_start_at || null,
+        offer_end_at || null,
+        id,
+        store.id
+      ]
     );
 
     if (!result.rows.length) {
@@ -1258,7 +1316,6 @@ app.put("/api/store/products/:id", authenticateToken, requireStoreOwner, async (
     res.status(500).json({ message: "فشل تعديل المنتج" });
   }
 });
-
 
 
 /* متاح / غير متاح */
@@ -1431,6 +1488,29 @@ app.post("/api/store/categories", authenticateToken, requireStoreOwner, async (r
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "فشل إضافة التصنيف" });
+  }
+});
+
+app.get("/api/offers", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT 
+         p.*,
+         s.name AS store_name,
+         s.is_active AS store_is_active
+       FROM products p
+       JOIN stores s ON p.store_id = s.id
+       WHERE p.is_offer = true
+       AND p.is_available = true
+       AND (p.offer_start_at IS NULL OR p.offer_start_at <= NOW())
+       AND (p.offer_end_at IS NULL OR p.offer_end_at >= NOW())
+       ORDER BY p.id DESC`
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("OFFERS ERROR:", err);
+    res.status(500).json({ message: "فشل جلب العروض" });
   }
 });
 

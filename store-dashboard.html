@@ -521,6 +521,28 @@ textarea{
           <option value="">اختاري تصنيف المنتج</option>
         </select>
         <textarea id="description" placeholder="وصف المنتج"></textarea>
+        <div class="box-title" style="margin-top:14px;">إعدادات العرض</div>
+
+<select id="isOffer">
+  <option value="false">بدون عرض</option>
+  <option value="true">يوجد عرض</option>
+</select>
+
+<input id="oldPrice" type="number" placeholder="السعر قبل العرض">
+
+<input id="offerPrice" type="number" placeholder="سعر العرض">
+
+<input id="offerTitle" placeholder="عنوان العرض">
+
+<label style="font-size:13px;color:#666;margin-bottom:5px;display:block;">
+  بداية العرض
+</label>
+<input id="offerStart" type="datetime-local">
+
+<label style="font-size:13px;color:#666;margin-bottom:5px;display:block;">
+  نهاية العرض
+</label>
+<input id="offerEnd" type="datetime-local">
 
         <div class="form-actions">
           <button class="btn primary" onclick="saveProduct()">حفظ</button>
@@ -690,12 +712,19 @@ async function saveProduct(){
   const productId = document.getElementById("productId").value;
 
   const body = {
-    name:document.getElementById("name").value.trim(),
-    price:document.getElementById("price").value.trim(),
-    image:document.getElementById("image").value.trim(),
-    category_id:document.getElementById("category").value,
-    description:document.getElementById("description").value.trim()
-  };
+  name: document.getElementById("name").value.trim(),
+  price: document.getElementById("price").value.trim(),
+  image: document.getElementById("image").value.trim(),
+  category_id: document.getElementById("category").value,
+  description: document.getElementById("description").value.trim(),
+
+  is_offer: document.getElementById("isOffer").value === "true",
+  old_price: document.getElementById("oldPrice").value || null,
+  offer_price: document.getElementById("offerPrice").value || null,
+  offer_title: document.getElementById("offerTitle").value.trim() || null,
+  offer_start_at: document.getElementById("offerStart").value || null,
+  offer_end_at: document.getElementById("offerEnd").value || null
+};
 
   if(!body.name || !body.price || !body.image || !body.category_id){
     showToast("كملي بيانات المنتج والتصنيف");
@@ -711,6 +740,29 @@ async function saveProduct(){
     showToast("رابط الصورة غير صحيح");
     return;
   }
+
+if (body.is_offer) {
+  if (!body.old_price || !body.offer_price || !body.offer_title || !body.offer_start_at || !body.offer_end_at) {
+    showToast("كملي بيانات العرض");
+    return;
+  }
+
+  if (Number(body.offer_price) <= 0 || Number(body.old_price) <= 0) {
+    showToast("أسعار العرض لازم تكون أكبر من صفر");
+    return;
+  }
+
+  if (Number(body.offer_price) >= Number(body.old_price)) {
+    showToast("سعر العرض لازم يكون أقل من السعر القديم");
+    return;
+  }
+
+  if (new Date(body.offer_end_at) <= new Date(body.offer_start_at)) {
+    showToast("نهاية العرض لازم تكون بعد بدايته");
+    return;
+  }
+}
+
 
   const url = productId ? `/api/store/products/${productId}` : "/api/store/products";
   const method = productId ? "PUT" : "POST";
