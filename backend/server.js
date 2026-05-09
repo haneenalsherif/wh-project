@@ -77,7 +77,7 @@ app.get("/api/test", async (req, res) => {
 app.get("/api/stores", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, name, image, type, store_type, is_active FROM stores ORDER BY id ASC"
+      "SELECT id, name, image, type, store_type, is_active,delivery_fee, lat, lng"
     );
 
     res.json(result.rows);
@@ -295,16 +295,19 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
 
   try {
     const userId = req.user.id;
+
     const {
       customer_address,
       store_id,
       items,
       payment,
       payment_method,
-      delivery_note
+      delivery_note,
+      delivery_fee
     } = req.body;
 
     const finalPayment = payment_method || payment || "cash";
+    const deliveryFee = Math.max(0, Number(delivery_fee || 0));
 
     if (!customer_address || !store_id || !items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "بيانات الطلب ناقصة" });
@@ -334,7 +337,7 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
 
     const user = userResult.rows[0];
 
-    let totalPrice = 0;
+    let itemsTotal = 0;
     const safeItems = [];
 
     for (const item of items) {
@@ -346,7 +349,8 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
       }
 
       const productResult = await client.query(
-        `SELECT id, name, price, store_id, is_available
+        `SELECT id, name, price, store_id, is_available,
+                is_offer, offer_price, offer_start_at, offer_end_at
          FROM products
          WHERE id = $1`,
         [productId]
@@ -366,8 +370,16 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
         return res.status(400).json({ message: `المنتج ${product.name} غير متاح حاليًا` });
       }
 
-      const price = Number(product.price);
-      totalPrice += price * qty;
+      const now = new Date();
+      const offerIsActive =
+        product.is_offer === true &&
+        product.offer_price &&
+        (!product.offer_start_at || new Date(product.offer_start_at) <= now) &&
+        (!product.offer_end_at || new Date(product.offer_end_at) >= now);
+
+      const price = offerIsActive ? Number(product.offer_price) : Number(product.price);
+
+      itemsTotal += price * qty;
 
       safeItems.push({
         product_id: product.id,
@@ -377,12 +389,14 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
       });
     }
 
+    const totalPrice = itemsTotal + deliveryFee;
+
     await client.query("BEGIN");
 
     const orderResult = await client.query(
       `INSERT INTO orders
-      (user_id, customer_name, customer_phone, customer_address, store_id, total_price, payment_method, delivery_note)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      (user_id, customer_name, customer_phone, customer_address, store_id, total_price, delivery_fee, payment_method, delivery_note)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING id`,
       [
         userId,
@@ -391,6 +405,7 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
         customer_address,
         store_id,
         totalPrice,
+        deliveryFee,
         finalPayment,
         delivery_note || ""
       ]
@@ -403,13 +418,7 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
         `INSERT INTO order_items
         (order_id, product_id, product_name, price, qty)
         VALUES ($1, $2, $3, $4, $5)`,
-        [
-          orderId,
-          item.product_id,
-          item.product_name,
-          item.price,
-          item.qty
-        ]
+        [orderId, item.product_id, item.product_name, item.price, item.qty]
       );
     }
 
@@ -418,6 +427,8 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
     res.status(201).json({
       message: "تم حفظ الطلب بنجاح",
       order_id: orderId,
+      items_total: itemsTotal,
+      delivery_fee: deliveryFee,
       total_price: totalPrice
     });
 

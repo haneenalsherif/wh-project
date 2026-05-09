@@ -375,6 +375,10 @@
 </div>
 
 <div id="toast" class="toast"></div>
+
+let userLat = null;
+let userLng = null;
+let currentDeliveryFee = 0;
 <script>
 let selectedPayment = "cash";
 let selectedAddress = null;
@@ -414,8 +418,7 @@ function authHeaders(json = false) {
 function loadSummary() {
   let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
   let itemsTotal = 0;
-  const delivery = 0.75;
-
+const delivery = currentDeliveryFee || 0;
   cart.forEach(item => {
     let qty = item.qty ? item.qty : 1;
     itemsTotal += Number(item.price) * qty;
@@ -488,7 +491,7 @@ function changeAddress() {
       `https://maps.google.com/maps?q=${selectedAddress.lat},${selectedAddress.lng}&z=15&output=embed`;
   }
 }
-function getCurrentLocation() {
+async function getCurrentLocation() {
   if (!navigator.geolocation) {
     showToast("المتصفح لا يدعم الموقع");
     return;
@@ -497,12 +500,29 @@ function getCurrentLocation() {
   showToast("جاري تحديد الموقع...");
 
   navigator.geolocation.getCurrentPosition(
-    function(position) {
+    async function(position) {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
 
-      const locationText =
-        `الموقع الحالي:\nLatitude: ${lat.toFixed(5)}\nLongitude: ${lng.toFixed(5)}`;
+      userLat = lat;
+userLng = lng;
+
+
+      let locationText = `الموقع الحالي: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ar`
+        );
+
+        const data = await response.json();
+
+        if (data && data.display_name) {
+          locationText = data.display_name;
+        }
+      } catch (error) {
+        console.error("Reverse geocoding error:", error);
+      }
 
       selectedAddress = {
         title: "موقعي الحالي",
@@ -514,16 +534,23 @@ function getCurrentLocation() {
       document.getElementById("addressPreview").textContent = locationText;
 
       document.getElementById("mapFrame").src =
-        `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+        `https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed`;
+        calculateDeliveryFee();
 
       showToast("تم تحديد الموقع بنجاح");
     },
     function(error) {
       console.error(error);
       showToast("فشل تحديد الموقع");
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
     }
   );
 }
+
 function selectPayment(value, element) {
   selectedPayment = value;
 
@@ -573,7 +600,9 @@ async function confirmOrder() {
     total_price: itemsTotal,
     items: items,
     payment_method: selectedPayment,
-    delivery_note: deliveryNote
+    delivery_note: deliveryNote,
+    delivery_fee: currentDeliveryFee,
+
   };
   console.log("ADDRESS:", selectedAddress);
 console.log("ORDER DATA:", orderData);
@@ -605,6 +634,65 @@ sessionStorage.removeItem("storeNote");
     showToast("خطأ في الاتصال بالسيرفر");
     console.error(err);
   }
+}
+
+async function calculateDeliveryFee() {
+  try {
+    const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+    if (!cart.length || !userLat || !userLng) return;
+
+    const storeId = getStoreIdFromCart(cart);
+
+    const response = await fetch("/api/stores");
+    const stores = await response.json();
+
+    const store = stores.find(s => String(s.id) === String(storeId));
+
+    if (!store || !store.lat || !store.lng) return;
+
+    const distance = getDistanceFromLatLonInKm(
+      userLat,
+      userLng,
+      Number(store.lat),
+      Number(store.lng)
+    );
+
+    let fee = 2;
+
+    if (distance > 3) fee = 4;
+    if (distance > 7) fee = 6;
+    if (distance > 12) fee = 10;
+
+    currentDeliveryFee = fee;
+
+    loadSummary();
+  } catch (err) {
+    console.error("Delivery fee error:", err);
+  }
+}
+
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+    Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
 }
 
 loadSummary();

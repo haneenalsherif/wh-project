@@ -557,6 +557,12 @@ async function loadOrders() {
             <strong>${formatPrice(order.total_price)} دينار</strong>
           </div>
 
+<div class="meta-row">
+  <span>رسوم التوصيل</span>
+  <strong>${formatPrice(order.delivery_fee || 0)} دينار</strong>
+</div>
+
+
           <div class="meta-row">
             <span>ملاحظة الطلب</span>
             <strong>${order.delivery_note?.trim() ? order.delivery_note : "لا توجد"}</strong>

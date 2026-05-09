@@ -314,10 +314,18 @@
         <strong id="itemsCount">0</strong>
       </div>
 
+       <div class="summary-row">
+  <span>رسوم التوصيل</span>
+  <strong id="deliveryFeeValue">0 دينار</strong>
+</div>
+
+
       <div class="summary-row">
         <span>الإجمالي التقريبي</span>
         <strong id="orderTotal">0 دينار</strong>
       </div>
+
+
 
       <div class="summary-row">
         <span>ملاحظة الطلب</span>
@@ -492,6 +500,10 @@ async function loadSuccessData() {
     document.getElementById("itemsCount").textContent = totalItems;
     document.getElementById("orderTotal").textContent =
   Number(order.total_price || 0).toFixed(2) + " دينار";
+    if (document.getElementById("deliveryFeeValue")) {
+  document.getElementById("deliveryFeeValue").textContent =
+    Number(order.delivery_fee || 0).toFixed(2) + " دينار";
+}
     document.getElementById("deliveryNote").textContent = order.delivery_note?.trim() ? order.delivery_note : "لا توجد";
 
     const itemsList = document.getElementById("itemsList");
