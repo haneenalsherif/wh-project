@@ -659,13 +659,11 @@ async function calculateDeliveryFee() {
       Number(store.lng)
     );
 
-    let fee = 2;
+    
 
-    if (distance > 3) fee = 4;
-    if (distance > 7) fee = 6;
-    if (distance > 12) fee = 10;
+    let fee = 5 + (distance * 0.8);
 
-    currentDeliveryFee = fee;
+currentDeliveryFee = Math.ceil(fee * 2) / 2;
 
     loadSummary();
   } catch (err) {
