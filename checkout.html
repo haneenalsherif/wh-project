@@ -421,7 +421,7 @@ function loadSummary() {
 const delivery = currentDeliveryFee || 0;
   cart.forEach(item => {
     let qty = item.qty ? item.qty : 1;
-    itemsTotal += Number(item.price) * qty;
+    itemsTotal += Number(item.offer_price || item.price || 0) * qty;
   });
 
   const grand = itemsTotal + delivery;
@@ -590,7 +590,7 @@ async function confirmOrder() {
   return {
     product_id: item.product_id || item.id,
     product_name: item.name,
-    price: Number(item.price),
+    price: Number(item.offer_price || item.price || 0),
     qty: qty
   };
 });
