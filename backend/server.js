@@ -77,16 +77,18 @@ app.get("/api/test", async (req, res) => {
 app.get("/api/stores", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, name, image, type, store_type, is_active,delivery_fee, lat, lng"
+      `SELECT id, name, image, type, store_type, is_active,
+              delivery_fee, lat, lng
+       FROM stores
+       ORDER BY id DESC`
     );
 
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error("STORES ERROR:", err);
     res.status(500).send("Database error");
   }
 });
-
 
 app.get("/api/products/:storeId", async (req, res) => {
   try {
