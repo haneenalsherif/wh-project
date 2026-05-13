@@ -1456,6 +1456,50 @@ const allowed = ["pending", "accepted", "preparing", "delivering", "delivered", 
       return res.status(404).json({ message: "الطلب غير موجود أو غير مصرح" });
     }
 
+
+    const order = result.rows[0];
+
+const statusMessages = {
+  accepted: {
+    title: "تم قبول الطلب",
+    message: "المتجر قبل طلبك وبدأ التجهيز."
+  },
+
+  preparing: {
+    title: "الطلب قيد التجهيز",
+    message: "المتجر يجهز طلبك الآن."
+  },
+
+  delivering: {
+    title: "الطلب خرج للتوصيل",
+    message: "السائق في الطريق إليك."
+  },
+
+  delivered: {
+    title: "تم تسليم الطلب",
+    message: "تم تسليم طلبك بنجاح."
+  },
+
+  rejected: {
+    title: "تم رفض الطلب",
+    message: "نعتذر، تم رفض الطلب من قبل المتجر."
+  }
+};
+
+const notify = statusMessages[status];
+
+if (notify) {
+  await pool.query(
+    `INSERT INTO notifications (user_id, title, message)
+     VALUES ($1, $2, $3)`,
+    [
+      order.user_id,
+      notify.title,
+      notify.message
+    ]
+  );
+}
+
     res.json({ message: "تم تحديث حالة الطلب", order: result.rows[0] });
   } catch (err) {
     console.error(err);
@@ -1558,6 +1602,38 @@ app.put("/api/store/location", authenticateToken, requireStoreOwner, async (req,
   } catch (err) {
     console.error("STORE LOCATION ERROR:", err);
     res.status(500).json({ message: "فشل حفظ الموقع" });
+  }
+});
+app.get("/api/notifications", authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, title, message, is_read, created_at
+       FROM notifications
+       WHERE user_id = $1
+       ORDER BY created_at DESC`,
+      [req.user.id]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("NOTIFICATIONS ERROR:", err);
+    res.status(500).json({ message: "فشل جلب الإشعارات" });
+  }
+});
+
+app.put("/api/notifications/read", authenticateToken, async (req, res) => {
+  try {
+    await pool.query(
+      `UPDATE notifications
+       SET is_read = true
+       WHERE user_id = $1`,
+      [req.user.id]
+    );
+
+    res.json({ message: "تم تعليم الإشعارات كمقروءة" });
+  } catch (err) {
+    console.error("READ NOTIFICATIONS ERROR:", err);
+    res.status(500).json({ message: "فشل تحديث الإشعارات" });
   }
 });
 

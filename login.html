@@ -352,10 +352,10 @@
 
   <div class="topbar">
     <div class="top-icons">
-      <button class="circle-icon" onclick="window.location.href='wallet.html'">👛</button>
-      <button class="circle-icon" onclick="window.location.href='favorites.html'">♡</button>
-    </div>
-  </div>
+  <button class="circle-icon" onclick="window.location.href='notifications.html'">🔔</button>
+  <button class="circle-icon" onclick="window.location.href='wallet.html'">👛</button>
+  <button class="circle-icon" onclick="window.location.href='favorites.html'">♡</button>
+</div>
 
   <div class="hero">
     <div class="hero-title">كل طلباتك في مكان واحد</div>
@@ -540,9 +540,8 @@
         <div class="cat-icon">${icons.offers}</div>
         <span>العروض</span>
       `;
-      offersBtn.onclick = function () {
-  window.location.href ="offers.html";
-  "category.html?type=restaurant&title=العروض";
+   offersBtn.onclick = function () {
+  window.location.href = "offers.html";
 };
       container.appendChild(offersBtn);
 
