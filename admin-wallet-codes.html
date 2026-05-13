@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أكواد المحفظة - WH App</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  direction:rtl;
+  background:#FAF3E0;
+  color:#2F3E46;
+}
+
+.page{
+  max-width:430px;
+  margin:auto;
+  min-height:100vh;
+  padding-bottom:100px;
+}
+
+.topbar{
+  background:#A3B18A;
+  color:white;
+  padding:16px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.back-btn{
+  background:white;
+  color:#344E41;
+  border:none;
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.hero{
+  margin:16px;
+  background:linear-gradient(135deg,#344E41,#A3B18A);
+  border-radius:30px;
+  padding:24px 20px;
+  color:white;
+}
+
+.hero-title{
+  font-size:28px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.hero-sub{
+  font-size:14px;
+  line-height:1.8;
+  opacity:.9;
+}
+
+.box{
+  background:white;
+  border-radius:24px;
+  padding:16px;
+  margin:0 16px 16px;
+  box-shadow:0 4px 14px rgba(0,0,0,.05);
+}
+
+.box-title{
+  font-size:22px;
+  font-weight:bold;
+  color:#344E41;
+  margin-bottom:14px;
+}
+
+.input{
+  width:100%;
+  border:1px solid #ddd;
+  background:#FAF3E0;
+  border-radius:16px;
+  padding:14px;
+  outline:none;
+  margin-bottom:12px;
+  font-size:15px;
+}
+
+.generate-btn{
+  width:100%;
+  border:none;
+  background:#344E41;
+  color:white;
+  padding:14px;
+  border-radius:16px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.codes-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.code-card{
+  background:#FAF3E0;
+  border-radius:18px;
+  padding:14px;
+  border:1px solid #eadfce;
+}
+
+.code-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.code-value{
+  font-size:18px;
+  font-weight:bold;
+  color:#344E41;
+}
+
+.copy-btn{
+  border:none;
+  background:#344E41;
+  color:white;
+  padding:8px 12px;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+.code-text{
+  font-size:16px;
+  font-weight:bold;
+  color:#2F3E46;
+  word-break:break-all;
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  padding:20px;
+}
+
+.toast{
+  position:fixed;
+  bottom:90px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:#344E41;
+  color:white;
+  padding:12px 18px;
+  border-radius:14px;
+  opacity:0;
+  transition:.3s;
+  z-index:9999;
+  min-width:220px;
+  text-align:center;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">→</button>
+    <div>أكواد المحفظة</div>
+    <div style="width:38px"></div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-title">
+      إنشاء أكواد الشحن 👛
+    </div>
+
+    <div class="hero-sub">
+      أنشئ بطاقات شحن للمستخدمين بقيم مختلفة.
+    </div>
+  </div>
+
+  <div class="box">
+
+    <div class="box-title">
+      إنشاء أكواد جديدة
+    </div>
+
+    <select id="amount" class="input">
+
+      <option value="10">10 د.ل</option>
+      <option value="20">20 د.ل</option>
+      <option value="40">40 د.ل</option>
+      <option value="60">60 د.ل</option>
+      <option value="80">80 د.ل</option>
+      <option value="100">100 د.ل</option>
+      <option value="120">120 د.ل</option>
+      <option value="140">140 د.ل</option>
+      <option value="160">160 د.ل</option>
+      <option value="180">180 د.ل</option>
+      <option value="200">200 د.ل</option>
+
+    </select>
+
+    <input
+      type="number"
+      id="count"
+      class="input"
+      placeholder="عدد الأكواد"
+      value="1"
+    >
+
+    <button class="generate-btn" onclick="generateCodes()">
+      إنشاء الأكواد
+    </button>
+
+  </div>
+
+  <div class="box">
+
+    <div class="box-title">
+      الأكواد المولدة
+    </div>
+
+    <div class="codes-list" id="codesContainer">
+
+      <div class="empty">
+        لم يتم إنشاء أكواد بعد.
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+function getToken(){
+  return sessionStorage.getItem("token");
+}
+
+function authHeaders(json=false){
+
+  const headers = {
+    "Authorization": `Bearer ${getToken()}`
+  };
+
+  if(json){
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
+}
+
+function showToast(message){
+
+  const toast =
+    document.getElementById("toast");
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(()=>{
+    toast.classList.remove("show");
+  },2000);
+}
+
+async function generateCodes(){
+
+  const amount =
+    Number(document.getElementById("amount").value);
+
+  const count =
+    Number(document.getElementById("count").value);
+
+  if(!amount || amount <= 0){
+    showToast("قيمة غير صحيحة");
+    return;
+  }
+
+  if(!count || count <= 0){
+    showToast("عدد الأكواد غير صحيح");
+    return;
+  }
+
+  try{
+
+    const response = await fetch(
+      "/api/admin/wallet-codes",
+      {
+        method:"POST",
+        headers:authHeaders(true),
+        body:JSON.stringify({
+          amount,
+          count
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if(!response.ok){
+      showToast(data.message || "فشل إنشاء الأكواد");
+      return;
+    }
+
+    renderCodes(data.codes || []);
+
+    showToast("تم إنشاء الأكواد");
+
+  }catch(err){
+
+    console.error(err);
+    showToast("فشل الاتصال");
+  }
+
+}
+
+function renderCodes(codes){
+
+  const container =
+    document.getElementById("codesContainer");
+
+  if(!codes.length){
+
+    container.innerHTML = `
+      <div class="empty">
+        لا توجد أكواد.
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML = "";
+
+  codes.forEach(item=>{
+
+    const card =
+      document.createElement("div");
+
+    card.className = "code-card";
+
+    card.innerHTML = `
+      <div class="code-top">
+
+        <div class="code-value">
+          ${Number(item.amount).toFixed(0)} د.ل
+        </div>
+
+        <button class="copy-btn"
+          onclick="copyCode('${item.code}')">
+
+          نسخ
+
+        </button>
+
+      </div>
+
+      <div class="code-text">
+        ${item.code}
+      </div>
+    `;
+
+    container.appendChild(card);
+
+  });
+
+}
+
+function copyCode(code){
+
+  navigator.clipboard.writeText(code);
+
+  showToast("تم نسخ الكود");
+}
+
+</script>
+
+</body>
+</html>
