@@ -1716,6 +1716,146 @@ app.post("/api/wallet/topup", authenticateToken, async (req, res) => {
   }
 });
 
+
+app.post("/api/admin/wallet-codes", authenticateToken, requireAdmin, async (req, res) => {
+  try {
+
+    const { amount, count } = req.body;
+
+    const codeAmount = Number(amount);
+    const codeCount = Number(count || 1);
+
+    if (!codeAmount || codeAmount <= 0) {
+      return res.status(400).json({ message: "قيمة الرصيد غير صحيحة" });
+    }
+
+    const generatedCodes = [];
+
+    for (let i = 0; i < codeCount; i++) {
+
+      const code =
+        "WH-" +
+        Math.random().toString(36).substring(2, 6).toUpperCase() +
+        "-" +
+        Math.random().toString(36).substring(2, 6).toUpperCase();
+
+      const result = await pool.query(
+        `INSERT INTO wallet_codes
+         (code, amount)
+         VALUES ($1, $2)
+         RETURNING *`,
+        [code, codeAmount]
+      );
+
+      generatedCodes.push(result.rows[0]);
+
+    }
+
+    res.json({
+      message: "تم إنشاء الأكواد",
+      codes: generatedCodes
+    });
+
+  } catch (err) {
+    console.error("GENERATE WALLET CODES ERROR:", err);
+    res.status(500).json({ message: "فشل إنشاء الأكواد" });
+  }
+});
+
+app.post("/api/wallet/redeem", authenticateToken, async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+
+    const { code } = req.body;
+
+    if (!code) {
+      return res.status(400).json({ message: "أدخلي كود الشحن" });
+    }
+
+    await client.query("BEGIN");
+
+    const codeResult = await client.query(
+      `SELECT *
+       FROM wallet_codes
+       WHERE code = $1`,
+      [code.trim()]
+    );
+
+    if (!codeResult.rows.length) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ message: "الكود غير موجود" });
+    }
+
+    const walletCode = codeResult.rows[0];
+
+    if (walletCode.is_used) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ message: "تم استخدام الكود مسبقًا" });
+    }
+
+    if (
+      walletCode.expires_at &&
+      new Date(walletCode.expires_at) < new Date()
+    ) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ message: "انتهت صلاحية الكود" });
+    }
+
+    const userResult = await client.query(
+      `UPDATE users
+       SET wallet_balance = wallet_balance + $1
+       WHERE id = $2
+       RETURNING wallet_balance`,
+      [walletCode.amount, req.user.id]
+    );
+
+    await client.query(
+      `UPDATE wallet_codes
+       SET is_used = true,
+           used_by = $1,
+           used_at = NOW()
+       WHERE id = $2`,
+      [req.user.id, walletCode.id]
+    );
+
+    await client.query(
+      `INSERT INTO wallet_transactions
+       (user_id, type, amount, description)
+       VALUES ($1, $2, $3, $4)`,
+      [
+        req.user.id,
+        "redeem",
+        walletCode.amount,
+        `شحن عبر كود: ${walletCode.code}`
+      ]
+    );
+
+    await client.query("COMMIT");
+
+    res.json({
+      message: "تم شحن المحفظة بنجاح",
+      balance: Number(userResult.rows[0].wallet_balance),
+      amount: Number(walletCode.amount)
+    });
+
+  } catch (err) {
+
+    await client.query("ROLLBACK");
+
+    console.error("REDEEM CODE ERROR:", err);
+
+    res.status(500).json({
+      message: "فشل تفعيل الكود"
+    });
+
+  } finally {
+    client.release();
+  }
+});
+
+
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

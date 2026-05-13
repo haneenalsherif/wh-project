@@ -277,32 +277,61 @@ body{
   <div class="section">
 
     <div class="box">
-      <div class="box-title">شحن الرصيد</div>
+
+      <div class="box-title">
+        شحن المحفظة
+      </div>
 
       <div class="topup-grid">
+
         <button class="amount-btn" onclick="setAmount(10,this)">10 د.ل</button>
         <button class="amount-btn" onclick="setAmount(20,this)">20 د.ل</button>
-        <button class="amount-btn" onclick="setAmount(50,this)">50 د.ل</button>
+        <button class="amount-btn" onclick="setAmount(40,this)">40 د.ل</button>
+
+        <button class="amount-btn" onclick="setAmount(60,this)">60 د.ل</button>
+        <button class="amount-btn" onclick="setAmount(80,this)">80 د.ل</button>
+        <button class="amount-btn" onclick="setAmount(100,this)">100 د.ل</button>
+
+        <button class="amount-btn" onclick="setAmount(120,this)">120 د.ل</button>
+        <button class="amount-btn" onclick="setAmount(140,this)">140 د.ل</button>
+        <button class="amount-btn" onclick="setAmount(160,this)">160 د.ل</button>
+
+        <button class="amount-btn" onclick="setAmount(180,this)">180 د.ل</button>
+        <button class="amount-btn" onclick="setAmount(200,this)">200 د.ل</button>
+
       </div>
 
       <input 
         type="number"
-        id="customAmount"
+        id="selectedAmount"
         class="custom-input"
-        placeholder="أو اكتبي مبلغ آخر"
+        placeholder="المبلغ المختار"
+        readonly
       >
 
-      <button class="topup-btn" onclick="topupWallet()">
-        شحن المحفظة
+      <input 
+        type="text"
+        id="redeemCode"
+        class="custom-input"
+        placeholder="أدخل كود الشحن"
+      >
+
+      <button class="topup-btn" onclick="redeemCode()">
+        تفعيل الكود
       </button>
+
     </div>
 
     <div class="box">
-      <div class="box-title">العمليات الأخيرة</div>
+
+      <div class="box-title">
+        العمليات الأخيرة
+      </div>
 
       <div class="transactions" id="transactionsContainer">
         <div class="empty">جاري تحميل العمليات...</div>
       </div>
+
     </div>
 
   </div>
@@ -310,6 +339,7 @@ body{
 </div>
 
 <div class="bottom-nav">
+
   <div class="nav-item" onclick="window.location.href='index.html'">
     <div>🏠</div>
     <span>الرئيسية</span>
@@ -329,19 +359,25 @@ body{
     <div>👤</div>
     <span>حسابي</span>
   </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const walletBalance = document.getElementById("walletBalance");
-const transactionsContainer = document.getElementById("transactionsContainer");
+
+const walletBalance =
+  document.getElementById("walletBalance");
+
+const transactionsContainer =
+  document.getElementById("transactionsContainer");
 
 function getToken(){
   return sessionStorage.getItem("token");
 }
 
 function authHeaders(json=false){
+
   const headers = {
     "Authorization": `Bearer ${getToken()}`
   };
@@ -354,7 +390,9 @@ function authHeaders(json=false){
 }
 
 function showToast(message){
-  const toast = document.getElementById("toast");
+
+  const toast =
+    document.getElementById("toast");
 
   toast.textContent = message;
   toast.classList.add("show");
@@ -365,15 +403,18 @@ function showToast(message){
 }
 
 function setAmount(amount, btn){
-  document.getElementById("customAmount").value = amount;
+
+  document.getElementById("selectedAmount").value =
+    amount;
 
   document.querySelectorAll(".amount-btn")
-    .forEach(b=>b.classList.remove("active"));
+    .forEach(b => b.classList.remove("active"));
 
   btn.classList.add("active");
 }
 
 function formatDate(dateString){
+
   const date = new Date(dateString);
 
   return date.toLocaleDateString("ar-EG") +
@@ -387,6 +428,7 @@ function formatDate(dateString){
 async function loadWallet(){
 
   if(!getToken()){
+
     walletBalance.textContent = "0 د.ل";
 
     transactionsContainer.innerHTML = `
@@ -436,13 +478,15 @@ async function loadWallet(){
 
       card.innerHTML = `
         <div class="transaction-top">
+
           <div class="transaction-title">
-            ${item.type === "topup" ? "شحن رصيد" : "عملية"}
+            ${item.type === "redeem" ? "شحن عبر كود" : "عملية"}
           </div>
 
           <div class="transaction-amount">
             +${Number(item.amount).toFixed(2)} د.ل
           </div>
+
         </div>
 
         <div class="transaction-desc">
@@ -459,6 +503,7 @@ async function loadWallet(){
     });
 
   }catch(err){
+
     console.error(err);
 
     transactionsContainer.innerHTML = `
@@ -469,42 +514,56 @@ async function loadWallet(){
   }
 }
 
-async function topupWallet(){
+async function redeemCode(){
 
-  const amount = Number(
-    document.getElementById("customAmount").value
-  );
+  const code =
+    document.getElementById("redeemCode").value.trim();
 
-  if(!amount || amount <= 0){
-    showToast("أدخلي مبلغ صحيح");
+  const selectedAmount =
+    Number(document.getElementById("selectedAmount").value);
+
+  if(!selectedAmount){
+    showToast("اختاري قيمة الشحن");
+    return;
+  }
+
+  if(!code){
+    showToast("أدخلي كود الشحن");
     return;
   }
 
   try{
 
-    const response = await fetch("/api/wallet/topup",{
+    const response = await fetch("/api/wallet/redeem",{
       method:"POST",
       headers:authHeaders(true),
-      body:JSON.stringify({ amount })
+      body:JSON.stringify({ code })
     });
 
     const data = await response.json();
 
     if(!response.ok){
-      showToast(data.message || "فشل شحن المحفظة");
+      showToast(data.message || "فشل تفعيل الكود");
+      return;
+    }
+
+    if(Number(data.amount) !== selectedAmount){
+      showToast("قيمة الكود لا تطابق الفئة المختارة");
       return;
     }
 
     showToast("تم شحن المحفظة");
 
-    document.getElementById("customAmount").value = "";
+    document.getElementById("redeemCode").value = "";
+    document.getElementById("selectedAmount").value = "";
 
     document.querySelectorAll(".amount-btn")
-      .forEach(b=>b.classList.remove("active"));
+      .forEach(b => b.classList.remove("active"));
 
     loadWallet();
 
   }catch(err){
+
     console.error(err);
     showToast("فشل الاتصال");
   }
@@ -512,6 +571,7 @@ async function topupWallet(){
 }
 
 loadWallet();
+
 </script>
 
 </body>
