@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المحفظة - WH App</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  direction:rtl;
+  background:#FAF3E0;
+  color:#2F3E46;
+}
+
+.page{
+  max-width:430px;
+  margin:auto;
+  min-height:100vh;
+  padding-bottom:95px;
+}
+
+.topbar{
+  background:#A3B18A;
+  color:white;
+  padding:16px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:20px;
+  font-weight:bold;
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+
+.back-btn{
+  background:white;
+  color:#344E41;
+  border:none;
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.hero{
+  margin:16px;
+  background:linear-gradient(135deg,#344E41,#A3B18A);
+  border-radius:30px;
+  padding:26px 20px;
+  color:white;
+  box-shadow:0 10px 24px rgba(52,78,65,.18);
+}
+
+.hero-label{
+  font-size:14px;
+  opacity:.9;
+  margin-bottom:10px;
+}
+
+.hero-balance{
+  font-size:40px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.hero-sub{
+  font-size:14px;
+  opacity:.9;
+  line-height:1.8;
+}
+
+.section{
+  padding:0 16px;
+}
+
+.box{
+  background:white;
+  border-radius:24px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 4px 14px rgba(0,0,0,.05);
+}
+
+.box-title{
+  font-size:22px;
+  font-weight:bold;
+  color:#344E41;
+  margin-bottom:14px;
+}
+
+.topup-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.amount-btn{
+  border:none;
+  background:#EDE0D4;
+  color:#344E41;
+  padding:13px;
+  border-radius:16px;
+  font-weight:bold;
+  cursor:pointer;
+  font-size:15px;
+}
+
+.amount-btn.active{
+  background:#344E41;
+  color:white;
+}
+
+.custom-input{
+  width:100%;
+  border:1px solid #ddd;
+  background:#FAF3E0;
+  border-radius:16px;
+  padding:14px;
+  outline:none;
+  margin-bottom:12px;
+  font-size:15px;
+}
+
+.topup-btn{
+  width:100%;
+  border:none;
+  background:#344E41;
+  color:white;
+  padding:14px;
+  border-radius:16px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.transactions{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.transaction-card{
+  background:#FAF3E0;
+  border-radius:18px;
+  padding:14px;
+  border:1px solid #eadfce;
+}
+
+.transaction-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:8px;
+}
+
+.transaction-title{
+  font-size:16px;
+  font-weight:bold;
+  color:#344E41;
+}
+
+.transaction-amount{
+  font-size:18px;
+  font-weight:bold;
+  color:#2e7d32;
+}
+
+.transaction-desc{
+  color:#666;
+  font-size:14px;
+  line-height:1.7;
+  margin-bottom:8px;
+}
+
+.transaction-time{
+  color:#888;
+  font-size:12px;
+}
+
+.empty{
+  background:white;
+  border-radius:22px;
+  padding:26px;
+  text-align:center;
+  color:#777;
+  line-height:1.8;
+}
+
+.toast{
+  position:fixed;
+  bottom:90px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:#344E41;
+  color:white;
+  padding:12px 18px;
+  border-radius:14px;
+  opacity:0;
+  transition:.3s;
+  z-index:9999;
+  min-width:220px;
+  text-align:center;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:430px;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  border-top:1px solid #e8dfcf;
+  z-index:999;
+}
+
+.nav-item{
+  text-align:center;
+  font-size:12px;
+  color:#888;
+  cursor:pointer;
+}
+
+.nav-item div{
+  font-size:20px;
+  margin-bottom:4px;
+}
+
+.nav-item.active{
+  color:#344E41;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">→</button>
+    <div>المحفظة</div>
+    <div style="width:38px"></div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-label">رصيدك الحالي</div>
+
+    <div class="hero-balance" id="walletBalance">
+      0 د.ل
+    </div>
+
+    <div class="hero-sub">
+      استخدمي المحفظة للدفع السريع داخل التطبيق.
+    </div>
+  </div>
+
+  <div class="section">
+
+    <div class="box">
+      <div class="box-title">شحن الرصيد</div>
+
+      <div class="topup-grid">
+        <button class="amount-btn" onclick="setAmount(10,this)">10 د.ل</button>
+        <button class="amount-btn" onclick="setAmount(20,this)">20 د.ل</button>
+        <button class="amount-btn" onclick="setAmount(50,this)">50 د.ل</button>
+      </div>
+
+      <input 
+        type="number"
+        id="customAmount"
+        class="custom-input"
+        placeholder="أو اكتبي مبلغ آخر"
+      >
+
+      <button class="topup-btn" onclick="topupWallet()">
+        شحن المحفظة
+      </button>
+    </div>
+
+    <div class="box">
+      <div class="box-title">العمليات الأخيرة</div>
+
+      <div class="transactions" id="transactionsContainer">
+        <div class="empty">جاري تحميل العمليات...</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='index.html'">
+    <div>🏠</div>
+    <span>الرئيسية</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='orders.html'">
+    <div>📦</div>
+    <span>طلباتي</span>
+  </div>
+
+  <div class="nav-item active" onclick="window.location.href='wallet.html'">
+    <div>👛</div>
+    <span>المحفظة</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='profile.html'">
+    <div>👤</div>
+    <span>حسابي</span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const walletBalance = document.getElementById("walletBalance");
+const transactionsContainer = document.getElementById("transactionsContainer");
+
+function getToken(){
+  return sessionStorage.getItem("token");
+}
+
+function authHeaders(json=false){
+  const headers = {
+    "Authorization": `Bearer ${getToken()}`
+  };
+
+  if(json){
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
+}
+
+function showToast(message){
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(()=>{
+    toast.classList.remove("show");
+  },2000);
+}
+
+function setAmount(amount, btn){
+  document.getElementById("customAmount").value = amount;
+
+  document.querySelectorAll(".amount-btn")
+    .forEach(b=>b.classList.remove("active"));
+
+  btn.classList.add("active");
+}
+
+function formatDate(dateString){
+  const date = new Date(dateString);
+
+  return date.toLocaleDateString("ar-EG") +
+    " - " +
+    date.toLocaleTimeString("ar-EG",{
+      hour:"2-digit",
+      minute:"2-digit"
+    });
+}
+
+async function loadWallet(){
+
+  if(!getToken()){
+    walletBalance.textContent = "0 د.ل";
+
+    transactionsContainer.innerHTML = `
+      <div class="empty">
+        يجب تسجيل الدخول أولًا.
+      </div>
+    `;
+
+    return;
+  }
+
+  try{
+
+    const response = await fetch("/api/wallet",{
+      headers:authHeaders()
+    });
+
+    const data = await response.json();
+
+    if(!response.ok){
+      showToast(data.message || "فشل تحميل المحفظة");
+      return;
+    }
+
+    walletBalance.textContent =
+      Number(data.balance || 0).toFixed(2) + " د.ل";
+
+    const transactions = data.transactions || [];
+
+    if(!transactions.length){
+
+      transactionsContainer.innerHTML = `
+        <div class="empty">
+          لا توجد عمليات حتى الآن.
+        </div>
+      `;
+
+      return;
+    }
+
+    transactionsContainer.innerHTML = "";
+
+    transactions.forEach(item=>{
+
+      const card = document.createElement("div");
+      card.className = "transaction-card";
+
+      card.innerHTML = `
+        <div class="transaction-top">
+          <div class="transaction-title">
+            ${item.type === "topup" ? "شحن رصيد" : "عملية"}
+          </div>
+
+          <div class="transaction-amount">
+            +${Number(item.amount).toFixed(2)} د.ل
+          </div>
+        </div>
+
+        <div class="transaction-desc">
+          ${item.description || "بدون وصف"}
+        </div>
+
+        <div class="transaction-time">
+          ${formatDate(item.created_at)}
+        </div>
+      `;
+
+      transactionsContainer.appendChild(card);
+
+    });
+
+  }catch(err){
+    console.error(err);
+
+    transactionsContainer.innerHTML = `
+      <div class="empty">
+        فشل الاتصال بالسيرفر.
+      </div>
+    `;
+  }
+}
+
+async function topupWallet(){
+
+  const amount = Number(
+    document.getElementById("customAmount").value
+  );
+
+  if(!amount || amount <= 0){
+    showToast("أدخلي مبلغ صحيح");
+    return;
+  }
+
+  try{
+
+    const response = await fetch("/api/wallet/topup",{
+      method:"POST",
+      headers:authHeaders(true),
+      body:JSON.stringify({ amount })
+    });
+
+    const data = await response.json();
+
+    if(!response.ok){
+      showToast(data.message || "فشل شحن المحفظة");
+      return;
+    }
+
+    showToast("تم شحن المحفظة");
+
+    document.getElementById("customAmount").value = "";
+
+    document.querySelectorAll(".amount-btn")
+      .forEach(b=>b.classList.remove("active"));
+
+    loadWallet();
+
+  }catch(err){
+    console.error(err);
+    showToast("فشل الاتصال");
+  }
+
+}
+
+loadWallet();
+</script>
+
+</body>
+</html>

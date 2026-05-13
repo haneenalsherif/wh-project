@@ -1638,6 +1638,84 @@ app.put("/api/notifications/read", authenticateToken, async (req, res) => {
 });
 
 
+app.get("/api/wallet", authenticateToken, async (req, res) => {
+  try {
+    const balanceResult = await pool.query(
+      `SELECT wallet_balance
+       FROM users
+       WHERE id = $1`,
+      [req.user.id]
+    );
+
+    const transactionsResult = await pool.query(
+      `SELECT id, type, amount, description, created_at
+       FROM wallet_transactions
+       WHERE user_id = $1
+       ORDER BY id DESC`,
+      [req.user.id]
+    );
+
+    res.json({
+      balance: Number(balanceResult.rows[0]?.wallet_balance || 0),
+      transactions: transactionsResult.rows
+    });
+
+  } catch (err) {
+    console.error("WALLET ERROR:", err);
+    res.status(500).json({ message: "فشل جلب بيانات المحفظة" });
+  }
+});
+
+
+app.post("/api/wallet/topup", authenticateToken, async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { amount } = req.body;
+    const topupAmount = Number(amount);
+
+    if (!topupAmount || topupAmount <= 0) {
+      return res.status(400).json({ message: "قيمة الشحن غير صحيحة" });
+    }
+
+    await client.query("BEGIN");
+
+    const userResult = await client.query(
+      `UPDATE users
+       SET wallet_balance = wallet_balance + $1
+       WHERE id = $2
+       RETURNING wallet_balance`,
+      [topupAmount, req.user.id]
+    );
+
+    await client.query(
+      `INSERT INTO wallet_transactions
+       (user_id, type, amount, description)
+       VALUES ($1, $2, $3, $4)`,
+      [
+        req.user.id,
+        "topup",
+        topupAmount,
+        "شحن رصيد تجريبي"
+      ]
+    );
+
+    await client.query("COMMIT");
+
+    res.json({
+      message: "تم شحن المحفظة بنجاح",
+      balance: Number(userResult.rows[0].wallet_balance)
+    });
+
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error("WALLET TOPUP ERROR:", err);
+    res.status(500).json({ message: "فشل شحن المحفظة" });
+  } finally {
+    client.release();
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
