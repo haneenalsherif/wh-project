@@ -533,7 +533,16 @@ textarea{
         <input id="productId" type="hidden">
         <input id="name" placeholder="اسم المنتج">
         <input id="price" type="number" placeholder="السعر">
-        <input id="image" placeholder="رابط الصورة أو مسار داخل images">
+        <input id="image" placeholder="رابط الصورة بعد الرفع" readonly>
+
+<input 
+  type="file" 
+  id="imageFile" 
+  accept="image/*"
+  style="margin-bottom:10px;"
+>
+
+
         <select id="category">
           <option value="">اختاري تصنيف المنتج</option>
         </select>
