@@ -66,17 +66,18 @@
       justify-content: center;
     }
 
-    .hero {
-      margin: 14px 16px 16px;
-      background: #EDE0D4;
-      border-radius: 28px;
-      padding: 26px 18px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
-    }
+   .hero {
+  margin: 14px 16px 16px;
+  background: #EDE0D4;
+  border-radius: 28px;
+  padding: 26px 18px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.03);
 
+  width: calc(100% - 32px);
+}
     .hero::before {
       content: "";
       position: absolute;
@@ -98,13 +99,16 @@
     }
 
     .hero-title {
-      font-size: 28px;
-      font-weight: bold;
-      color: #344E41;
-      line-height: 1.6;
-      position: relative;
-      z-index: 1;
-    }
+  font-size: 28px;
+  font-weight: bold;
+  color: #344E41;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  display: block;
+}
 
     .hero-subtitle {
       margin-top: 8px;
