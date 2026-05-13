@@ -1527,6 +1527,40 @@ app.get("/api/offers", async (req, res) => {
   }
 });
 
+app.put("/api/store/location", authenticateToken, requireStoreOwner, async (req, res) => {
+  try {
+    const { lat, lng } = req.body;
+
+    if (!lat || !lng) {
+      return res.status(400).json({ message: "بيانات الموقع ناقصة" });
+    }
+
+    const store = await getMyStore(req.user.id);
+
+    if (!store) {
+      return res.status(404).json({ message: "ما عندكش متجر مربوط بحسابك" });
+    }
+
+    const result = await pool.query(
+      `UPDATE stores
+       SET lat = $1,
+           lng = $2
+       WHERE id = $3
+       RETURNING id, name, lat, lng`,
+      [lat, lng, store.id]
+    );
+
+    res.json({
+      message: "تم حفظ موقع المتجر",
+      store: result.rows[0]
+    });
+
+  } catch (err) {
+    console.error("STORE LOCATION ERROR:", err);
+    res.status(500).json({ message: "فشل حفظ الموقع" });
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

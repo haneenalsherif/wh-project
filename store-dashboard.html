@@ -504,6 +504,23 @@ textarea{
 
     <div id="addTab" class="panel">
       <div class="box">
+  <div class="box-title">موقع المتجر</div>
+
+  <input id="storeLat" placeholder="Latitude">
+
+  <input id="storeLng" placeholder="Longitude">
+
+  <div class="form-actions">
+    <button class="btn secondary" onclick="useCurrentStoreLocation()">
+      📍 استخدام موقعي الحالي
+    </button>
+
+    <button class="btn primary" onclick="saveStoreLocation()">
+      حفظ الموقع
+    </button>
+  </div>
+</div>
+      <div class="box">
         <div class="box-title">إضافة تصنيف</div>
         <input id="catName" placeholder="مثال: عصائر، قهوة، حلويات">
         <button class="btn primary" onclick="addCategory()">إضافة تصنيف</button>
@@ -1027,6 +1044,65 @@ async function initDashboard(){
 
   setInterval(loadOrders,10000);
 }
+
+function useCurrentStoreLocation() {
+  if (!navigator.geolocation) {
+    showToast("المتصفح لا يدعم الموقع");
+    return;
+  }
+
+  showToast("جاري تحديد الموقع...");
+
+  navigator.geolocation.getCurrentPosition(
+    function(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      document.getElementById("storeLat").value = lat;
+      document.getElementById("storeLng").value = lng;
+
+      showToast("تم تحديد موقع المتجر");
+    },
+    function(error) {
+      console.error(error);
+      showToast("فشل تحديد الموقع");
+    }
+  );
+}
+
+async function saveStoreLocation() {
+  const lat = document.getElementById("storeLat").value.trim();
+  const lng = document.getElementById("storeLng").value.trim();
+
+  if (!lat || !lng) {
+    showToast("كملي بيانات الموقع");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/store/location", {
+      method: "PUT",
+      headers: authHeaders(true),
+      body: JSON.stringify({
+        lat,
+        lng
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast(data.message || "فشل حفظ الموقع");
+      return;
+    }
+
+    showToast("تم حفظ موقع المتجر");
+  } catch (err) {
+    console.error(err);
+    showToast("فشل الاتصال بالسيرفر");
+  }
+}
+
 
 initDashboard();
 </script>
