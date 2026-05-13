@@ -447,8 +447,10 @@
           ${store.is_active ? "🟢 مفتوح" : "🔴 مغلق"}
         </div>
 
-        <button class="favorite-mini" onclick="event.stopPropagation(); toggleFavorite(${store.id}, this)">♡</button>
-
+<button class="favorite-mini"
+onclick="event.stopPropagation(); toggleFavorite(${store.id}, this)">
+${isFavorite(store.id) ? "♥" : "♡"}
+</button>
         <div class="place-content">
           <div class="place-name">${store.name}</div>
           <div class="place-type">${getTypeLabel(store.type)}</div>
@@ -500,19 +502,31 @@
     }, 120);
   }
 
-  function toggleFavorite(storeId, btn) {
-    let favorites = JSON.parse(sessionStorage.getItem("favorites")) || [];
+  function getFavorites() {
+  return JSON.parse(sessionStorage.getItem("favorites")) || [];
+}
 
-    if (favorites.includes(storeId)) {
-      favorites = favorites.filter(id => id !== storeId);
-      btn.textContent = "♡";
-    } else {
-      favorites.push(storeId);
-      btn.textContent = "♥";
-    }
+function saveFavorites(favorites) {
+  sessionStorage.setItem("favorites", JSON.stringify(favorites));
+}
 
-    sessionStorage.setItem("favorites", JSON.stringify(favorites));
+function isFavorite(storeId) {
+  return getFavorites().includes(storeId);
+}
+
+function toggleFavorite(storeId, btn) {
+  let favorites = getFavorites();
+
+  if (favorites.includes(storeId)) {
+    favorites = favorites.filter(id => id !== storeId);
+    btn.textContent = "♡";
+  } else {
+    favorites.push(storeId);
+    btn.textContent = "♥";
   }
+
+  saveFavorites(favorites);
+}
 
   async function loadStoreTypes() {
     const container = document.getElementById("chipsContainer");

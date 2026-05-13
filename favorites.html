@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المفضلة - WH App</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  direction:rtl;
+  background:#FAF3E0;
+  color:#2F3E46;
+}
+
+.page{
+  max-width:430px;
+  margin:auto;
+  min-height:100vh;
+  padding-bottom:95px;
+}
+
+.topbar{
+  background:#A3B18A;
+  color:white;
+  padding:16px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:20px;
+  font-weight:bold;
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+
+.back-btn{
+  background:white;
+  color:#344E41;
+  border:none;
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.hero{
+  margin:16px;
+  background:#EDE0D4;
+  border-radius:28px;
+  padding:22px 18px;
+  text-align:center;
+}
+
+.hero-title{
+  font-size:28px;
+  font-weight:bold;
+  color:#344E41;
+  margin-bottom:8px;
+}
+
+.hero-sub{
+  color:#6B705C;
+  font-size:14px;
+  line-height:1.8;
+}
+
+.favorites-list{
+  padding:0 16px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.place-card{
+  background:white;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 4px 14px rgba(0,0,0,.05);
+  position:relative;
+  cursor:pointer;
+}
+
+.place-card img{
+  width:100%;
+  height:170px;
+  object-fit:cover;
+  display:block;
+  background:#EDE0D4;
+}
+
+.status-pill{
+  position:absolute;
+  top:12px;
+  right:12px;
+  background:white;
+  color:#344E41;
+  border-radius:999px;
+  padding:7px 12px;
+  font-size:13px;
+  font-weight:bold;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.favorite-btn{
+  position:absolute;
+  top:12px;
+  left:12px;
+  background:white;
+  color:#344E41;
+  border:none;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  font-size:22px;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.place-content{
+  padding:15px;
+}
+
+.place-name{
+  font-size:20px;
+  font-weight:bold;
+  color:#344E41;
+  margin-bottom:6px;
+}
+
+.place-type{
+  color:#6B705C;
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+.place-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.place-meta{
+  color:#888;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.open-btn{
+  border:none;
+  background:#344E41;
+  color:white;
+  padding:11px 15px;
+  border-radius:14px;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.empty{
+  background:white;
+  margin:0 16px;
+  border-radius:22px;
+  padding:28px 18px;
+  text-align:center;
+  color:#777;
+  line-height:1.8;
+}
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:430px;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  border-top:1px solid #e8dfcf;
+  z-index:999;
+}
+
+.nav-item{
+  text-align:center;
+  font-size:12px;
+  color:#888;
+  cursor:pointer;
+}
+
+.nav-item div{
+  font-size:20px;
+  margin-bottom:4px;
+}
+
+.nav-item.active{
+  color:#344E41;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">→</button>
+    <div>المفضلة</div>
+    <div style="width:38px"></div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-title">أماكنك المفضلة ❤️</div>
+    <div class="hero-sub">
+      جميع المتاجر والمطاعم اللي حفظتيها في المفضلة.
+    </div>
+  </div>
+
+  <div class="favorites-list" id="favoritesContainer">
+    <div class="empty">جاري تحميل المفضلة...</div>
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='index.html'">
+    <div>🏠</div>
+    <span>الرئيسية</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='orders.html'">
+    <div>📦</div>
+    <span>طلباتي</span>
+  </div>
+
+  <div class="nav-item active" onclick="window.location.href='favorites.html'">
+    <div>❤️</div>
+    <span>المفضلة</span>
+  </div>
+
+  <div class="nav-item" onclick="window.location.href='profile.html'">
+    <div>👤</div>
+    <span>حسابي</span>
+  </div>
+</div>
+
+<script>
+const favoritesContainer = document.getElementById("favoritesContainer");
+
+function getFavorites(){
+  return JSON.parse(sessionStorage.getItem("favorites")) || [];
+}
+
+function saveFavorites(favorites){
+  sessionStorage.setItem("favorites", JSON.stringify(favorites));
+}
+
+function getTypeLabel(type){
+  if(type === "restaurant") return "مطعم";
+  if(type === "cafe") return "كافيه";
+  if(type === "pharmacy") return "صيدلية";
+  if(type === "market") return "ماركت";
+  return type || "متجر";
+}
+
+function removeFavorite(storeId){
+  let favorites = getFavorites();
+
+  favorites = favorites.filter(id => String(id) !== String(storeId));
+
+  saveFavorites(favorites);
+
+  loadFavorites();
+}
+
+async function loadFavorites(){
+  const favoriteIds = getFavorites();
+
+  if(!favoriteIds.length){
+    favoritesContainer.innerHTML = `
+      <div class="empty">
+        لا توجد أماكن في المفضلة بعد.
+      </div>
+    `;
+    return;
+  }
+
+  try{
+    const response = await fetch("/api/stores");
+    const stores = await response.json();
+
+    const favoriteStores = stores.filter(store =>
+      favoriteIds.includes(store.id)
+    );
+
+    if(!favoriteStores.length){
+      favoritesContainer.innerHTML = `
+        <div class="empty">
+          لا توجد أماكن محفوظة.
+        </div>
+      `;
+      return;
+    }
+
+    favoritesContainer.innerHTML = "";
+
+    favoriteStores.forEach(store=>{
+      const card = document.createElement("div");
+      card.className = "place-card";
+
+      card.innerHTML = `
+        <img src="${store.image}" onerror="this.src='images/dolce1.jpg.jpg'">
+
+        <div class="status-pill">
+          ${store.is_active ? "🟢 مفتوح" : "🔴 مغلق"}
+        </div>
+
+        <button class="favorite-btn"
+          onclick="event.stopPropagation(); removeFavorite(${store.id})">
+          ♥
+        </button>
+
+        <div class="place-content">
+          <div class="place-name">${store.name}</div>
+
+          <div class="place-type">
+            ${getTypeLabel(store.type)}
+          </div>
+
+          <div class="place-bottom">
+            <div class="place-meta">
+              رسوم التوصيل<br>
+              ${store.delivery_fee || 0} د.ل
+            </div>
+
+            <button class="open-btn">
+              افتح
+            </button>
+          </div>
+        </div>
+      `;
+
+      card.onclick = function(){
+        window.location.href = `store.html?id=${store.id}`;
+      };
+
+      favoritesContainer.appendChild(card);
+    });
+
+  }catch(err){
+    console.error(err);
+
+    favoritesContainer.innerHTML = `
+      <div class="empty">
+        فشل تحميل المفضلة.
+      </div>
+    `;
+  }
+}
+
+loadFavorites();
+</script>
+
+</body>
+</html>
